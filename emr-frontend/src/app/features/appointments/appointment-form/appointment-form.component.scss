@@ -1,0 +1,168 @@
+.emr-prime-card {
+  background: #ffffff;
+  border-radius: 16px;
+}
+
+.card-header-gradient {
+  background: linear-gradient(135deg, #0f3960 0%, #119da4 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header-icon-box {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.emr-prime-input, .emr-prime-select {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #1e293b;
+  background: #ffffff;
+  height: 48px;
+  transition: all 0.2s ease;
+
+  &:focus {
+    border-color: var(--emr-primary, #119da4);
+    box-shadow: 0 0 0 3px rgba(17, 157, 164, 0.15);
+    outline: none;
+  }
+
+  &.is-invalid {
+    border-color: #ef4444;
+  }
+}
+
+/* Custom Compact Up/Down Time Selector Widget */
+.emr-time-widget {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  padding: 4px 10px !important;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-time-arrow {
+  background: transparent;
+  border: none;
+  padding: 0;
+  height: 11px;
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #16a34a;
+  transition: all 0.15s ease;
+
+  i {
+    font-size: 0.68rem !important;
+    font-weight: 800 !important;
+  }
+
+  &:hover {
+    background: #e2e8f0;
+    border-radius: 3px;
+  }
+}
+
+.time-box-input {
+  width: 36px;
+  height: 22px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  background: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1e293b;
+  outline: none;
+  text-align: center;
+  margin: 1px 0;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
+
+  &:focus {
+    border-color: #119da4;
+    box-shadow: 0 0 0 2px rgba(17, 157, 164, 0.15);
+  }
+}
+
+.btn-ampm-toggle {
+  background: #16a34a;
+  color: #ffffff;
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  min-width: 44px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+
+  &:hover {
+    background: #15803d;
+  }
+
+  &.is-pm {
+    background: #0f3960;
+    &:hover {
+      background: #1e4b7a;
+    }
+  }
+}
+
+.patient-suggestions-box {
+  max-height: 260px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+}
+
+.suggestion-item {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: #f8fafc;
+  }
+}
+
+.patient-avatar-mini {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #119da4, #1e7cc6);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.emr-error {
+  font-size: 0.82rem;
+  color: #ef4444;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}

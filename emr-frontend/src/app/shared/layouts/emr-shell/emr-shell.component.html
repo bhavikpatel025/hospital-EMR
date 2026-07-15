@@ -1,0 +1,76 @@
+<div class="emr-shell" [class.sidebar-open]="sidebarOpen()">
+  <aside class="emr-sidebar">
+    <div class="emr-brand d-flex align-items-center gap-3 px-2 py-2 border-bottom mb-2" style="border-color: #f1f5f9 !important;">
+      <div class="emr-logo-box d-flex align-items-center justify-content-center text-white shadow-sm" style="width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #0d9488, #0284c7); font-size: 1.35rem;">
+        <i class="pi pi-heart-fill"></i>
+      </div>
+      <div>
+        <strong style="font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; color: #0f172a;">EMR</strong>
+      </div>
+    </div>
+
+    <nav class="emr-nav">
+      <a
+        *ngFor="let item of primaryNav"
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
+        class="emr-nav__item"
+        (click)="closeSidebar()">
+        <div class="qa-icon-box" [ngClass]="item.qaColor || 'qa-blue'" style="width: 32px; height: 32px; font-size: 1rem;">
+          <i [class]="item.primeIcon || 'pi pi-check'"></i>
+        </div>
+        <span class="fw-semibold">{{ item.label }}</span>
+      </a>
+    </nav>
+
+    <button type="button" class="emr-help-card mt-auto d-flex align-items-center gap-2 p-2 border-0 bg-transparent text-danger fw-semibold" (click)="logout()" style="cursor: pointer;">
+      <div class="qa-icon-box qa-red" style="width: 32px; height: 32px; font-size: 1rem;">
+        <i class="pi pi-sign-out"></i>
+      </div>
+      <span>Sign out</span>
+    </button>
+  </aside>
+
+  <div class="emr-shell__overlay" (click)="closeSidebar()"></div>
+
+  <div class="emr-main">
+    <header class="emr-topbar">
+      <div class="emr-topbar__left">
+        <button type="button" class="emr-icon-button" (click)="toggleSidebar()">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <div>
+          <!-- <p class="emr-eyebrow">Hospital operations</p> -->
+          <h1>{{ pageTitle() }}</h1>
+        </div>
+      </div>
+
+      <div class="emr-topbar__search">
+        <i class="pi pi-search me-2" style="color: var(--emr-text-soft, #64748b); font-size: 1.1rem;"></i>
+        <input type="text" placeholder="Search patient (name, UHID, mobile)" />
+      </div>
+
+      <div class="emr-topbar__right d-flex align-items-center gap-3">
+        <div class="emr-date-chip d-flex align-items-center gap-2 px-3 py-1 shadow-2xs">
+          <div class="qa-icon-box qa-purple" style="width: 28px; height: 28px; font-size: 0.88rem;"><i class="pi pi-calendar"></i></div>
+          <span class="font-semibold text-sm">{{ todayLabel }}</span>
+        </div>
+
+        <div class="emr-user d-flex align-items-center gap-2 px-2 py-1 shadow-2xs">
+          <div class="qa-icon-box qa-teal d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; font-size: 1.1rem; border-radius: 8px;">
+            <i class="pi pi-user"></i>
+          </div>
+          <div>
+            <strong class="d-flex align-items-center gap-1">{{ user?.fullName || 'Dr. Rahul Sharma' }} <i class="pi pi-verified text-primary" style="font-size: 0.78rem;" title="Verified Staff"></i></strong>
+            <span>{{ user?.role || 'Rheumatologist' }}</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="emr-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

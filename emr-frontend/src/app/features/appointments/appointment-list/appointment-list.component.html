@@ -1,0 +1,174 @@
+<section class="emr-page">
+
+  <div class="emr-grid emr-grid--stats">
+    <article class="emr-kpi-card">
+      <div class="d-flex align-items-start gap-3">
+        <div class="qa-icon-box qa-purple" style="width: 44px; height: 44px; font-size: 1.25rem;"><i class="pi pi-calendar-plus"></i></div>
+        <div>
+          <div class="emr-kpi-card__meta mb-1" style="font-weight: 600; color: #334155; font-size: 0.88rem;">Today's appointments</div>
+          <div class="emr-kpi-card__value mb-1" style="font-size: 1.85rem; font-weight: 800; color: #0f172a; line-height: 1;">{{ todayCount() }}</div>
+          <div style="font-size: 0.78rem; font-weight: 600; color: #0284c7;">Today's queue</div>
+        </div>
+      </div>
+    </article>
+    <article class="emr-kpi-card">
+      <div class="d-flex align-items-start gap-3">
+        <div class="qa-icon-box qa-orange" style="width: 44px; height: 44px; font-size: 1.25rem;"><i class="pi pi-clock"></i></div>
+        <div>
+          <div class="emr-kpi-card__meta mb-1" style="font-weight: 600; color: #334155; font-size: 0.88rem;">Upcoming</div>
+          <div class="emr-kpi-card__value mb-1" style="font-size: 1.85rem; font-weight: 800; color: #0f172a; line-height: 1;">{{ upcomingCount() }}</div>
+          <div style="font-size: 0.78rem; font-weight: 600; color: #d97706;">Future schedule</div>
+        </div>
+      </div>
+    </article>
+    <article class="emr-kpi-card">
+      <div class="d-flex align-items-start gap-3">
+        <div class="qa-icon-box qa-green" style="width: 44px; height: 44px; font-size: 1.25rem;"><i class="pi pi-check-circle"></i></div>
+        <div>
+          <div class="emr-kpi-card__meta mb-1" style="font-weight: 600; color: #334155; font-size: 0.88rem;">Completed</div>
+          <div class="emr-kpi-card__value mb-1" style="font-size: 1.85rem; font-weight: 800; color: #0f172a; line-height: 1;">{{ completedCount() }}</div>
+          <div style="font-size: 0.78rem; font-weight: 600; color: #059669;">Closed visits</div>
+        </div>
+      </div>
+    </article>
+    <article class="emr-kpi-card">
+      <div class="d-flex align-items-start gap-3">
+        <div class="qa-icon-box qa-red" style="width: 44px; height: 44px; font-size: 1.25rem;"><i class="pi pi-times-circle"></i></div>
+        <div>
+          <div class="emr-kpi-card__meta mb-1" style="font-weight: 600; color: #334155; font-size: 0.88rem;">Cancelled</div>
+          <div class="emr-kpi-card__value mb-1" style="font-size: 1.85rem; font-weight: 800; color: #0f172a; line-height: 1;">{{ cancelledCount() }}</div>
+          <div style="font-size: 0.78rem; font-weight: 600; color: #e11d48;">Needs rebooking</div>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <!-- Actions Toolbar Outside Table Card -->
+  <div class="emr-page__actions">
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <div class="qa-icon-box qa-purple" style="width: 28px; height: 28px; font-size: 0.85rem;"><i class="pi pi-list"></i></div>
+        <h2 class="mb-0">Appointments Queue</h2>
+      </div>
+      <p class="emr-muted">Manage scheduled patient visits and calendar operations.</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <button type="button" class="emr-button--ghost d-flex align-items-center gap-2" (click)="onCalendar()" title="Switch to Monthly Calendar View" style="white-space: nowrap;">
+        <i class="pi pi-calendar"></i>
+        <span>Calendar View</span>
+      </button>
+      <button type="button" class="emr-button d-flex align-items-center gap-2" (click)="onAdd()" style="white-space: nowrap;">
+        <i class="pi pi-plus"></i>
+        <span>New appointment</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="emr-card">
+    <div class="d-flex align-items-center flex-wrap gap-2 w-100 mb-3" style="min-height: 52px;">
+      <input class="emr-input" type="date" [(ngModel)]="selectedDate" (ngModelChange)="loadAppointments()" style="width: auto; min-width: 140px;" />
+
+      <select class="emr-select" [(ngModel)]="statusFilter" (ngModelChange)="loadAppointments()" style="width: auto; min-width: 130px;">
+        <option [ngValue]="null">All statuses</option>
+        <option *ngFor="let status of statusOptions" [ngValue]="status.value">{{ status.label }}</option>
+      </select>
+
+      <select class="emr-select" [(ngModel)]="doctorFilter" (ngModelChange)="loadAppointments()" style="width: auto; min-width: 140px;">
+        <option [ngValue]="null">All doctors</option>
+        <option *ngFor="let doctor of doctors()" [ngValue]="doctor.doctorId">Dr. {{ doctor.fullName }}</option>
+      </select>
+
+      <div class="emr-input-group emr-input--search" style="min-width: 220px; max-width: 320px; flex-grow: 1;">
+        <input [ngModel]="searchTerm" (ngModelChange)="onSearchChange($event)" placeholder="Search patient name or mobile" />
+        <i class="pi pi-search" style="color: var(--emr-text-soft);"></i>
+      </div>
+    </div>
+
+    <div class="text-center py-5" *ngIf="loading()">
+      <mat-spinner class="mx-auto"></mat-spinner>
+    </div>
+
+    <div class="emr-table-wrap" *ngIf="!loading() && appointments().length">
+      <table class="emr-table">
+        <thead>
+          <tr>
+            <th>Patient</th>
+            <th>Doctor</th>
+            <th>Date & time</th>
+            <th>Status</th>
+            <th>Reason</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let appointment of appointments()">
+            <td>
+              <div class="emr-table__name">
+                <div class="emr-avatar">{{ initials(appointment.patientName) }}</div>
+                <div>
+                  <strong>{{ appointment.patientName }}</strong>
+                  <div class="emr-muted">{{ appointment.patientMobile }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <strong>Dr. {{ appointment.doctorName }}</strong>
+              <div class="emr-muted">{{ appointment.specialization }}</div>
+            </td>
+            <td>
+              <strong>{{ appointment.appointmentDate | date: 'dd MMM yyyy' }}</strong>
+              <div class="emr-muted">{{ formatTime(appointment.startTime) }} - {{ formatTime(appointment.endTime) }}</div>
+            </td>
+            <td>
+              <button type="button" class="emr-link-button" [matMenuTriggerFor]="statusMenu">
+                <span
+                  class="emr-pill"
+                  [ngClass]="{
+                    'emr-pill--warning': appointment.status === 'Pending',
+                    'emr-pill--info': appointment.status === 'Confirmed',
+                    'emr-pill--success': appointment.status === 'Completed',
+                    'emr-pill--danger': appointment.status === 'Cancelled'
+                  }">
+                  {{ appointment.status }}
+                </span>
+              </button>
+              <mat-menu #statusMenu="matMenu">
+                <button mat-menu-item *ngFor="let status of statusOptions" (click)="onChangeStatus(appointment.appointmentId, status.value)">
+                  {{ status.label }}
+                </button>
+              </mat-menu>
+            </td>
+            <td>{{ appointment.reason || 'General review' }}</td>
+            <td>
+              <div class="emr-icon-actions">
+                <button type="button" (click)="onEdit(appointment.appointmentId)" title="Edit appointment">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button type="button" (click)="onDelete(appointment.appointmentId, appointment.patientName)" title="Delete appointment">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="emr-empty" *ngIf="!loading() && appointments().length === 0">
+      No appointments found for the selected filters.
+    </div>
+
+    <div class="emr-table-footer">
+      <div class="emr-muted">
+        {{ showingRangeText }}
+      </div>
+      <mat-paginator
+        [length]="totalCount()"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[5, 10, 25, 50]"
+        (page)="onPageChange($event)"
+        showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </div>
+</section>

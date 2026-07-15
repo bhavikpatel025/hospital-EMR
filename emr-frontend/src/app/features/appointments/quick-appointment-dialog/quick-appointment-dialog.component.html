@@ -1,0 +1,177 @@
+<div class="emr-quick-dialog">
+  <!-- Dialog Header -->
+  <div class="dialog-header d-flex align-items-center justify-content-between pb-3 mb-4 border-bottom">
+    <div class="d-flex align-items-center gap-3">
+      <div class="header-icon-badge">
+        <i class="pi pi-calendar-plus"></i>
+      </div>
+      <div>
+        <h3 class="dialog-title mb-1">New Appointment</h3>
+        <span class="dialog-subtitle"><i class="pi pi-calendar me-1"></i>Schedule for {{ data.date }}</span>
+      </div>
+    </div>
+    <button type="button" class="btn-close-custom" (click)="onCancel()" title="Close">
+      <i class="pi pi-times"></i>
+    </button>
+  </div>
+
+  <!-- Form Content -->
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-form">
+    
+    <!-- 1. Patient Search Field with Live Suggestions -->
+    <div class="form-group mb-4 position-relative">
+      <label class="form-label fw-semibold mb-1 d-flex align-items-center gap-1">
+        <i class="pi pi-user text-primary"></i> Select Patient <span class="text-danger">*</span>
+      </label>
+      <div class="p-input-icon-left w-100 position-relative">
+        <i class="pi pi-search position-absolute top-50 translate-middle-y ms-3 text-muted" style="z-index: 2;"></i>
+        <input 
+          type="text" 
+          pInputText 
+          formControlName="patientSearch" 
+          class="w-100 ps-5 py-2 emr-prime-input" 
+          placeholder="Search by patient name or mobile number (min 2 letters)..." 
+          autocomplete="off" />
+      </div>
+
+      <!-- Live Search Results Dropdown -->
+      <div class="patient-suggestions-box shadow-lg border rounded-3 position-absolute w-100 bg-white mt-1 z-3 overflow-hidden" *ngIf="patientResults().length > 0">
+        <div class="suggestion-header px-3 py-2 bg-light border-bottom text-muted small fw-semibold d-flex justify-content-between align-items-center">
+          <span>Matching Patients (Click to select)</span>
+          <span class="badge bg-secondary-subtle text-secondary">{{ patientResults().length }} found</span>
+        </div>
+        <div class="suggestion-list max-h-200 overflow-auto">
+          <div *ngFor="let p of patientResults()" 
+               class="suggestion-item px-3 py-2 d-flex align-items-center justify-content-between border-bottom cursor-pointer"
+               (click)="onSelectPatient(p)">
+            <div class="d-flex align-items-center gap-2">
+              <div class="patient-avatar-mini">{{ p.fullName.charAt(0) }}</div>
+              <div>
+                <div class="fw-semibold text-dark">{{ p.fullName }}</div>
+                <div class="text-muted small"><i class="pi pi-phone me-1"></i>{{ p.mobile || 'No mobile' }}</div>
+              </div>
+            </div>
+            <span class="badge bg-primary-subtle text-primary rounded-pill px-2 py-1 small">ID: #{{ p.patientId }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Selected Patient Confirmation Pill -->
+      <div class="selected-patient-pill mt-2 d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-success-subtle text-success border border-success-subtle" *ngIf="form.get('patientId')?.value">
+        <i class="pi pi-check-circle"></i>
+        <span class="fw-semibold small">Selected Patient ID: #{{ form.get('patientId')?.value }}</span>
+      </div>
+    </div>
+
+    <!-- 2. Doctor Selection -->
+    <div class="form-group mb-4">
+      <label class="form-label fw-semibold mb-1 d-flex align-items-center gap-1">
+        <i class="pi pi-user-plus text-primary"></i> Select Doctor <span class="text-danger">*</span>
+      </label>
+      <select formControlName="doctorId" class="form-select emr-prime-select py-2">
+        <option [ngValue]="null" disabled selected>-- Choose Doctor --</option>
+        <option *ngFor="let d of doctors()" [value]="d.doctorId">
+          Dr. {{ d.fullName }} — {{ d.specialization || 'General Physician' }}
+        </option>
+      </select>
+    </div>
+
+    <!-- 3. Time Slots (Start Time & End Time) -->
+    <div class="row g-3 mb-4">
+      <div class="col-6">
+        <div class="form-group">
+          <label class="form-label fw-semibold mb-1 d-flex align-items-center gap-1">
+            <i class="pi pi-clock text-primary"></i> Start Time <span class="text-danger">*</span>
+          </label>
+          <div class="emr-time-widget d-inline-flex align-items-center gap-2 p-2 rounded-3 border bg-light w-100 justify-content-center">
+            <div class="d-flex flex-column align-items-center">
+              <button type="button" class="btn-time-arrow" (click)="incrementHour('start')" title="Next Hour">
+                <i class="pi pi-chevron-up text-success fw-bold"></i>
+              </button>
+              <input type="text" class="time-box-input text-center fw-bold" [value]="startHour()" (change)="startHour.set($any($event.target).value); onTimeInputChange('start')" maxlength="2" />
+              <button type="button" class="btn-time-arrow" (click)="decrementHour('start')" title="Previous Hour">
+                <i class="pi pi-chevron-down text-success fw-bold"></i>
+              </button>
+            </div>
+            <span class="fw-bold fs-4 text-secondary mb-1">:</span>
+            <div class="d-flex flex-column align-items-center">
+              <button type="button" class="btn-time-arrow" (click)="incrementMinute('start')" title="Next Minute">
+                <i class="pi pi-chevron-up text-success fw-bold"></i>
+              </button>
+              <input type="text" class="time-box-input text-center fw-bold" [value]="startMinute()" (change)="startMinute.set($any($event.target).value); onTimeInputChange('start')" maxlength="2" />
+              <button type="button" class="btn-time-arrow" (click)="decrementMinute('start')" title="Previous Minute">
+                <i class="pi pi-chevron-down text-success fw-bold"></i>
+              </button>
+            </div>
+            <div class="ms-1 d-flex align-items-center">
+              <button type="button" class="btn-ampm-toggle px-2 py-1 fw-bold rounded-3 shadow-sm" (click)="toggleAmPm('start')" [class.is-pm]="startAmPm() === 'PM'">
+                {{ startAmPm() }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6">
+        <div class="form-group">
+          <label class="form-label fw-semibold mb-1 d-flex align-items-center gap-1">
+            <i class="pi pi-clock text-primary"></i> End Time <span class="text-danger">*</span>
+          </label>
+          <div class="emr-time-widget d-inline-flex align-items-center gap-2 p-2 rounded-3 border bg-light w-100 justify-content-center">
+            <div class="d-flex flex-column align-items-center">
+              <button type="button" class="btn-time-arrow" (click)="incrementHour('end')" title="Next Hour">
+                <i class="pi pi-chevron-up text-success fw-bold"></i>
+              </button>
+              <input type="text" class="time-box-input text-center fw-bold" [value]="endHour()" (change)="endHour.set($any($event.target).value); onTimeInputChange('end')" maxlength="2" />
+              <button type="button" class="btn-time-arrow" (click)="decrementHour('end')" title="Previous Hour">
+                <i class="pi pi-chevron-down text-success fw-bold"></i>
+              </button>
+            </div>
+            <span class="fw-bold fs-4 text-secondary mb-1">:</span>
+            <div class="d-flex flex-column align-items-center">
+              <button type="button" class="btn-time-arrow" (click)="incrementMinute('end')" title="Next Minute">
+                <i class="pi pi-chevron-up text-success fw-bold"></i>
+              </button>
+              <input type="text" class="time-box-input text-center fw-bold" [value]="endMinute()" (change)="endMinute.set($any($event.target).value); onTimeInputChange('end')" maxlength="2" />
+              <button type="button" class="btn-time-arrow" (click)="decrementMinute('end')" title="Previous Minute">
+                <i class="pi pi-chevron-down text-success fw-bold"></i>
+              </button>
+            </div>
+            <div class="ms-1 d-flex align-items-center">
+              <button type="button" class="btn-ampm-toggle px-2 py-1 fw-bold rounded-3 shadow-sm" (click)="toggleAmPm('end')" [class.is-pm]="endAmPm() === 'PM'">
+                {{ endAmPm() }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Reason / Notes -->
+    <div class="form-group mb-4">
+      <label class="form-label fw-semibold mb-1 d-flex align-items-center gap-1">
+        <i class="pi pi-comment text-primary"></i> Consultation Reason / Notes
+      </label>
+      <input type="text" pInputText formControlName="reason" class="w-100 py-2 emr-prime-input" placeholder="e.g. Regular Checkup, Fever and Cough, Follow-up visit" />
+    </div>
+
+    <!-- Dialog Actions -->
+    <div class="dialog-actions d-flex align-items-center justify-content-end gap-2 pt-3 border-top mt-2">
+      <p-button 
+        label="Cancel" 
+        icon="pi pi-times" 
+        [outlined]="true" 
+        severity="secondary" 
+        styleClass="p-button-sm px-4 py-2 fw-semibold" 
+        (onClick)="onCancel()" />
+      <p-button 
+        label="Schedule Appointment" 
+        icon="pi pi-calendar-plus" 
+        [loading]="saving()"
+        [disabled]="saving()"
+        styleClass="p-button-sm px-4 py-2 fw-semibold shadow-sm" 
+        (onClick)="onSubmit()" />
+    </div>
+
+  </form>
+</div>

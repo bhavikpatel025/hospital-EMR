@@ -1,0 +1,107 @@
+<div class="emr-card">
+  <div class="emr-card__header d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+    <div>
+      <h3 class="m-0" style="color: #0f3960; font-size: 1.35rem; font-weight: 700;">
+        {{ isEditMode() ? 'Edit Doctor Profile' : 'Add New Doctor' }}
+      </h3>
+      <p class="m-0 text-muted mt-1" style="font-size: 0.88rem;">
+        Enter professional qualifications and consultation details below. Fields marked with <span class="text-danger">*</span> are mandatory.
+      </p>
+    </div>
+    <button type="button" class="emr-button--ghost" (click)="onCancel()" style="height: 42px; padding: 0 16px; font-size: 0.88rem;">
+      <mat-icon style="font-size: 18px; width: 18px; height: 18px;">arrow_back</mat-icon>
+      <span>Back to Doctors</span>
+    </button>
+  </div>
+
+  <div class="text-center py-5" *ngIf="loading()">
+    <mat-spinner class="mx-auto"></mat-spinner>
+  </div>
+
+  <form [formGroup]="doctorForm" (ngSubmit)="onSubmit()" *ngIf="!loading()">
+
+    <!-- Section 1: Basic Profile Details -->
+    <div class="emr-section-title mb-3">
+      <span class="emr-pill emr-pill--info">1. Basic & Login Details</span>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <div class="col-md-6">
+        <div class="emr-form-group">
+          <label class="emr-form-label">Full Name <span class="text-danger">*</span></label>
+          <input type="text" class="emr-input w-100" formControlName="fullName" placeholder="e.g. Dr. John Doe" [class.is-invalid]="doctorForm.get('fullName')?.invalid && doctorForm.get('fullName')?.touched" />
+          <div class="emr-error" *ngIf="doctorForm.get('fullName')?.errors?.['required'] && doctorForm.get('fullName')?.touched">Full name is required</div>
+        </div>
+      </div>
+
+      <!-- Email & Password sirf Add mode mein dikhenge -->
+      <div class="col-md-6" *ngIf="!isEditMode()">
+        <div class="emr-form-group">
+          <label class="emr-form-label">Email (Login ID) <span class="text-danger">*</span></label>
+          <input type="email" class="emr-input w-100" formControlName="email" placeholder="e.g. doctor@hospital.com" [class.is-invalid]="doctorForm.get('email')?.invalid && doctorForm.get('email')?.touched" />
+          <div class="emr-error" *ngIf="doctorForm.get('email')?.errors?.['required'] && doctorForm.get('email')?.touched">Email is required</div>
+          <div class="emr-error" *ngIf="doctorForm.get('email')?.errors?.['email'] && doctorForm.get('email')?.touched">Enter a valid email address</div>
+        </div>
+      </div>
+
+      <div class="col-md-6" *ngIf="!isEditMode()">
+        <div class="emr-form-group">
+          <label class="emr-form-label">Password <span class="text-danger">*</span></label>
+          <input type="password" class="emr-input w-100" formControlName="password" placeholder="Create secure password (min. 6 characters)" [class.is-invalid]="doctorForm.get('password')?.invalid && doctorForm.get('password')?.touched" />
+          <div class="emr-error" *ngIf="doctorForm.get('password')?.errors?.['required'] && doctorForm.get('password')?.touched">Password is required</div>
+          <div class="emr-error" *ngIf="doctorForm.get('password')?.errors?.['minlength'] && doctorForm.get('password')?.touched">Minimum 6 characters required</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Specialization & Experience -->
+    <div class="emr-section-title mb-3 mt-4">
+      <span class="emr-pill emr-pill--info">2. Professional Specialization & Experience</span>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <div class="col-md-6">
+        <div class="emr-form-group">
+          <label class="emr-form-label">Specialization <span class="text-danger">*</span></label>
+          <input type="text" class="emr-input w-100" formControlName="specialization" placeholder="e.g. Rheumatology, Cardiology, Orthopedics" [class.is-invalid]="doctorForm.get('specialization')?.invalid && doctorForm.get('specialization')?.touched" />
+          <div class="emr-error" *ngIf="doctorForm.get('specialization')?.errors?.['required'] && doctorForm.get('specialization')?.touched">Specialization is required</div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="emr-form-group">
+          <label class="emr-form-label">Qualification</label>
+          <input type="text" class="emr-input w-100" formControlName="qualification" placeholder="e.g. MBBS, MD (Rheumatology)" />
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="emr-form-group">
+          <label class="emr-form-label">Experience (Years) <span class="text-danger">*</span></label>
+          <input type="number" class="emr-input w-100" formControlName="experienceYears" placeholder="e.g. 12" min="0" max="60" [class.is-invalid]="doctorForm.get('experienceYears')?.invalid && doctorForm.get('experienceYears')?.touched" />
+          <div class="emr-error" *ngIf="doctorForm.get('experienceYears')?.errors?.['required'] && doctorForm.get('experienceYears')?.touched">Experience is required</div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="emr-form-group">
+          <label class="emr-form-label">Consultation Fee (₹) <span class="text-danger">*</span></label>
+          <input type="number" class="emr-input w-100" formControlName="consultationFee" placeholder="e.g. 800" min="0" [class.is-invalid]="doctorForm.get('consultationFee')?.invalid && doctorForm.get('consultationFee')?.touched" />
+          <div class="emr-error" *ngIf="doctorForm.get('consultationFee')?.errors?.['required'] && doctorForm.get('consultationFee')?.touched">Consultation fee is required</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Actions -->
+    <div class="emr-form-actions d-flex justify-content-end align-items-center gap-3 pt-4 mt-3 border-top">
+      <button type="button" class="emr-button--ghost" (click)="onCancel()" style="min-width: 120px;">
+        <span>Cancel</span>
+      </button>
+      <button type="submit" class="emr-button" [disabled]="doctorForm.invalid || loading()" style="min-width: 200px;">
+        <mat-icon>{{ isEditMode() ? 'save' : 'person_add' }}</mat-icon>
+        <span>{{ isEditMode() ? 'Update Doctor Profile' : 'Save Doctor Profile' }}</span>
+      </button>
+    </div>
+
+  </form>
+</div>

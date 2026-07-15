@@ -1,0 +1,19 @@
+.emr-table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 16px 24px;
+  border-top: 1px solid rgba(18, 38, 63, 0.08);
+
+  mat-paginator {
+    background: transparent;
+  }
+}
+
+.avatar-0 { background: #e9f9ef !important; color: #17824f !important; }
+.avatar-1 { background: #f3e8ff !important; color: #7e22ce !important; }
+.avatar-2 { background: #ecf4ff !important; color: #236fbd !important; }
+.avatar-3 { background: #fff5e8 !important; color: #ba6a12 !important; }
+.avatar-4 { background: #ffecec !important; color: #c44646 !important; }

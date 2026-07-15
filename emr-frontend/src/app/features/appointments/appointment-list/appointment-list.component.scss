@@ -1,0 +1,13 @@
+.emr-table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 16px 24px;
+  border-top: 1px solid rgba(18, 38, 63, 0.08);
+
+  mat-paginator {
+    background: transparent;
+  }
+}

@@ -1,0 +1,108 @@
+<section class="emr-page">
+
+
+  <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 w-100 mb-3" style="min-height: 52px;">
+    <div class="d-flex align-items-center gap-2 flex-wrap flex-grow-1">
+      <div class="emr-input-group emr-input--search" style="min-width: 220px; max-width: 320px; flex-grow: 1;">
+        <input [ngModel]="searchTerm" (ngModelChange)="onSearchChange($event)" placeholder="Search by Name, ID, Mobile..." />
+        <mat-icon style="color: var(--emr-text-soft);">search</mat-icon>
+      </div>
+
+      <select class="emr-select" [(ngModel)]="doctorFilter" (ngModelChange)="onFilterChange()" style="width: auto; min-width: 140px;">
+        <option value="">All Doctors</option>
+        <option *ngFor="let doc of doctorsList()" [value]="doc.fullName">Dr. {{ doc.fullName }}</option>
+      </select>
+
+      <select class="emr-select" [(ngModel)]="statusFilter" (ngModelChange)="onFilterChange()" style="width: auto; min-width: 130px;">
+        <option value="">All Status</option>
+        <option value="Active">Active</option>
+        <option value="Inactive">Inactive</option>
+      </select>
+
+      <button type="button" class="emr-button--ghost" (click)="resetFilters()" title="Clear Filters" style="white-space: nowrap;">
+        <mat-icon>filter_list</mat-icon>
+        <span>Clear Filter</span>
+      </button>
+    </div>
+
+    <div class="ms-auto">
+      <button type="button" class="emr-button" (click)="onAdd()" style="white-space: nowrap;">
+        <mat-icon>add</mat-icon>
+        <span>Add New Patient</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="emr-card">
+    <div class="text-center py-5" *ngIf="loading()">
+      <mat-spinner class="mx-auto"></mat-spinner>
+    </div>
+
+    <div class="emr-table-wrap" *ngIf="!loading() && patients().length">
+      <table class="emr-table">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Patient Name</th>
+            <th>Age / Gender</th>
+            <th>Mobile</th>
+            <th>Status</th>
+            <th class="text-end">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let patient of patients()">
+            <td>
+              <strong style="color: #435b71;">{{ formatId(patient.patientId) }}</strong>
+            </td>
+            <td>
+              <div class="emr-table__name">
+                <div class="emr-avatar" [ngClass]="'avatar-' + (patient.patientId % 5)">{{ initials(patient.fullName) }}</div>
+                <div>
+                  <strong style="color: #1a2e40;">{{ patient.fullName }}</strong>
+                </div>
+              </div>
+            </td>
+            <td>{{ patient.age }} / {{ formatGender(patient.gender) }}</td>
+            <td>{{ patient.mobile }}</td>
+            <td>
+              <span class="emr-pill" [ngClass]="patient.isActive ? 'emr-pill--success' : 'emr-pill--danger'">
+                {{ patient.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+            <td class="text-end">
+              <div class="emr-icon-actions justify-content-end">
+                <button type="button" (click)="onView(patient.patientId)" title="View profile">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                <button type="button" (click)="onEdit(patient.patientId)" title="Edit">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button type="button" (click)="onDelete(patient.patientId, patient.fullName)" title="Delete">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="emr-empty" *ngIf="!loading() && patients().length === 0">
+      No patients matched the current search or filter.
+    </div>
+
+    <div class="emr-table-footer">
+      <div class="emr-muted">
+        {{ showingRangeText }}
+      </div>
+      <mat-paginator
+        [length]="totalCount()"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[5, 10, 25, 50]"
+        (page)="onPageChange($event)"
+        showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </div>
+</section>

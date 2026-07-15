@@ -1,0 +1,31 @@
+<div class="emr-confirm-card">
+  <div class="confirm-header">
+    <div class="confirm-icon-box">
+      <i class="pi pi-exclamation-triangle"></i>
+    </div>
+    <div class="confirm-header-text">
+      <h3 class="confirm-title">{{ data?.title || 'Confirm Action' }}</h3>
+      <span class="confirm-subtitle">Please verify before proceeding</span>
+    </div>
+  </div>
+
+  <div class="confirm-body">
+    <p class="confirm-message">{{ data?.message || 'Are you sure you want to perform this action?' }}</p>
+  </div>
+
+  <div class="confirm-footer">
+    <p-button 
+      label="Cancel" 
+      icon="pi pi-times" 
+      [outlined]="true" 
+      severity="secondary" 
+      styleClass="p-button-sm px-3 py-2" 
+      (onClick)="dialogRef.close(false)" />
+    <p-button 
+      label="Confirm" 
+      icon="pi pi-check" 
+      severity="danger" 
+      styleClass="p-button-sm px-4 py-2 shadow-sm fw-semibold" 
+      (onClick)="dialogRef.close(true)" />
+  </div>
+</div>

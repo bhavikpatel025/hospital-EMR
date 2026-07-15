@@ -1,0 +1,229 @@
+:host {
+  display: block;
+}
+
+.emr-patient-detail {
+  /* Hero Profile Card Styling */
+  /* Hero Profile Card Styling */
+  ::ng-deep .emr-hero-profile.p-card {
+    background: #ffffff !important;
+    color: #0b1f33 !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 20px rgba(18, 38, 63, 0.05) !important;
+    border-top: 4px solid var(--emr-primary, #119da4) !important;
+    
+    .p-card-body, .p-card-content {
+      padding: 0 !important;
+    }
+  }
+
+  .emr-profile-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #119da4 0%, #1877c9 100%);
+    color: #ffffff;
+    box-shadow: 0 6px 16px rgba(17, 157, 164, 0.25);
+    font-size: 1.75rem !important;
+    font-weight: 700;
+  }
+
+  /* Smart OCR Upload Card & Dropzone */
+  ::ng-deep .emr-ocr-center.p-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 16px rgba(18, 38, 63, 0.04) !important;
+    
+    .p-card-body, .p-card-content {
+      padding: 1.5rem !important;
+    }
+  }
+
+  .emr-upload-dropzone {
+    border: 2px dashed #cbd5e1 !important;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    background: #f8fafc;
+    border-radius: 12px;
+    box-sizing: border-box;
+    width: 100%;
+
+    &:hover, &:focus-within {
+      border-color: var(--emr-primary, #119da4) !important;
+      background: #f0fdfc !important;
+      box-shadow: 0 6px 14px rgba(17, 157, 164, 0.1) !important;
+    }
+
+    &.processing {
+      border-color: #119da4 !important;
+      background: #f0fdfc !important;
+    }
+  }
+
+  .upload-icon-wrapper {
+    transition: transform 0.2s ease;
+  }
+  .emr-upload-dropzone:hover .upload-icon-wrapper {
+    transform: scale(1.05);
+  }
+
+  /* Clinical Tabs Custom Polish */
+  ::ng-deep .emr-clinical-tabs.p-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
+
+    .p-card-body, .p-card-content {
+      padding: 0 !important;
+    }
+  }
+
+  ::ng-deep {
+    p-tabs {
+      p-tablist {
+        background: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 0.5rem 1rem 0 1rem;
+      }
+
+      p-tab {
+        padding: 1rem 1.25rem;
+        border-radius: 8px 8px 0 0;
+        transition: all 0.2s ease;
+        color: #64748b;
+
+        &:hover {
+          color: #1e293b;
+          background: rgba(226, 232, 240, 0.5);
+        }
+
+        &[data-p-active="true"], &.p-tab-active {
+          color: var(--emr-primary, #3b82f6) !important;
+          font-weight: 600;
+        }
+      }
+    }
+
+    /* PrimeNG Table styling polish inside tabs */
+    .p-datatable {
+      width: 100%;
+      box-sizing: border-box;
+
+      .p-datatable-wrapper {
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .p-datatable-header {
+        background: transparent;
+        border: 0;
+        padding: 1rem 0;
+      }
+      
+      .p-datatable-thead > tr > th {
+        background: #f8fafc;
+        color: #475569;
+        font-weight: 600;
+        font-size: 0.825rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 2px solid #e2e8f0;
+        padding: 0.875rem 1rem;
+        white-space: nowrap;
+      }
+
+      .p-datatable-tbody > tr > td {
+        padding: 1rem;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 0.925rem;
+        vertical-align: middle;
+      }
+
+      .p-datatable-tbody > tr:hover {
+        background: #f8fafc !important;
+      }
+    }
+  }
+
+  /* Empty states */
+  .emr-empty-state {
+    transition: opacity 0.3s ease;
+  }
+}
+
+/* Verification Dialog Custom Styling */
+::ng-deep .emr-verification-dialog.p-dialog {
+  border-radius: 16px !important;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35) !important;
+
+  .p-dialog-header {
+    background: #1e293b !important;
+    color: #ffffff !important;
+    padding: 1.25rem 1.75rem !important;
+
+    .p-dialog-title {
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    .p-dialog-header-icons .p-dialog-header-icon {
+      color: #cbd5e1 !important;
+      &:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+      }
+    }
+  }
+
+  .p-dialog-content {
+    padding: 1.5rem 1.75rem !important;
+    background: #f8fafc !important;
+  }
+
+  .p-dialog-footer {
+    padding: 1.25rem 1.75rem !important;
+    background: #ffffff !important;
+    border-top: 1px solid #e2e8f0 !important;
+  }
+}
+
+/* Patient Consolidated Clinical Summary Card */
+::ng-deep .emr-clinical-summary-card.p-card {
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  box-shadow: 0 10px 25px rgba(18, 38, 63, 0.08) !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+
+  .p-card-body, .p-card-content {
+    padding: 0 !important;
+  }
+
+  .summary-gradient-header {
+    background: linear-gradient(135deg, #0f3960 0%, #119da4 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .executive-box {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  }
+
+  .summary-col-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    }
+  }
+
+  .text-truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}

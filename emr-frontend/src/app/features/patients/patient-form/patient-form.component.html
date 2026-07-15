@@ -1,0 +1,119 @@
+<div class="emr-card">
+  <div class="emr-card__header d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+    <div>
+      <h3 class="m-0" style="color: #0f3960; font-size: 1.35rem; font-weight: 700;">
+        {{ isEditMode() ? 'Edit Patient Profile' : 'New Patient Registration' }}
+      </h3>
+      <p class="m-0 text-muted mt-1" style="font-size: 0.88rem;">
+        Please fill in the personal and clinical contact details below. Fields marked with <span class="text-danger">*</span> are mandatory.
+      </p>
+    </div>
+    <button type="button" class="emr-button--ghost" (click)="onCancel()" style="height: 42px; padding: 0 16px; font-size: 0.88rem;">
+      <mat-icon style="font-size: 18px; width: 18px; height: 18px;">arrow_back</mat-icon>
+      <span>Back to Patients</span>
+    </button>
+  </div>
+
+  <div class="text-center py-5" *ngIf="loading()">
+    <mat-spinner class="mx-auto"></mat-spinner>
+  </div>
+
+  <form [formGroup]="patientForm" (ngSubmit)="onSubmit()" *ngIf="!loading()">
+
+    <!-- Section 1: Personal Details -->
+    <div class="emr-section-title mb-3">
+      <span class="emr-pill emr-pill--info">1. Personal Details</span>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <div class="col-md-5">
+        <div class="emr-form-group">
+          <label class="emr-form-label">Full Name <span class="text-danger">*</span></label>
+          <input type="text" class="emr-input w-100" formControlName="fullName" placeholder="e.g. Rajesh Kumar" [class.is-invalid]="fullName?.invalid && fullName?.touched" />
+          <div class="emr-error" *ngIf="fullName?.errors?.['required'] && fullName?.touched">Full name is required</div>
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <div class="emr-form-group">
+          <label class="emr-form-label">Age <span class="text-danger">*</span></label>
+          <input type="number" class="emr-input w-100" formControlName="age" placeholder="e.g. 34" min="0" max="150" [class.is-invalid]="age?.invalid && age?.touched" />
+          <div class="emr-error" *ngIf="age?.errors?.['required'] && age?.touched">Age required</div>
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <div class="emr-form-group">
+          <label class="emr-form-label">Gender <span class="text-danger">*</span></label>
+          <select class="emr-select w-100" formControlName="gender" [class.is-invalid]="gender?.invalid && gender?.touched">
+            <option value="" disabled selected>Select</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+          <div class="emr-error" *ngIf="gender?.errors?.['required'] && gender?.touched">Gender required</div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="emr-form-group">
+          <label class="emr-form-label">Blood Group</label>
+          <select class="emr-select w-100" formControlName="bloodGroup">
+            <option value="">Unknown / Not tested</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Contact & Address -->
+    <div class="emr-section-title mb-3 mt-4">
+      <span class="emr-pill emr-pill--info">2. Contact & Address</span>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <div class="col-md-5">
+        <div class="emr-form-group">
+          <label class="emr-form-label">Mobile Number <span class="text-danger">*</span></label>
+          <input type="text" class="emr-input w-100" formControlName="mobile" maxlength="10" placeholder="e.g. 9876543210" [class.is-invalid]="mobile?.invalid && mobile?.touched" />
+          <div class="emr-error" *ngIf="mobile?.errors?.['required'] && mobile?.touched">Mobile number is required</div>
+          <div class="emr-error" *ngIf="mobile?.errors?.['pattern'] && mobile?.touched">Enter a valid 10-digit mobile</div>
+        </div>
+      </div>
+
+      <div class="col-md-7">
+        <div class="emr-form-group">
+          <label class="emr-form-label">Email Address</label>
+          <input type="email" class="emr-input w-100" formControlName="email" placeholder="e.g. patient@example.com" [class.is-invalid]="email?.invalid && email?.touched" />
+          <div class="emr-error" *ngIf="email?.errors?.['email'] && email?.touched">Enter a valid email address</div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="emr-form-group">
+          <label class="emr-form-label">Residential Address</label>
+          <textarea class="emr-input w-100 py-2" formControlName="address" rows="3" style="height: auto; min-height: 80px;" placeholder="House / Flat no., Street area, City, State, Pincode"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Actions -->
+    <div class="emr-form-actions d-flex justify-content-end align-items-center gap-3 pt-4 mt-3 border-top">
+      <button type="button" class="emr-button--ghost" (click)="onCancel()" style="min-width: 120px;">
+        <span>Cancel</span>
+      </button>
+      <button type="submit" class="emr-button" style="min-width: 200px;">
+        <mat-icon>{{ isEditMode() ? 'save' : 'check' }}</mat-icon>
+        <span>{{ isEditMode() ? 'Update Patient Profile' : 'Register Patient' }}</span>
+      </button>
+    </div>
+
+  </form>
+</div>

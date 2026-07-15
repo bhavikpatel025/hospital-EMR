@@ -1,0 +1,152 @@
+.emr-login-page {
+  min-height: 100vh;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  background: #f4f6f9;
+  position: relative;
+  overflow: hidden;
+  padding: 24px;
+}
+
+.emr-login-glow {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(100px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.emr-login-glow--1 {
+  width: 450px;
+  height: 450px;
+  top: -100px;
+  left: -100px;
+  background: rgba(17, 157, 164, 0.18);
+}
+
+.emr-login-glow--2 {
+  width: 500px;
+  height: 500px;
+  bottom: -150px;
+  right: -100px;
+  background: rgba(24, 119, 201, 0.14);
+}
+
+.emr-login-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 460px;
+}
+
+.emr-login-card {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(24px);
+  border-radius: 16px;
+  padding: 40px 36px;
+  box-shadow: 0 24px 60px rgba(18, 38, 63, 0.1);
+  border: 1px solid rgba(18, 38, 63, 0.08);
+}
+
+.emr-login-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.emr-login-title {
+  font-family: "Bahnschrift", "Aptos Display", "Segoe UI", sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #0f3960;
+  margin: 0 0 8px;
+  letter-spacing: -0.03em;
+}
+
+.emr-login-subtitle {
+  font-size: 0.9rem;
+  color: #5e7389;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.emr-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.emr-form-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #334155;
+  margin: 0;
+}
+
+.emr-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.emr-input-icon {
+  position: absolute;
+  left: 14px;
+  color: #64748b;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+}
+
+.emr-input--with-icon {
+  padding-left: 44px !important;
+}
+
+.emr-input {
+  height: 50px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  padding: 0 16px;
+  background: #ffffff;
+  color: #1e293b;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.emr-input:focus {
+  border-color: #119da4;
+  box-shadow: 0 0 0 3px rgba(17, 157, 164, 0.15);
+}
+
+.emr-input.is-invalid {
+  border-color: #ef4444;
+}
+
+.emr-error {
+  font-size: 0.8rem;
+  color: #ef4444;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.emr-login-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffecec;
+  border: 1px solid #f87171;
+  color: #c44646;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 0.88rem;
+  font-weight: 600;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+}

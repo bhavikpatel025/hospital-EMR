@@ -1,0 +1,35 @@
+<section class="py-2">
+  <div class="card p-4 rounded-4 shadow-sm border-0 bg-white">
+    <!-- Header with Bootstrap Utilities -->
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 pb-3 mb-4 border-bottom">
+      <div>
+        <h3 class="m-0 fw-bold text-dark fs-5">Interactive Appointment Calendar</h3>
+        <p class="m-0 text-muted small mt-1">
+          Drag & drop events to quickly reschedule or click on any date slot to create a quick appointment.
+        </p>
+      </div>
+
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        <select class="form-select shadow-sm" [(ngModel)]="doctorFilter" (ngModelChange)="onDoctorFilterChange()" style="width: auto; min-width: 170px;">
+          <option [ngValue]="null">All Doctors</option>
+          <option *ngFor="let d of doctors" [ngValue]="d.doctorId">Dr. {{ d.fullName }}</option>
+        </select>
+
+        <button type="button" class="btn btn-outline-secondary d-inline-flex align-items-center gap-1 shadow-sm px-3 py-2 fw-semibold" (click)="onList()" title="Switch to Table List View">
+          <mat-icon style="font-size: 18px; width: 18px; height: 18px;">table_chart</mat-icon>
+          <span>List View</span>
+        </button>
+
+        <button type="button" class="btn btn-primary d-inline-flex align-items-center gap-1 shadow-sm px-3 py-2 fw-semibold" (click)="onAdd()">
+          <mat-icon style="font-size: 18px; width: 18px; height: 18px;">add</mat-icon>
+          <span>New appointment</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Calendar Container -->
+    <div class="calendar-wrapper mt-2">
+      <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+    </div>
+  </div>
+</section>

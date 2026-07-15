@@ -1,0 +1,757 @@
+<section class="emr-patient-detail pt-0 pb-4" *ngIf="patient() as patient">
+  <!-- Top Navigation Bar -->
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
+    <p-button 
+      label="Back to Patients" 
+      icon="pi pi-arrow-left" 
+      severity="secondary" 
+      variant="outlined" 
+      (onClick)="backToList()" 
+      styleClass="font-semibold text-sm">
+    </p-button>
+    
+    <div class="d-flex align-items-center gap-2">
+      <span class="text-muted small font-semibold">Patient Record #{{ patient.patientId }}</span>
+    </div>
+  </div>
+
+  <!-- Hero Profile Card (PrimeNG p-card with clean white medical design & 100% zoom stability) -->
+  <p-card styleClass="emr-hero-profile rounded-4 mb-4 overflow-hidden">
+    <div class="d-flex flex-column flex-xl-row justify-content-between align-items-start align-items-xl-center gap-4 p-4">
+      <div class="d-flex align-items-start gap-4 min-w-0 flex-grow-1">
+        <div class="emr-profile-avatar d-flex align-items-center justify-content-center flex-shrink-0">
+          {{ initials() }}
+        </div>
+        <div class="min-w-0 flex-grow-1">
+          <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+            <h2 class="mb-0 fw-bold fs-3 text-truncate" style="color: #0b1f33;">{{ patient.fullName }}</h2>
+            <p-tag 
+              [severity]="patient.isActive ? 'success' : 'danger'" 
+              [value]="patient.isActive ? 'Active Patient' : 'Inactive'" 
+              styleClass="px-2 py-0.5 font-semibold rounded-pill text-xs">
+            </p-tag>
+          </div>
+          <p class="mb-2 text-sm" style="color: #5e7389;">Patient ID: <strong style="color: #0b1f33;">#{{ patient.patientId }}</strong></p>
+          
+          <div class="d-flex flex-wrap align-items-center gap-2 gap-md-3 text-sm py-2 px-3 rounded-3 border mt-2" style="background: #f8fafc; border-color: #e2e8f0; color: #334155;">
+            <span class="d-flex align-items-center"><i class="pi pi-user me-2 text-primary"></i><strong>Age/Gender:</strong><span class="ms-1">{{ patient.age }} yrs / {{ patient.gender }}</span></span>
+            <span class="text-muted d-none d-sm-inline">•</span>
+            <span class="d-flex align-items-center"><i class="pi pi-phone me-2 text-success"></i><strong>Mobile:</strong><span class="ms-1">{{ patient.mobile }}</span></span>
+            <span class="text-muted d-none d-sm-inline">•</span>
+            <span class="d-flex align-items-center"><i class="pi pi-heart me-2 text-danger"></i><strong>Blood Group:</strong> <span class="badge bg-danger ms-2 px-2 py-1">{{ patient.bloodGroup || 'N/A' }}</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-3 flex-shrink-0 align-self-start align-self-xl-center pt-2 pt-xl-0">
+        <p-button 
+          label="Edit Profile" 
+          icon="pi pi-pencil" 
+          variant="outlined" 
+          severity="secondary" 
+          [routerLink]="['/patients/edit', patient.patientId]">
+        </p-button>
+        
+        <p-button 
+          label="Book Appointment" 
+          icon="pi pi-calendar-plus" 
+          styleClass="emr-button px-3 border-0 shadow-sm" 
+          routerLink="/appointments/add">
+        </p-button>
+      </div>
+    </div>
+  </p-card>
+
+  <!-- 🧠 Patient Consolidated Clinical Summary Card (Synthesized from Uploaded Prescriptions & MRI Reports) -->
+  <p-card *ngIf="clinicalSummary() as summary" styleClass="emr-clinical-summary-card rounded-4 mb-4 overflow-hidden border-0 shadow-sm">
+    <div class="summary-gradient-header p-3 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <div class="d-flex align-items-center gap-2">
+        <i class="pi pi-sparkles text-warning fs-5"></i>
+        <h5 class="mb-0 text-white fw-bold fs-6">Patient Clinical Summary & Overview</h5>
+        <p-tag severity="warn" [value]="'Auto-Synthesized (' + summary.totalDocumentsScanned + ' Docs)'" styleClass="ms-2 px-2 py-0.5 text-xs font-bold rounded-pill bg-white text-dark"></p-tag>
+      </div>
+      <span class="text-white-50 text-xs font-medium">Last Updated: {{ summary.lastUpdated | date:'dd MMM yyyy, hh:mm a' }}</span>
+    </div>
+
+    <div class="p-4 bg-white">
+      <!-- Executive Assessment Paragraph -->
+      <div class="executive-box p-3 rounded-3 mb-4 border d-flex align-items-start gap-3" style="background: #f8fafc; border-color: #e2e8f0;">
+        <i class="pi pi-info-circle text-primary fs-5 mt-1 flex-shrink-0"></i>
+        <div>
+          <h6 class="fw-bold mb-1 text-dark fs-7">Executive Clinical Snapshot:</h6>
+          <p class="mb-0 text-secondary font-medium" style="line-height: 1.5;">{{ summary.executiveOverview }}</p>
+        </div>
+      </div>
+
+      <!-- 3-Column Highlights Grid -->
+      <div class="row g-3">
+        <!-- Active Medications -->
+        <div class="col-12 col-lg-4">
+          <div class="summary-col-card p-3 rounded-3 border h-100" style="background: #ffffff; border-color: #e1e8f0;">
+            <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+              <i class="pi pi-prescription text-success fs-6"></i>
+              <h6 class="mb-0 fw-bold fs-7 text-dark">Active Medications Regimen</h6>
+              <span class="badge bg-success bg-opacity-10 text-success ms-auto font-semibold">{{ summary.activeMedications?.length || 0 }}</span>
+            </div>
+            <div *ngIf="summary.activeMedications?.length > 0; else noMeds" class="d-flex flex-column gap-2" style="max-height: 180px; overflow-y: auto;">
+              <div *ngFor="let med of summary.activeMedications.slice(0, 4)" class="p-2 rounded-2 border-start border-3 border-success bg-light text-xs">
+                <div class="fw-bold text-dark">{{ med.medicineName }}</div>
+                <div class="text-muted">{{ med.dosage || 'Standard' }} • {{ med.frequency || 'Regular' }}</div>
+              </div>
+            </div>
+            <ng-template #noMeds>
+              <p class="text-muted text-xs mb-0 fst-italic">No active medications extracted from prescriptions yet.</p>
+            </ng-template>
+          </div>
+        </div>
+
+        <!-- Radiology / MRI Impressions -->
+        <div class="col-12 col-lg-4">
+          <div class="summary-col-card p-3 rounded-3 border h-100" style="background: #ffffff; border-color: #e1e8f0;">
+            <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+              <i class="pi pi-camera text-primary fs-6"></i>
+              <h6 class="mb-0 fw-bold fs-7 text-dark">MRI & Scan Impressions</h6>
+              <span class="badge bg-primary bg-opacity-10 text-primary ms-auto font-semibold">{{ summary.radiologyHighlights?.length || 0 }}</span>
+            </div>
+            <div *ngIf="summary.radiologyHighlights?.length > 0; else noRad" class="d-flex flex-column gap-2" style="max-height: 180px; overflow-y: auto;">
+              <div *ngFor="let rad of summary.radiologyHighlights.slice(0, 3)" class="p-2 rounded-2 border-start border-3 border-primary bg-light text-xs">
+                <div class="fw-bold text-dark mb-1">Radiology Impression:</div>
+                <div class="text-secondary text-truncate-3" style="line-height: 1.4;">{{ rad.impressionText }}</div>
+              </div>
+            </div>
+            <ng-template #noRad>
+              <p class="text-muted text-xs mb-0 fst-italic">No radiology scan reports uploaded yet.</p>
+            </ng-template>
+          </div>
+        </div>
+
+        <!-- Diagnostic / Lab Markers -->
+        <div class="col-12 col-lg-4">
+          <div class="summary-col-card p-3 rounded-3 border h-100" style="background: #ffffff; border-color: #e1e8f0;">
+            <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+              <i class="pi pi-chart-bar text-warning fs-6"></i>
+              <h6 class="mb-0 fw-bold fs-7 text-dark">Diagnostic & Lab Markers</h6>
+              <span class="badge bg-warning bg-opacity-10 text-dark ms-auto font-semibold">{{ summary.labHighlights?.length || 0 }}</span>
+            </div>
+            <div *ngIf="summary.labHighlights?.length > 0; else noLabs" class="d-flex flex-column gap-2" style="max-height: 180px; overflow-y: auto;">
+              <div *ngFor="let lab of summary.labHighlights.slice(0, 4)" class="p-2 rounded-2 d-flex justify-content-between align-items-center bg-light text-xs" [ngClass]="lab.isAbnormal || lab.status.includes('High') || lab.status.includes('Positive') ? 'border-start border-3 border-danger' : 'border-start border-3 border-secondary'">
+                <div>
+                  <div class="fw-bold text-dark">{{ lab.testName }}</div>
+                  <div class="text-muted">{{ lab.observedValue }} {{ lab.unit }}</div>
+                </div>
+                <span class="badge px-2 py-1" [ngClass]="lab.isAbnormal || lab.status.includes('High') || lab.status.includes('Positive') ? 'bg-danger text-white' : 'bg-secondary bg-opacity-10 text-secondary'">{{ lab.status }}</span>
+              </div>
+            </div>
+            <ng-template #noLabs>
+              <p class="text-muted text-xs mb-0 fst-italic">No lab test markers on file.</p>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </p-card>
+
+  <!-- ⚡ Smart OCR Document Upload Zone -->
+  <p-card styleClass="emr-ocr-center rounded-4 mb-4">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center gap-3 mb-4">
+      <div>
+        <h5 class="fw-bold text-dark d-flex align-items-center gap-2 mb-1 fs-6">
+          <i class="pi pi-upload text-primary"></i>
+          Upload Medical Document
+        </h5>
+        <p class="text-muted mb-0 small">
+          Select document category and attach file (.pdf, .jpg, .png) for automatic data extraction.
+        </p>
+      </div>
+
+      <!-- Document Category PrimeNG SelectButton -->
+      <div class="category-selector flex-shrink-0" style="max-width: 100%; overflow-x: auto;">
+        <p-selectbutton 
+          [options]="docCategories" 
+          [ngModel]="selectedDocCategory()" 
+          (ngModelChange)="setDocCategory($event)" 
+          optionLabel="label" 
+          optionValue="value" 
+          styleClass="shadow-sm">
+          <ng-template let-item #item>
+            <i [class]="item.icon + ' me-2'"></i>
+            <span class="font-semibold text-sm">{{ item.label }}</span>
+          </ng-template>
+        </p-selectbutton>
+      </div>
+    </div>
+
+    <!-- File Dropzone Area -->
+    <div class="emr-upload-dropzone position-relative p-5 text-center"
+         [class.processing]="isExtracting()">
+      
+      <input type="file" class="position-absolute top-0 start-0 w-100 h-100 opacity-0 cursor-pointer" style="cursor: pointer; z-index: 5;"
+             accept=".pdf,.jpg,.jpeg,.png"
+             [disabled]="isExtracting()"
+             (change)="onFileSelected($event)" />
+      
+      <!-- Normal State -->
+      <div *ngIf="!isExtracting()" class="py-2">
+        <div class="upload-icon-wrapper rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center shadow-2xs" style="width: 60px; height: 60px; background: #e0f2fe; color: #0284c7;">
+          <i class="pi pi-cloud-upload fs-2"></i>
+        </div>
+        <h6 class="fw-bold mb-1" style="color: #0b1f33;">Drag & drop file here, or click to browse</h6>
+        <p class="text-muted small mb-0">Supports PDF, JPG, PNG up to 25 MB</p>
+      </div>
+
+      <!-- Processing State -->
+      <div *ngIf="isExtracting()" class="py-4 d-flex flex-column align-items-center justify-content-center">
+        <p-progressSpinner styleClass="w-3rem h-3rem mb-3" strokeWidth="4" fill="transparent" animationDuration=".8s"></p-progressSpinner>
+        <h6 class="fw-bold text-dark mb-1">Extracting clinical data...</h6>
+        <p class="text-muted small mb-0">Please wait while the document is analyzed.</p>
+      </div>
+    </div>
+  </p-card>
+
+  <!-- Clinical Tabs & Database Content Section -->
+  <p-card styleClass="emr-clinical-tabs shadow-sm rounded-4 border-0 mb-4 overflow-hidden">
+    <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
+      <p-tablist>
+        <p-tab value="records">
+          <i class="pi pi-folder me-2"></i>
+          <span class="font-semibold">Uploaded Documents</span>
+          <p-tag [value]="uploadedDocuments().length.toString()" severity="secondary" styleClass="ms-2 px-2 py-0 text-xs rounded-pill"></p-tag>
+        </p-tab>
+        <p-tab value="meds">
+          <i class="pi pi-box me-2 text-primary"></i>
+          <span class="font-semibold">Medications Roster</span>
+          <p-tag [value]="patientMedications().length.toString()" severity="info" styleClass="ms-2 px-2 py-0 text-xs rounded-pill"></p-tag>
+        </p-tab>
+        <!-- <p-tab value="labs">
+          <i class="pi pi-chart-line me-2 text-success"></i>
+          <span class="font-semibold">Lab Results History</span>
+          <p-tag [value]="patientLabs().length.toString()" severity="success" styleClass="ms-2 px-2 py-0 text-xs rounded-pill"></p-tag>
+        </p-tab> -->
+        <p-tab value="imaging">
+          <i class="pi pi-images me-2 text-warning"></i>
+          <span class="font-semibold">Radiology & MRI/CT</span>
+          <p-tag [value]="patientImaging().length.toString()" severity="warn" styleClass="ms-2 px-2 py-0 text-xs rounded-pill"></p-tag>
+        </p-tab>
+      </p-tablist>
+
+      <p-tabpanels styleClass="p-4 bg-white">
+        <!-- Tab 1: Uploaded Documents Archive -->
+        <p-tabpanel value="records">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <div>
+              <h6 class="fw-bold mb-1 text-dark">Patient Documents</h6>
+              <p class="text-muted small mb-0">Attached prescriptions, lab reports, and radiology files.</p>
+            </div>
+          </div>
+
+          <div *ngIf="uploadedDocuments().length === 0" class="emr-empty-state text-center py-5 rounded-4 border bg-light my-3">
+            <div class="empty-icon-wrapper rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center bg-secondary bg-opacity-10 text-secondary" style="width: 64px; height: 64px;">
+              <i class="pi pi-folder-open fs-2"></i>
+            </div>
+            <h6 class="fw-bold text-dark fs-6">No documents attached</h6>
+            <p class="text-muted small mb-0 max-w-md mx-auto">Upload a medical document above to attach it to this record.</p>
+          </div>
+
+          <div *ngIf="uploadedDocuments().length > 0">
+            <p-table [value]="uploadedDocuments()" [paginator]="true" [rows]="5" styleClass="p-datatable-sm p-datatable-striped border rounded-3 overflow-hidden shadow-2xs">
+              <ng-template #header>
+                <tr>
+                  <th style="width: 150px;">Category</th>
+                  <th>File Name</th>
+                  <th style="width: 160px;">Uploaded On</th>
+                  <th>Summary</th>
+                  <th style="width: 180px;" class="text-center">Actions</th>
+                </tr>
+              </ng-template>
+              <ng-template #body let-doc>
+                <tr>
+                  <td>
+                    <p-tag [value]="doc.category" severity="info" styleClass="font-semibold px-2 py-1 text-xs"></p-tag>
+                  </td>
+                  <td class="fw-bold text-dark">
+                    <div class="d-flex align-items-center gap-2">
+                      <i *ngIf="isImageFile(doc.fileUrl || doc.filePath || doc.fileName)" class="pi pi-image text-primary fs-5"></i>
+                      <i *ngIf="isPdfFile(doc.fileUrl || doc.filePath || doc.fileName)" class="pi pi-file-pdf text-danger fs-5"></i>
+                      <span>{{ doc.fileName }}</span>
+                    </div>
+                  </td>
+                  <td class="text-sm text-muted">{{ doc.uploadedAt }}</td>
+                  <td class="text-sm text-muted">{{ doc.summary || 'Attached document' }}</td>
+                  <td class="text-center">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                      <p-button icon="pi pi-eye" label="Preview" size="small" variant="outlined" (onClick)="openPreviewModal(doc)"></p-button>
+                      <a [href]="doc.fileUrl || doc.filePath || ('/uploads/medical_records/patient_' + (patient.patientId || 1) + '/' + doc.fileName)" target="_blank" class="btn btn-sm btn-light border p-2 d-flex align-items-center justify-content-center" title="Open in New Tab">
+                        <i class="pi pi-external-link text-secondary"></i>
+                      </a>
+                      <p-button icon="pi pi-trash" severity="danger" variant="text" size="small" (onClick)="onDeleteDocument(doc)" [title]="'Delete Document'"></p-button>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </p-tabpanel>
+
+        <!-- Tab 2: Medications Roster -->
+        <p-tabpanel value="meds">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <div>
+              <h6 class="fw-bold mb-1 text-dark">Prescriptions & Medications</h6>
+              <p class="text-muted small mb-0">Current and historical medications.</p>
+            </div>
+          </div>
+
+          <div *ngIf="patientMedications().length === 0" class="emr-empty-state text-center py-5 rounded-4 border bg-light my-3">
+            <div class="empty-icon-wrapper rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary" style="width: 64px; height: 64px;">
+              <i class="pi pi-box fs-2"></i>
+            </div>
+            <h6 class="fw-bold text-dark fs-6">No medications recorded</h6>
+            <p class="text-muted small mb-0 max-w-md mx-auto">Upload a prescription above or add medications manually.</p>
+          </div>
+
+          <div *ngIf="patientMedications().length > 0">
+            <p-table [value]="patientMedications()" [paginator]="true" [rows]="10" styleClass="p-datatable-sm p-datatable-striped border rounded-3 overflow-hidden shadow-2xs">
+              <ng-template #header>
+                <tr>
+                  <th style="width: 60px;">#</th>
+                  <th>Medicine Name</th>
+                  <th style="width: 140px;">Dosage</th>
+                  <th style="width: 160px;">Frequency</th>
+                  <th style="width: 160px;">Duration</th>
+                  <th style="width: 150px;">Source</th>
+                  <th style="width: 80px;" class="text-center">Actions</th>
+                </tr>
+              </ng-template>
+              <ng-template #body let-med let-rowIndex="rowIndex">
+                <tr>
+                  <td class="fw-bold text-muted">{{ rowIndex + 1 }}</td>
+                  <td class="fw-bold text-primary fs-6">{{ med.medicineName }}</td>
+                  <td>
+                    <span class="badge bg-dark px-3 py-1 font-monospace">{{ med.dosage }}</span>
+                  </td>
+                  <td class="fw-semibold text-dark">{{ med.frequency }}</td>
+                  <td class="text-muted">{{ med.duration || 'As directed' }}</td>
+                  <td>
+                    <p-tag severity="success" value="Active" styleClass="px-2 py-1 text-xs"></p-tag>
+                  </td>
+                  <td class="text-center">
+                    <p-button icon="pi pi-trash" severity="danger" variant="text" size="small" (onClick)="onDeleteMedication(med)" [title]="'Delete Medication'"></p-button>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </p-tabpanel>
+
+        <!-- Tab 3: Lab Results History -->
+        <p-tabpanel value="labs">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <div>
+              <h6 class="fw-bold mb-1 text-dark">Lab Results</h6>
+              <p class="text-muted small mb-0">Recorded blood tests and diagnostic markers.</p>
+            </div>
+          </div>
+
+          <div *ngIf="patientLabs().length === 0" class="emr-empty-state text-center py-5 rounded-4 border bg-light my-3">
+            <div class="empty-icon-wrapper rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success" style="width: 64px; height: 64px;">
+              <i class="pi pi-chart-line fs-2"></i>
+            </div>
+            <h6 class="fw-bold text-dark fs-6">No lab results recorded</h6>
+            <p class="text-muted small mb-0 max-w-md mx-auto">Upload a lab report above or add test results manually.</p>
+          </div>
+
+          <div *ngIf="patientLabs().length > 0">
+            <p-table [value]="patientLabs()" [paginator]="true" [rows]="10" styleClass="p-datatable-sm border rounded-3 overflow-hidden shadow-2xs">
+              <ng-template #header>
+                <tr>
+                  <th>Test Marker Name</th>
+                  <th style="width: 160px;">Category</th>
+                  <th style="width: 180px;">Observed Value</th>
+                  <th style="width: 180px;">Reference Range</th>
+                  <th style="width: 180px;">Status / Flag</th>
+                </tr>
+              </ng-template>
+              <ng-template #body let-lab>
+                <tr [ngClass]="{'bg-danger bg-opacity-10': lab.isAbnormal || lab.status === 'High' || lab.status === 'Positive' || lab.status === 'Deficient'}">
+                  <td class="fw-bold text-dark fs-6">{{ lab.testName }}</td>
+                  <td><span class="badge bg-light text-dark border font-monospace px-2 py-1">{{ lab.category || 'General' }}</span></td>
+                  <td>
+                    <span class="fw-bold fs-6" [class.text-danger]="lab.isAbnormal || lab.status === 'High' || lab.status === 'Positive' || lab.status === 'Deficient'" [class.text-dark]="!lab.isAbnormal">
+                      {{ lab.observedValue }}
+                    </span>
+                    <small class="text-muted ms-1">{{ lab.unit }}</small>
+                  </td>
+                  <td class="text-muted font-monospace text-sm">{{ lab.referenceRange }}</td>
+                  <td>
+                    <p-tag 
+                      [severity]="(lab.isAbnormal || lab.status === 'High' || lab.status === 'Positive' || lab.status === 'Deficient') ? 'danger' : 'success'" 
+                      [value]="lab.status ? lab.status : (lab.isAbnormal ? 'Abnormal' : 'Normal')" 
+                      styleClass="px-2 py-1 text-xs font-semibold">
+                    </p-tag>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </p-tabpanel>
+
+        <!-- Tab 4: Radiology & Imaging Reports -->
+        <p-tabpanel value="imaging">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <div>
+              <h6 class="fw-bold mb-1 text-dark">Radiology Reports</h6>
+              <p class="text-muted small mb-0">Diagnostic impressions from X-Ray, CT Scan, and MRI reports.</p>
+            </div>
+          </div>
+
+          <div *ngIf="patientImaging().length === 0" class="emr-empty-state text-center py-5 rounded-4 border bg-light my-3">
+            <div class="empty-icon-wrapper rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning" style="width: 64px; height: 64px;">
+              <i class="pi pi-images fs-2"></i>
+            </div>
+            <h6 class="fw-bold text-dark fs-6">No radiology reports recorded</h6>
+            <p class="text-muted small mb-0 max-w-md mx-auto">Upload a radiology report above to attach diagnostic impressions.</p>
+          </div>
+
+          <div *ngIf="patientImaging().length > 0" class="d-flex flex-column gap-3 my-2">
+            <p-card *ngFor="let imp of patientImaging(); let i = index" styleClass="border-start border-warning border-4 bg-light shadow-2xs rounded-3">
+              <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                <strong class="text-dark d-flex align-items-center gap-2 fs-6">
+                  <i class="pi pi-check-circle text-warning fs-5"></i>
+                  Report #{{ i + 1 }}
+                </strong>
+                <div class="d-flex align-items-center gap-2">
+                  <p-tag severity="warn" value="Attached" styleClass="px-2 py-1 text-xs font-semibold"></p-tag>
+                  <p-button icon="pi pi-trash" severity="danger" variant="text" size="small" (onClick)="onDeleteImaging(imp)" [title]="'Delete Radiology Note'"></p-button>
+                </div>
+              </div>
+              <p class="mb-0 text-dark text-sm lh-base" style="white-space: pre-line;">{{ getImpressionText(imp) }}</p>
+            </p-card>
+          </div>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </p-card>
+
+  <!-- Bottom Grid: Next Appointment & History -->
+  <div class="row g-4">
+    <div class="col-12 col-lg-6">
+      <p-card styleClass="shadow-sm border-0 h-100 rounded-4">
+        <h5 class="fw-bold mb-3 fs-6 text-dark d-flex align-items-center gap-2">
+          <i class="pi pi-calendar text-primary"></i> Next Appointment
+        </h5>
+        
+        <div *ngIf="nextAppointment as appointment; else noAppointment" class="p-3 bg-light rounded-3 border">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <strong class="fs-6 text-dark">{{ appointment.appointmentDate | date: 'dd MMM yyyy' }}</strong>
+            <p-tag severity="info" [value]="appointment.status" styleClass="px-2 py-1 text-xs"></p-tag>
+          </div>
+          <div class="text-muted mb-1 text-sm"><i class="pi pi-clock mr-1"></i> {{ appointment.startTime }} - {{ appointment.endTime }}</div>
+          <div class="fw-semibold text-primary text-sm">Dr. {{ appointment.doctorName }} ({{ appointment.specialization }})</div>
+          <div class="text-muted text-xs mt-2 pt-2 border-top">Reason: {{ appointment.reason || 'General checkup' }}</div>
+        </div>
+      </p-card>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <p-card styleClass="shadow-sm border-0 h-100 rounded-4">
+        <h5 class="fw-bold mb-3 fs-6 text-dark d-flex align-items-center gap-2">
+          <i class="pi pi-history text-secondary"></i> Recent Consultation History
+        </h5>
+        
+        <div *ngIf="appointments().length; else noHistory" class="d-flex flex-column gap-2">
+          <div *ngFor="let appointment of appointments()" class="p-3 bg-light rounded-3 border d-flex justify-content-between align-items-center">
+            <div>
+              <strong class="d-block text-sm text-dark">{{ appointment.appointmentDate | date: 'dd MMM yyyy' }}</strong>
+              <small class="text-muted text-xs">Dr. {{ appointment.doctorName }} · {{ appointment.reason || 'Routine visit' }}</small>
+            </div>
+            <p-tag severity="secondary" [value]="appointment.status" styleClass="px-2 py-1 text-xs"></p-tag>
+          </div>
+        </div>
+      </p-card>
+    </div>
+  </div>
+</section>
+
+<!-- Loading Spinner State -->
+<div class="container py-5 text-center" *ngIf="loading()">
+  <p-progressSpinner styleClass="w-4rem h-4rem mb-3" strokeWidth="4" fill="transparent" animationDuration=".8s"></p-progressSpinner>
+  <h6 class="fw-bold text-dark">Loading patient record...</h6>
+</div>
+
+<ng-template #noAppointment>
+  <div class="alert alert-light border text-center my-3 py-4 rounded-3 text-muted text-sm">
+    No upcoming appointments scheduled.
+  </div>
+</ng-template>
+
+<ng-template #noHistory>
+  <div class="alert alert-light border text-center my-3 py-4 rounded-3 text-muted text-sm">
+    No consultation history found.
+  </div>
+</ng-template>
+
+<!-- ========================================================================= -->
+<!-- VERIFICATION MODAL (PrimeNG Dialog)                                      -->
+<!-- ========================================================================= -->
+<p-dialog 
+  header="Verify Extracted Data" 
+  [(visible)]="showVerificationModal" 
+  [modal]="true" 
+  [style]="{ width: '92vw', maxWidth: '1400px' }" 
+  [maximizable]="true" 
+  [closable]="true"
+  (onHide)="closeVerificationModal()"
+  styleClass="emr-verification-dialog">
+  
+  <!-- Dialog Subheader / Banner -->
+  <div *ngIf="extractedData() as data" class="dialog-content py-2">
+    <div class="alert alert-primary py-3 px-4 rounded-3 mb-4 d-flex align-items-center justify-content-between flex-wrap gap-3 border border-primary border-opacity-25 bg-primary bg-opacity-10">
+      <div class="d-flex align-items-center gap-3">
+        <div class="icon-box rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px;">
+          <i class="pi pi-file fs-5"></i>
+        </div>
+        <div>
+          <h6 class="fw-bold mb-1 text-dark">Review Extracted Data</h6>
+          <p class="mb-0 text-muted small">
+            File: <strong class="text-dark">{{ data.documentTitle }}</strong> | Category: <strong class="text-dark">{{ data.category }}</strong>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Split Screen: Left (Document Preview + Metadata), Right (Editable Data Tables) -->
+    <div class="row g-4">
+      
+      <!-- Document Live Preview & Metadata Column -->
+      <div class="col-12 col-lg-5 d-flex flex-column gap-3">
+        <!-- Live Document Preview -->
+        <p-card styleClass="shadow-sm border rounded-3 overflow-hidden">
+          <ng-template #header>
+            <div class="bg-light px-3 py-2 border-bottom d-flex align-items-center justify-content-between">
+              <span class="fw-bold text-dark text-sm d-flex align-items-center gap-2">
+                <i class="pi pi-eye text-primary fs-5"></i> Document Live Preview
+              </span>
+              <a *ngIf="data.fileUrl" [href]="data.fileUrl" target="_blank" class="btn btn-sm btn-outline-primary py-1 px-2 text-xs d-flex align-items-center gap-1">
+                <i class="pi pi-external-link"></i> Open Full
+              </a>
+            </div>
+          </ng-template>
+
+          <div class="preview-viewport text-center bg-dark rounded d-flex align-items-center justify-content-center p-2" style="min-height: 320px; max-height: 420px; overflow: auto;">
+            <img *ngIf="isImageFile(data.fileUrl || data.documentTitle)" [src]="data.fileUrl" class="img-fluid rounded shadow" style="max-height: 400px; object-fit: contain;" alt="Uploaded Document Preview" />
+            <iframe *ngIf="isPdfFile(data.fileUrl || data.documentTitle)" [src]="getSafeUrl(data.fileUrl)" class="w-100 rounded border-0" style="height: 400px;"></iframe>
+            <div *ngIf="!isImageFile(data.fileUrl || data.documentTitle) && !isPdfFile(data.fileUrl || data.documentTitle)" class="p-4 text-white text-center">
+              <i class="pi pi-file fs-1 mb-2 text-muted"></i>
+              <p class="mb-1 fw-bold">{{ data.documentTitle }}</p>
+              <span class="badge bg-secondary">Document ready for review</span>
+            </div>
+          </div>
+        </p-card>
+
+        <!-- Extracted Document Metadata -->
+        <p-card styleClass="shadow-sm border rounded-3 overflow-hidden">
+          <ng-template #header>
+            <div class="bg-light px-3 py-2 border-bottom fw-bold text-dark text-sm d-flex align-items-center gap-2">
+              <i class="pi pi-info-circle text-primary fs-5"></i> Document Information
+            </div>
+          </ng-template>
+
+          <div class="metadata-list text-sm">
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+              <span class="text-muted">Detected Category:</span>
+              <p-tag [value]="data.category" severity="info" styleClass="px-2 py-1 text-xs"></p-tag>
+            </div>
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+              <span class="text-muted">Hospital / Clinic:</span>
+              <strong class="text-dark">{{ data.hospitalName || 'Medical Center' }}</strong>
+            </div>
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+              <span class="text-muted">Attending Doctor:</span>
+              <strong class="text-dark">{{ data.doctorName || 'Attending Physician' }}</strong>
+            </div>
+            <div *ngIf="data.diagnoses && data.diagnoses.length > 0" class="pt-2">
+              <span class="text-muted d-block mb-2">Detected Diagnoses / Conditions:</span>
+              <div class="d-flex flex-wrap gap-1">
+                <p-tag *ngFor="let diag of data.diagnoses" [value]="diag" severity="warn" icon="pi pi-check" styleClass="px-2 py-1 text-xs"></p-tag>
+              </div>
+            </div>
+          </div>
+        </p-card>
+      </div>
+
+      <!-- Editable Clinical Entities Table Column -->
+      <div class="col-12 col-lg-7">
+        <p-card styleClass="shadow-sm border rounded-3 overflow-hidden h-100 d-flex flex-column">
+          <ng-template #header>
+            <div class="bg-light px-3 py-3 border-bottom d-flex align-items-center justify-content-between flex-wrap gap-2">
+              <span class="fw-bold text-dark fs-6 d-flex align-items-center gap-2">
+                <i class="pi pi-check-square text-primary fs-5"></i> Extracted Records
+              </span>
+              <span class="text-xs text-muted">Verify or edit values below</span>
+            </div>
+          </ng-template>
+
+          <div class="p-1 flex-grow-1">
+            <!-- If Prescription / Medications -->
+            <div *ngIf="data.category === 'Prescription' || (data.category !== 'LabReport' && data.category !== 'Radiology' && data.medications && data.medications.length > 0)">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-dark mb-0 fs-6"><i class="pi pi-box mr-2 text-primary"></i>Prescriptions</h6>
+                <p-button icon="pi pi-plus" label="Add Medicine" size="small" variant="outlined" (onClick)="addMedicationRow()"></p-button>
+              </div>
+
+              <div class="table-responsive mb-3 border rounded-3 overflow-hidden">
+                <table class="table table-sm table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Medicine Name</th>
+                      <th style="width: 130px;">Dosage</th>
+                      <th style="width: 140px;">Frequency</th>
+                      <th style="width: 130px;">Duration</th>
+                      <th style="width: 46px;" class="text-center">Del</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let med of data.medications; let i = index">
+                      <td><input type="text" class="form-control form-control-sm fw-bold border-0 bg-light" placeholder="Medicine name..." [(ngModel)]="med.medicineName" /></td>
+                      <td><input type="text" class="form-control form-control-sm border-0 bg-light" placeholder="e.g. 500mg" [(ngModel)]="med.dosage" /></td>
+                      <td><input type="text" class="form-control form-control-sm border-0 bg-light" placeholder="e.g. 1-0-1" [(ngModel)]="med.frequency" /></td>
+                      <td><input type="text" class="form-control form-control-sm border-0 bg-light" placeholder="e.g. 5 Days" [(ngModel)]="med.duration" /></td>
+                      <td class="text-center">
+                        <button class="btn btn-sm text-danger p-1" (click)="data.medications!.splice(i, 1)" title="Remove item">
+                          <i class="pi pi-times"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr *ngIf="data.medications?.length === 0">
+                      <td colspan="5" class="text-center text-muted py-4 small">
+                        <i class="pi pi-exclamation-circle text-warning fs-4 d-block mb-1"></i>
+                        No structured medicines detected via OCR. Click <strong>+ Add Medicine</strong> above to manually add items.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- If Lab Report / Test Markers -->
+            <div *ngIf="data.category === 'LabReport' || (data.category !== 'Prescription' && data.category !== 'Radiology' && data.labFindings && data.labFindings.length > 0)">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-success mb-0 fs-6"><i class="pi pi-chart-line mr-2"></i>Laboratory Test Markers (Editable)</h6>
+                <p-button icon="pi pi-plus" label="Add Lab Test" size="small" severity="success" variant="outlined" (onClick)="addLabFindingRow()"></p-button>
+              </div>
+
+              <div class="table-responsive mb-3 border rounded-3 overflow-hidden">
+                <table class="table table-sm table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Test Name</th>
+                      <th style="width: 140px;">Category</th>
+                      <th style="width: 120px;">Observed Value</th>
+                      <th style="width: 85px;">Unit</th>
+                      <th style="width: 130px;">Reference Range</th>
+                      <th style="width: 120px;">Status</th>
+                      <th style="width: 46px;" class="text-center">Del</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let lab of data.labFindings; let i = index">
+                      <td><input type="text" class="form-control form-control-sm fw-bold border-0 bg-light" placeholder="Test marker name..." [(ngModel)]="lab.testName" /></td>
+                      <td><input type="text" class="form-control form-control-sm text-muted border-0 bg-light" placeholder="Category..." [(ngModel)]="lab.category" /></td>
+                      <td><input type="text" class="form-control form-control-sm fw-bold text-primary border-0 bg-light" placeholder="Value..." [(ngModel)]="lab.observedValue" /></td>
+                      <td><input type="text" class="form-control form-control-sm border-0 bg-light" placeholder="Unit..." [(ngModel)]="lab.unit" /></td>
+                      <td><input type="text" class="form-control form-control-sm text-muted border-0 bg-light" placeholder="Range..." [(ngModel)]="lab.referenceRange" /></td>
+                      <td><input type="text" class="form-control form-control-sm fw-bold border-0 bg-light" [ngClass]="{'text-danger': lab.isAbnormal || lab.status === 'High' || lab.status === 'Positive' || lab.status === 'Deficient', 'text-success': !lab.isAbnormal && lab.status === 'Normal'}" placeholder="Status..." [(ngModel)]="lab.status" /></td>
+                      <td class="text-center">
+                        <button class="btn btn-sm text-danger p-1" (click)="data.labFindings!.splice(i, 1)" title="Remove item">
+                          <i class="pi pi-times"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr *ngIf="data.labFindings?.length === 0">
+                      <td colspan="7" class="text-center text-muted py-4 small">
+                        <i class="pi pi-exclamation-circle text-warning fs-4 d-block mb-1"></i>
+                        No structured lab markers detected via OCR. Click <strong>+ Add Lab Test</strong> above to manually add items.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- If Radiology Impression -->
+            <div *ngIf="data.category === 'Radiology' || (data.category !== 'Prescription' && data.category !== 'LabReport' && data.radiologyImpression && data.radiologyImpression.trim().length > 0)" class="mb-3">
+              <h6 class="fw-bold text-dark mb-2 fs-6"><i class="pi pi-images mr-2 text-warning"></i>Radiology Impression</h6>
+              <textarea pTextarea class="w-100 form-control p-3 text-sm lh-base bg-light border-0" rows="6" placeholder="Enter or review diagnostic impressions..." [(ngModel)]="data.radiologyImpression"></textarea>
+            </div>
+
+            <div class="alert alert-info py-2 px-3 mb-0 d-flex align-items-center gap-2 small border border-info border-opacity-25 rounded-3 bg-info bg-opacity-10">
+              <i class="pi pi-info-circle text-info flex-shrink-0"></i>
+              <span>Confirmed records will be saved to the patient's clinical history and document archive.</span>
+            </div>
+          </div>
+        </p-card>
+      </div>
+
+    </div>
+  </div>
+
+  <ng-template #footer>
+    <div class="d-flex justify-content-end align-items-center gap-2 pt-3 border-top w-100">
+      <p-button 
+        label="Cancel & Discard" 
+        icon="pi pi-times" 
+        severity="secondary" 
+        variant="outlined" 
+        (onClick)="closeVerificationModal()">
+      </p-button>
+      <p-button 
+        label="Confirm & Add to Patient Record" 
+        icon="pi pi-check-circle" 
+        severity="success" 
+        styleClass="fw-bold shadow" 
+        (onClick)="confirmAutoEntry()">
+      </p-button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- Standalone Document Preview Dialog (For Archive Tab) -->
+<p-dialog 
+  *ngIf="selectedPreviewDoc() as previewDoc"
+  [header]="previewDoc.fileName" 
+  [(visible)]="showPreviewModal" 
+  [modal]="true" 
+  [style]="{ width: '85vw', maxWidth: '1200px' }" 
+  [maximizable]="true" 
+  (onHide)="closePreviewModal()"
+  styleClass="emr-preview-dialog">
+  
+  <ng-template #header>
+    <div class="d-flex align-items-center gap-3">
+      <i class="pi pi-file fs-4 text-primary"></i>
+      <div>
+        <h5 class="fw-bold mb-0 fs-6 text-dark">{{ previewDoc.fileName }}</h5>
+        <span class="text-xs text-muted">Uploaded on {{ previewDoc.uploadedAt }}</span>
+      </div>
+      <p-tag [value]="previewDoc.category" severity="info" styleClass="px-2 py-1 text-xs"></p-tag>
+    </div>
+  </ng-template>
+
+  <div class="p-3 bg-light rounded-3 text-center d-flex align-items-center justify-content-center" style="min-height: 520px; max-height: 75vh; overflow: auto;">
+    <img *ngIf="isImageFile(previewDoc.fileUrl || previewDoc.filePath || previewDoc.fileName)" [src]="previewDoc.fileUrl || previewDoc.filePath" class="img-fluid rounded shadow" style="max-height: 68vh; object-fit: contain;" alt="Full Document Preview" />
+    <iframe *ngIf="isPdfFile(previewDoc.fileUrl || previewDoc.filePath || previewDoc.fileName)" [src]="getSafeUrl(previewDoc.fileUrl || previewDoc.filePath)" class="w-100 rounded border shadow-sm bg-white" style="height: 68vh;"></iframe>
+    <div *ngIf="!isImageFile(previewDoc.fileUrl || previewDoc.filePath || previewDoc.fileName) && !isPdfFile(previewDoc.fileUrl || previewDoc.filePath || previewDoc.fileName)" class="p-5 bg-white rounded shadow text-dark text-center">
+      <i class="pi pi-file fs-1 text-muted mb-3 d-block"></i>
+      <h5 class="fw-bold">{{ previewDoc.fileName }}</h5>
+      <p class="text-muted text-sm">Attached document</p>
+      <a [href]="previewDoc.fileUrl || previewDoc.filePath" target="_blank" class="btn btn-primary px-4 mt-2">Open / Download File</a>
+    </div>
+  </div>
+
+  <ng-template #footer>
+    <div class="d-flex justify-content-between align-items-center pt-2 border-top w-100 text-sm">
+      <span class="text-muted"><i class="pi pi-info-circle mr-1"></i> Summary: {{ previewDoc.summary || 'Attached document' }}</span>
+      <p-button label="Close Preview" icon="pi pi-times" severity="secondary" (onClick)="closePreviewModal()"></p-button>
+    </div>
+  </ng-template>
+</p-dialog>
