@@ -65,6 +65,7 @@ export class PatientDetailComponent implements OnInit {
     { label: 'Radiology / Scan', value: 'Radiology', icon: 'pi pi-camera' }
   ];
   protected readonly isExtracting = signal(false);
+  protected readonly useAiExtraction = signal(true);
   protected readonly extractedData = signal<ExtractedMedicalDataDto | null>(null);
   protected readonly showVerificationModal = signal(false);
 
@@ -213,12 +214,18 @@ export class PatientDetailComponent implements OnInit {
 
     const patientId = this.patient()?.patientId ?? 1;
     this.isExtracting.set(true);
-    this.notify.info(`Scanning ${file.name} with Tesseract OCR...`);
 
-    this.patientService.uploadAndExtractDocument(patientId, this.selectedDocCategory(), file)
+    const isAi = this.useAiExtraction();
+    this.notify.info(isAi ? `Analyzing ${file.name} with AI Structured Extraction...` : `Scanning ${file.name} with Tesseract OCR...`);
+
+    const upload$ = isAi
+      ? this.patientService.uploadAndExtractWithAI(patientId, this.selectedDocCategory(), file)
+      : this.patientService.uploadAndExtractDocument(patientId, this.selectedDocCategory(), file);
+
+    upload$
       .pipe(
         catchError((err) => {
-          console.error('OCR Extraction Error:', err);
+          console.error('Document Extraction Error:', err);
           this.notify.error('Backend extraction failed. Please ensure API server (`dotnet run`) is running.');
           return of(null);
         })

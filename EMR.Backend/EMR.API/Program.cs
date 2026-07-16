@@ -4,6 +4,7 @@ using EMR.Application.Mappings;
 using EMR.Application.Services;
 using EMR.Infrastructure.Data;
 using EMR.Infrastructure.Repositories;
+using EMR.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -19,6 +20,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // 3. Dependency Injection
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<IAiDocumentExtractionService, GroqAiDocumentExtractionService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPatientRepository, PatientRepository>();

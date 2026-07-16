@@ -56,6 +56,13 @@ export class PatientService {
     return this.http.post<ExtractedMedicalDataDto>(`${environment.apiUrl}/documents/${patientId}/extract`, formData);
   }
 
+  uploadAndExtractWithAI(patientId: number, category: string, file: File): Observable<ExtractedMedicalDataDto> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('category', category);
+    return this.http.post<ExtractedMedicalDataDto>(`${environment.apiUrl}/ai-extraction/${patientId}/extract`, formData);
+  }
+
   saveExtractedRecords(patientId: number, payload: any): Observable<any> {
     return this.http.post<any>(`${environment.apiUrl}/documents/${patientId}/batch-save`, payload);
   }

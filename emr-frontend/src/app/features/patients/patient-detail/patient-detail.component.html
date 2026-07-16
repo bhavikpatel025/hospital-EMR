@@ -99,20 +99,34 @@
         </p>
       </div>
 
-      <!-- Document Category PrimeNG SelectButton -->
-      <div class="category-selector flex-shrink-0" style="max-width: 100%; overflow-x: auto;">
-        <p-selectbutton 
-          [options]="docCategories" 
-          [ngModel]="selectedDocCategory()" 
-          (ngModelChange)="setDocCategory($event)" 
-          optionLabel="label" 
-          optionValue="value" 
-          styleClass="shadow-sm">
-          <ng-template let-item #item>
-            <i [class]="item.icon + ' me-2'"></i>
-            <span class="font-semibold text-sm">{{ item.label }}</span>
-          </ng-template>
-        </p-selectbutton>
+      <!-- Document Category PrimeNG SelectButton + AI Extraction Toggle -->
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <div class="category-selector flex-shrink-0" style="max-width: 100%; overflow-x: auto;">
+          <p-selectbutton 
+            [options]="docCategories" 
+            [ngModel]="selectedDocCategory()" 
+            (ngModelChange)="setDocCategory($event)" 
+            optionLabel="label" 
+            optionValue="value" 
+            styleClass="shadow-sm">
+            <ng-template let-item #item>
+              <i [class]="item.icon + ' me-2'"></i>
+              <span class="font-semibold text-sm">{{ item.label }}</span>
+            </ng-template>
+          </p-selectbutton>
+        </div>
+
+        <!-- AI vs OCR Toggle Switch -->
+        <div class="d-flex align-items-center px-3 py-2 rounded-3 border shadow-sm" [style.background]="useAiExtraction() ? '#f0fdf4' : '#f8fafc'" [style.border-color]="useAiExtraction() ? '#bbf7d0' : '#e2e8f0'">
+          <div class="form-check form-switch mb-0 d-flex align-items-center gap-2 m-0 p-0">
+            <input class="form-check-input ms-0 mt-0 cursor-pointer" type="checkbox" role="switch" id="aiExtractionSwitch"
+                   [checked]="useAiExtraction()" (change)="useAiExtraction.set(!useAiExtraction())" style="cursor: pointer; width: 2.5em; height: 1.3em;">
+            <label class="form-check-label font-semibold text-sm cursor-pointer mb-0 d-flex align-items-center gap-1" for="aiExtractionSwitch" style="cursor: pointer; color: #0f172a;">
+              <span *ngIf="useAiExtraction()" class="badge bg-success px-2 py-1"><i class="pi pi-bolt me-1"></i>AI Extraction (Structured)</span>
+              <span *ngIf="!useAiExtraction()" class="badge bg-secondary px-2 py-1"><i class="pi pi-cog me-1"></i>OCR + Regex (Fallback)</span>
+            </label>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -137,8 +151,8 @@
       <!-- Processing State -->
       <div *ngIf="isExtracting()" class="py-4 d-flex flex-column align-items-center justify-content-center">
         <p-progressSpinner styleClass="w-3rem h-3rem mb-3" strokeWidth="4" fill="transparent" animationDuration=".8s"></p-progressSpinner>
-        <h6 class="fw-bold text-dark mb-1">Extracting clinical data...</h6>
-        <p class="text-muted small mb-0">Please wait while the document is analyzed.</p>
+        <h6 class="fw-bold text-dark mb-1">{{ useAiExtraction() ? 'Analyzing document with AI Model...' : 'Extracting clinical data with OCR...' }}</h6>
+        <p class="text-muted small mb-0">{{ useAiExtraction() ? 'Structuring medications, lab findings & summary with Llama 3 / Groq AI.' : 'Please wait while the document is analyzed with regex fallback.' }}</p>
       </div>
     </div>
   </p-card>
