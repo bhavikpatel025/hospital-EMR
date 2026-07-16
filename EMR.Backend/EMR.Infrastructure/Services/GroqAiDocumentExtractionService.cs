@@ -168,4 +168,138 @@ Required JSON Schema:
 
         return fallback;
     }
+
+    public async Task<AiExtractedDocumentDto> ExtractFromHandwrittenImageAsync(string base64Image, string fileName, string category)
+    {
+        var fallback = new AiExtractedDocumentDto
+        {
+            Category = string.IsNullOrWhiteSpace(category) ? "Prescription" : category,
+            ClinicalSummary = $"Vision AI extraction completed for {fileName} ({category}). Please verify structured entries below.",
+            Diagnoses = new List<string>(),
+            Medications = new List<MedicationItemDto>(),
+            LabFindings = new List<LabFindingItemDto>(),
+            RadiologyImpression = string.Empty
+        };
+
+        if (string.IsNullOrWhiteSpace(base64Image))
+        {
+            return fallback;
+        }
+
+        try
+        {
+            string apiKey = _configuration["GroqSettings:ApiKey"] ?? Environment.GetEnvironmentVariable("GROQ_API_KEY") ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(apiKey) || apiKey.Equals("YOUR_GROQ_API_KEY_HERE", StringComparison.OrdinalIgnoreCase))
+            {
+                _logger.LogWarning("Vision AI Document Extraction bypassed: No valid Groq/xAI API key found.");
+                return fallback;
+            }
+
+            // For multimodal vision, Groq endpoint is https://api.groq.com/openai/v1/chat/completions with model llama-3.2-90b-vision-preview
+            string endpoint = "https://api.groq.com/openai/v1/chat/completions";
+            string model = "llama-3.2-90b-vision-preview";
+
+            var client = _httpClientFactory.CreateClient();
+            client.Timeout = TimeSpan.FromSeconds(35);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey.Trim());
+
+            string systemPrompt = @"You are an expert Senior Clinical Physician. Analyze this medical document/prescription image directly and extract all clinical information strictly as a valid JSON object matching exactly the following schema.
+If this is a handwritten prescription, carefully decipher the doctor's handwriting for medicine names, dosages, and frequencies.
+Do not invent or hallucinate any data not present in the image. If a field is not found, leave it empty or null.
+
+Required JSON Schema:
+{
+  ""category"": ""Prescription"" or ""LabReport"" or ""Radiology"",
+  ""doctorName"": ""Doctor Name (or null)"",
+  ""hospitalName"": ""Hospital Name (or null)"",
+  ""clinicalSummary"": ""Concise 2-sentence clinical summary of what the document states"",
+  ""diagnoses"": [""Diagnosis 1"", ""Diagnosis 2""],
+  ""medications"": [
+    {
+      ""medicineName"": ""Name of drug"",
+      ""dosage"": ""Dosage (e.g., 500mg)"",
+      ""frequency"": ""Frequency (e.g., BID, TDS, once daily)""
+    }
+  ],
+  ""labFindings"": [
+    {
+      ""testName"": ""Test Parameter"",
+      ""observedValue"": ""Observed numeric or string value"",
+      ""unit"": ""Unit of measurement (or empty string)"",
+      ""normalRange"": ""Reference range (or empty string)"",
+      ""status"": ""Normal or High or Low or Abnormal""
+    }
+  ],
+  ""radiologyImpression"": ""Summary or impression text if radiology report (or null)""
+}";
+
+            // Determine image mime type based on file extension
+            string mimeType = "image/jpeg";
+            if (!string.IsNullOrWhiteSpace(fileName) && fileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
+            {
+                mimeType = "image/png";
+            }
+
+            var payload = new
+            {
+                model = model,
+                messages = new object[]
+                {
+                    new
+                    {
+                        role = "user",
+                        content = new object[]
+                        {
+                            new { type = "text", text = systemPrompt },
+                            new { type = "image_url", image_url = new { url = $"data:{mimeType};base64,{base64Image}" } }
+                        }
+                    }
+                },
+                response_format = new { type = "json_object" },
+                temperature = 0.1
+            };
+
+            var jsonContent = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync(endpoint, jsonContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseString = await response.Content.ReadAsStringAsync();
+                using var doc = JsonDocument.Parse(responseString);
+                var content = doc.RootElement.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString();
+
+                if (!string.IsNullOrWhiteSpace(content))
+                {
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    };
+
+                    var extractedDto = JsonSerializer.Deserialize<AiExtractedDocumentDto>(content.Trim(), options);
+                    if (extractedDto != null)
+                    {
+                        if (string.IsNullOrWhiteSpace(extractedDto.Category))
+                        {
+                            extractedDto.Category = category;
+                        }
+                        if (extractedDto.Diagnoses == null) extractedDto.Diagnoses = new List<string>();
+                        if (extractedDto.Medications == null) extractedDto.Medications = new List<MedicationItemDto>();
+                        if (extractedDto.LabFindings == null) extractedDto.LabFindings = new List<LabFindingItemDto>();
+                        return extractedDto;
+                    }
+                }
+            }
+            else
+            {
+                var err = await response.Content.ReadAsStringAsync();
+                _logger.LogError("Vision AI Extraction API returned status {Status}: {Error}", response.StatusCode, err);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception occurred during Multimodal Vision AI extraction for {FileName}", fileName);
+        }
+
+        return fallback;
+    }
 }

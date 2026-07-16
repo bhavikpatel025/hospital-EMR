@@ -60,7 +60,7 @@ public class AiDocumentExtractionController : ControllerBase
         var patientFolder = Path.Combine(_uploadRootDirectory, $"patient_{patientId}");
         if (!Directory.Exists(patientFolder))
         {
-            Directory.CreateDirectory(_patientFolder(patientFolder));
+            Directory.CreateDirectory(patientFolder);
         }
 
         // 1. Save physical file to disk
@@ -75,8 +75,25 @@ public class AiDocumentExtractionController : ControllerBase
         // 2. Perform OCR Text Extraction (Option B: self-contained duplicate of OCR helper)
         string rawExtractedText = await ExtractTextWithTesseractOrPdfAsync(physicalFilePath, file.FileName);
 
-        // 3. Run AI Structured Extraction via Groq / xAI API
-        var aiDto = await _aiExtractionService.ExtractStructuredDataAsync(rawExtractedText, file.FileName, docCategory);
+        // 3. Smart Handwriting Auto-Detection:
+        // If the file is an image (.jpg/.jpeg/.png) AND Tesseract extracted very little/empty text (< 30 chars),
+        // automatically trigger Multimodal Vision AI (`llama-3.2-90b-vision-preview`) using the physical file!
+        AiExtractedDocumentDto aiDto;
+        bool isImageFile = file.FileName.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
+                           file.FileName.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase) ||
+                           file.FileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase);
+
+        if (isImageFile && (string.IsNullOrWhiteSpace(rawExtractedText) || rawExtractedText.Trim().Length < 30))
+        {
+            byte[] fileBytes = await System.IO.File.ReadAllBytesAsync(physicalFilePath);
+            string base64Image = Convert.ToBase64String(fileBytes);
+            aiDto = await _aiExtractionService.ExtractFromHandwrittenImageAsync(base64Image, file.FileName, docCategory);
+        }
+        else
+        {
+            // 4. Run standard Text AI Structured Extraction (`llama-3.3-70b-versatile` / `grok-beta`)
+            aiDto = await _aiExtractionService.ExtractStructuredDataAsync(rawExtractedText, file.FileName, docCategory);
+        }
 
         if (!string.IsNullOrWhiteSpace(aiDto.Category))
         {
