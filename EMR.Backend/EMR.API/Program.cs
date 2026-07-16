@@ -1,4 +1,5 @@
 using System.Text;
+using EMR.API.Middlewares;
 using EMR.Application.Interfaces;
 using EMR.Application.Mappings;
 using EMR.Application.Services;
@@ -90,6 +91,9 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+
+// 1. Global Exception Handling Middleware - catches any unhandled exception across all downstream pipeline steps
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
