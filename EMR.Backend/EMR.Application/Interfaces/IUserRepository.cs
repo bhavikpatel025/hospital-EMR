@@ -1,4 +1,4 @@
-﻿using EMR.Domain.Entities;
+using EMR.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +10,7 @@ namespace EMR.Application.Interfaces
     public interface IUserRepository
     {
         Task<User?> GetByEmailAsync(string email);
+        Task<User?> GetByRefreshTokenAsync(string refreshToken);
+        Task UpdateAsync(User user);
     }
 }

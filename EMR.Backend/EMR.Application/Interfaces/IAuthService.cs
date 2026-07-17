@@ -1,4 +1,4 @@
-﻿using EMR.Application.DTOs.Auth;
+using EMR.Application.DTOs.Auth;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +10,6 @@ namespace EMR.Application.Interfaces
     public interface IAuthService
     {
         Task<LoginResponseDto?> LoginAsync(LoginRequestDto request);
+        Task<LoginResponseDto?> RefreshTokenAsync(TokenRefreshRequestDto request);
     }
 }

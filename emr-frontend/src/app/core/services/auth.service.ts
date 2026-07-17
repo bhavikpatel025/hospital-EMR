@@ -13,18 +13,36 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.baseUrl}/login`, payload).pipe(
       tap(res => {
         localStorage.setItem('token', res.token);
+        if (res.refreshToken) localStorage.setItem('refreshToken', res.refreshToken);
         localStorage.setItem('user', JSON.stringify(res.user));
+      })
+    );
+  }
+
+  refreshTokenSession(): Observable<LoginResponse> {
+    const accessToken = this.getToken() || '';
+    const refreshToken = this.getRefreshToken() || '';
+    return this.http.post<LoginResponse>(`${this.baseUrl}/refresh-token`, { accessToken, refreshToken }).pipe(
+      tap(res => {
+        if (res.token) localStorage.setItem('token', res.token);
+        if (res.refreshToken) localStorage.setItem('refreshToken', res.refreshToken);
+        if (res.user) localStorage.setItem('user', JSON.stringify(res.user));
       })
     );
   }
 
   logout(): void {
     localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
   }
 
   getToken(): string | null {
     return localStorage.getItem('token');
+  }
+
+  getRefreshToken(): string | null {
+    return localStorage.getItem('refreshToken');
   }
 
   getUser(): any {

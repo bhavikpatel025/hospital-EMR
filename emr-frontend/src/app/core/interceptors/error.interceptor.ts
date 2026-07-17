@@ -2,7 +2,7 @@ import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { catchError, throwError } from 'rxjs';
+import { catchError, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
@@ -26,6 +26,30 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       } else {
         // Server-side error response
         if (error.status === 401) {
+          // ⚡ Silent Refresh Token Rotation: If Access Token expired, attempt to renew silently using Refresh Token!
+          if (!req.url.includes('/login') && !req.url.includes('/refresh-token') && authService.getRefreshToken()) {
+            return authService.refreshTokenSession().pipe(
+              switchMap(res => {
+                const clonedRequest = req.clone({
+                  setHeaders: { Authorization: `Bearer ${res.token}` }
+                });
+                return next(clonedRequest);
+              }),
+              catchError(refreshErr => {
+                errorMessage = 'Your 30-day session has ended. Please log in again.';
+                messageService.add({
+                  severity: 'warn',
+                  summary: 'Session Expired',
+                  detail: errorMessage,
+                  life: 4000
+                });
+                authService.logout();
+                router.navigate(['/login']);
+                return throwError(() => refreshErr);
+              })
+            );
+          }
+
           errorMessage = 'Your session has expired or you are unauthorized. Please log in again.';
           messageService.add({
             severity: 'warn',
