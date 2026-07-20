@@ -259,38 +259,12 @@ public class DocumentsController : ControllerBase
 
             if (medications.Any() || rxDocs.Any())
             {
-                var medNames = medications.Select(m => $"{m.MedicineName} {m.Dosage}".Trim()).Where(n => !string.IsNullOrWhiteSpace(n)).Distinct().ToList();
-                string rxSummaryText = medNames.Any()
-                    ? $"Patient is maintained on {medNames.Count} active medication(s) across {rxDocs.Count} uploaded prescription(s) (including {string.Join(", ", medNames.Take(4))})."
-                    : $"Analyzed {rxDocs.Count} prescription document(s).";
-
-                if (medNames.Any())
-                {
-                    string prompt = $"Active Medications: {string.Join(", ", medications.Take(15).Select(m => $"{m.MedicineName} {m.Dosage} ({m.Frequency})"))}\nUploaded Prescription Notes: {string.Join(" | ", rxDocs.Take(5).Select(d => d.RawTextSummary))}\n\nTask: Write a structured, professional Prescription Summary formatted strictly as single-line bullet points (each line starting with '• '). Adaptive length rule: If standard (under 6 medications), write 3 to 4 bullet points. If extensive (6+ medications), write between 5 to 7 bullet points by grouping related medications logically so it never exceeds 7 items and remains easy to read.";
-                    prescriptionSummary = await GenerateClinicalSummaryWithGroqAsync(prompt, fallbackText: rxSummaryText);
-                }
-                else
-                {
-                    prescriptionSummary = rxSummaryText;
-                }
+                prescriptionSummary = "structured";
             }
 
             if (labFindings.Any() || labDocs.Any())
             {
-                var abnormalLabs = labFindings.Where(l => l.IsAbnormal || l.Status.Contains("High", StringComparison.OrdinalIgnoreCase) || l.Status.Contains("Low", StringComparison.OrdinalIgnoreCase)).ToList();
-                string labSummaryText = abnormalLabs.Any()
-                    ? $"Recent blood panel highlights {abnormalLabs.Count} critical/abnormal marker(s) ({string.Join(", ", abnormalLabs.Take(3).Select(l => $"{l.TestName}: {l.ObservedValue} {l.Unit}"))}) across {labDocs.Count} report(s)."
-                    : $"{labFindings.Count} lab parameter(s) monitored across {labDocs.Count} report(s) within normal limits.";
-
-                if (labFindings.Any())
-                {
-                    string prompt = $"Lab Markers: {string.Join(", ", labFindings.Take(20).Select(l => $"{l.TestName}: {l.ObservedValue} {l.Unit} ({l.Status})"))}\nUploaded Lab Report Notes: {string.Join(" | ", labDocs.Take(5).Select(d => d.RawTextSummary))}\n\nTask: Write a structured, professional Lab Report Summary formatted strictly as single-line bullet points (each line starting with '• '). Adaptive length rule: If normal or minor findings, write 3 to 4 bullet points. If multiple abnormal markers across reports, write between 5 to 7 bullet points highlighting the most critical parameters (never exceeding 7 items).";
-                    labReportSummary = await GenerateClinicalSummaryWithGroqAsync(prompt, fallbackText: labSummaryText);
-                }
-                else
-                {
-                    labReportSummary = labSummaryText;
-                }
+                labReportSummary = "structured";
             }
 
             if (radiologyNotes.Any() || radDocs.Any())
