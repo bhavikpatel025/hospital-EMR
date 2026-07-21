@@ -15,7 +15,7 @@
   </div>
 
   <div class="text-center py-5" *ngIf="loading()">
-    <mat-spinner class="mx-auto"></mat-spinner>
+    <p-progressSpinner styleClass="w-4rem h-4rem mx-auto" strokeWidth="4" fill="transparent" animationDuration=".8s"></p-progressSpinner>
   </div>
 
   <form [formGroup]="doctorForm" (ngSubmit)="onSubmit()" *ngIf="!loading()">

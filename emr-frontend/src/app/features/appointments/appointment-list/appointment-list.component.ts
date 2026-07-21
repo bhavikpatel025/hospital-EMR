@@ -2,9 +2,9 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { PaginatorModule } from 'primeng/paginator';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { debounceTime, forkJoin, of, Subject } from 'rxjs';
@@ -19,7 +19,7 @@ import { DoctorListDto } from '../../../core/models/doctor.model';
 @Component({
   selector: 'app-appointment-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatPaginatorModule, MatIconModule, MatProgressSpinnerModule, MatDialogModule, MatMenuModule],
+  imports: [CommonModule, FormsModule, PaginatorModule, MatIconModule, ProgressSpinnerModule, MatDialogModule, MatMenuModule],
   templateUrl: './appointment-list.component.html',
   styleUrl: './appointment-list.component.scss'
 })
@@ -110,9 +110,9 @@ export class AppointmentListComponent implements OnInit {
     });
   }
 
-  onPageChange(event: PageEvent): void {
-    this.pageNumber = event.pageIndex + 1;
-    this.pageSize = event.pageSize;
+  onPageChange(event: any): void {
+    this.pageNumber = (event.page || 0) + 1;
+    this.pageSize = event.rows || 10;
     this.loadAppointments();
   }
 

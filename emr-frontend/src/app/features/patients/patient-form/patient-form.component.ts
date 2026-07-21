@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MatIconModule } from '@angular/material/icon';
 
 import { PatientService } from '../../../core/services/patient.service';
@@ -18,7 +18,7 @@ import { NotificationService } from '../../../core/services/notification.service
   standalone: true,
   imports: [
     CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule,
-    MatSelectModule, MatButtonModule, MatProgressSpinnerModule, MatIconModule
+    MatSelectModule, MatButtonModule, ProgressSpinnerModule, MatIconModule
   ],
   templateUrl: './patient-form.component.html',
   styleUrl: './patient-form.component.scss'

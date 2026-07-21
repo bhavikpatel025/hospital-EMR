@@ -9,7 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatIconModule } from '@angular/material/icon';
 import { ButtonModule } from 'primeng/button';
@@ -30,7 +30,7 @@ import { DoctorListDto } from '../../../core/models/doctor.model';
   imports: [
     CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule,
     MatSelectModule, MatButtonModule, MatDatepickerModule, MatNativeDateModule,
-    MatProgressSpinnerModule, MatAutocompleteModule, MatIconModule, ButtonModule, InputTextModule, DatePickerModule
+    ProgressSpinnerModule, MatAutocompleteModule, MatIconModule, ButtonModule, InputTextModule, DatePickerModule
   ],
   templateUrl: './appointment-form.component.html',
   styleUrl: './appointment-form.component.scss'

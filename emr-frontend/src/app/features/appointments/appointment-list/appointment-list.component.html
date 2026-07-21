@@ -85,7 +85,7 @@
     </div>
 
     <div class="text-center py-5" *ngIf="loading()">
-      <mat-spinner class="mx-auto"></mat-spinner>
+      <p-progressSpinner styleClass="w-4rem h-4rem mx-auto" strokeWidth="4" fill="transparent" animationDuration=".8s"></p-progressSpinner>
     </div>
 
     <div class="emr-table-wrap" *ngIf="!loading() && appointments().length">
@@ -162,13 +162,14 @@
       <div class="emr-muted">
         {{ showingRangeText }}
       </div>
-      <mat-paginator
-        [length]="totalCount()"
-        [pageSize]="pageSize"
-        [pageSizeOptions]="[5, 10, 25, 50]"
-        (page)="onPageChange($event)"
-        showFirstLastButtons>
-      </mat-paginator>
+      <p-paginator
+        [totalRecords]="totalCount()"
+        [rows]="pageSize"
+        [first]="(pageNumber - 1) * pageSize"
+        [rowsPerPageOptions]="[5, 10, 25, 50]"
+        (onPageChange)="onPageChange($event)"
+        styleClass="border-0 bg-transparent">
+      </p-paginator>
     </div>
   </div>
 </section>

@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MatIconModule } from '@angular/material/icon';
 
 import { DoctorService } from '../../../core/services/doctor.service';
@@ -17,7 +17,7 @@ import { NotificationService } from '../../../core/services/notification.service
   standalone: true,
   imports: [
     CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule,
-    MatButtonModule, MatProgressSpinnerModule, MatIconModule
+    MatButtonModule, ProgressSpinnerModule, MatIconModule
   ],
   templateUrl: './doctor-form.component.html',
   styleUrl: './doctor-form.component.scss'

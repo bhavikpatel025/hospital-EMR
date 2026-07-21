@@ -4,13 +4,13 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { PaginatorModule } from 'primeng/paginator';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatChipsModule } from '@angular/material/chips';
 
@@ -24,9 +24,9 @@ import { debounceTime, Subject } from 'rxjs';
   selector: 'app-doctor-list',
   standalone: true,
   imports: [
-    CommonModule, FormsModule, MatTableModule, MatPaginatorModule, MatSortModule,
+    CommonModule, FormsModule, MatTableModule, PaginatorModule, MatSortModule,
     MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule,
-    MatProgressSpinnerModule, MatDialogModule, MatChipsModule
+    ProgressSpinnerModule, MatDialogModule, MatChipsModule
   ],
   templateUrl: './doctor-list.component.html',
   styleUrl: './doctor-list.component.scss'
@@ -86,9 +86,9 @@ export class DoctorListComponent implements OnInit {
     });
   }
 
-  onPageChange(event: PageEvent): void {
-    this.pageNumber = event.pageIndex + 1;
-    this.pageSize = event.pageSize;
+  onPageChange(event: any): void {
+    this.pageNumber = (event.page || 0) + 1;
+    this.pageSize = event.rows || 10;
     this.loadDoctors();
   }
 
