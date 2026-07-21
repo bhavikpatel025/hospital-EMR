@@ -24,18 +24,15 @@ import { DoctorListDto } from '../../../core/models/doctor.model';
 })
 export class PatientListComponent implements OnInit {
   private readonly patientService = inject(PatientService);
-  private readonly doctorService = inject(DoctorService);
   private readonly notify = inject(NotificationService);
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
 
   patients = signal<PatientListDto[]>([]);
-  doctorsList = signal<DoctorListDto[]>([]);
   totalCount = signal(0);
   loading = signal(false);
 
   searchTerm = '';
-  doctorFilter = '';
   statusFilter = '';
   genderFilter = '';
   pageNumber = 1;
@@ -49,11 +46,6 @@ export class PatientListComponent implements OnInit {
     this.searchSubject.pipe(debounceTime(400)).subscribe(() => {
       this.pageNumber = 1;
       this.loadPatients();
-    });
-
-    this.doctorService.getActiveDoctors().subscribe({
-      next: docs => this.doctorsList.set(docs),
-      error: () => {}
     });
 
     this.loadPatients();
@@ -71,7 +63,6 @@ export class PatientListComponent implements OnInit {
 
   resetFilters(): void {
     this.searchTerm = '';
-    this.doctorFilter = '';
     this.statusFilter = '';
     this.genderFilter = '';
     this.pageNumber = 1;

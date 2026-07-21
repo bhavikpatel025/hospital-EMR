@@ -71,6 +71,15 @@ export class AppointmentListComponent implements OnInit {
     this.searchSubject.next(value);
   }
 
+  resetFilters(): void {
+    this.searchTerm = '';
+    this.doctorFilter = null;
+    this.statusFilter = null;
+    this.selectedDate = new Date().toISOString().slice(0, 10);
+    this.pageNumber = 1;
+    this.loadAppointments();
+  }
+
   loadAppointments(): void {
     this.loading.set(true);
     const params: AppointmentQueryParams = {

@@ -8,10 +8,7 @@
         <mat-icon style="color: var(--emr-text-soft);">search</mat-icon>
       </div>
 
-      <select class="emr-select" [(ngModel)]="doctorFilter" (ngModelChange)="onFilterChange()" style="width: auto; min-width: 140px;">
-        <option value="">All Doctors</option>
-        <option *ngFor="let doc of doctorsList()" [value]="doc.fullName">Dr. {{ doc.fullName }}</option>
-      </select>
+
 
       <select class="emr-select" [(ngModel)]="statusFilter" (ngModelChange)="onFilterChange()" style="width: auto; min-width: 130px;">
         <option value="">All Status</option>

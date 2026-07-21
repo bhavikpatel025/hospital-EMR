@@ -82,6 +82,11 @@
         <input [ngModel]="searchTerm" (ngModelChange)="onSearchChange($event)" placeholder="Search patient name or mobile" />
         <i class="pi pi-search" style="color: var(--emr-text-soft);"></i>
       </div>
+
+      <button type="button" class="emr-button--ghost" (click)="resetFilters()" title="Clear Filters" style="white-space: nowrap;">
+        <i class="pi pi-filter-slash"></i>
+        <span>Clear Filter</span>
+      </button>
     </div>
 
     <div class="text-center py-5" *ngIf="loading()">

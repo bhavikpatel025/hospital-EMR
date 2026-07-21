@@ -1,4 +1,4 @@
-﻿using EMR.Application.DTOs.Patients;
+using EMR.Application.DTOs.Patients;
 using EMR.Application.Interfaces;
 using EMR.Domain.Entities;
 using EMR.Infrastructure.Data;
