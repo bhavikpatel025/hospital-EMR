@@ -92,3 +92,16 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.dashboard-main-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2.3fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 1250px) {
+  .dashboard-main-grid {
+    grid-template-columns: 1fr;
+  }
+}
