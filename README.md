@@ -8,7 +8,7 @@
 
 An advanced, highly responsive, and AI-augmented **Hospital Electronic Medical Records (EMR) System** engineered from scratch using **Clean Architecture** on the backend (.NET 8 Web API + Entity Framework Core) and reactive **Angular Signals** + **PrimeNG** on the frontend.
 
-This enterprise portal streamlines hospital clinical workflows by combining robust daily OPD management with a state-of-the-art **Hybrid Medical Document Extraction Engine (Local OCR + Groq Multimodal Vision AI)** to instantly auto-fill patient clinical summaries, laboratory findings, and doctor prescriptions.
+**Enterprise-grade Hospital EMR system built with .NET 8 Web API (Clean Architecture) and Angular 18 (Reactive Signals). Features JWT RBAC, OPD scheduling, and a Hybrid AI Engine using Local OCR + Groq AI (Llama-3.3 Text / Vision) for document extraction, alongside real-time Voice Dictation (Groq Whisper AI) to auto-fill prescriptions, clinical summaries, and lab reports.**
 
 ---
 
@@ -32,37 +32,38 @@ This enterprise portal streamlines hospital clinical workflows by combining robu
 
 ---
 
-## 🤖 4. Smart Hybrid Medical Document Processing (Local OCR + Groq AI)
+## 🤖 4. Smart Hybrid AI Engine (Documents & Voice Dictation)
 
-The core innovation of this EMR is its dual-flow intelligent document extraction system capable of reading both digital lab reports and messy handwritten doctor prescriptions:
+The core innovation of this EMR is its dual-flow intelligent data extraction system, capable of processing both physical medical records and live doctor dictations:
 
 ```
-[ Upload Document (.PDF / .JPG / .PNG) ]
-                   │
-                   ▼
-       [ Local Tesseract OCR Engine ]
-                   │
-         ┌─────────┴─────────┐
-         ▼                   ▼
- (Text Found >= 30 chars)    (Low Text < 30 chars / Handwritten)
-         │                   │
-         ▼                   ▼
-  [ Groq Text-AI Engine ]    [ Groq Multimodal Vision AI ]
- (`llama-3.3-70b-versatile`) (`llama-3.2-90b-vision-preview`)
-         │                   │
-         └─────────┬─────────┘
-                   ▼
-  [ Structured JSON Auto-Fill in UI ]
-  (Medications, Lab Findings, Radiology)
+[ Upload Document (.PDF / .JPG) ]      [ Microphone Voice Dictation ]
+               │                                      │
+               ▼                                      ▼
+   [ Local Tesseract OCR Engine ]          [ Groq Whisper AI ]
+               │                                      │
+     ┌─────────┴─────────┐                            │
+     ▼                   ▼                            │
+[ Groq Text-AI ]  [ Groq Vision AI ]                  │
+     │                   │                            │
+     └─────────┬─────────┘                            │
+               ▼                                      ▼
+        [ Structured JSON Auto-Fill in Clinical UI ]
+        (Medications, Lab Findings, Clinical Notes)
 ```
 
-### 🔥 Flow A: Local OCR + Regular Expression Fallback
+### 🎙️ Flow A: Live Voice Dictation (`Groq Whisper`)
+* **Real-time Transcription:** Doctors can speak symptoms and prescriptions directly into the UI. The `.webm` audio is captured via browser `MediaRecorder` API and streamed to the backend.
+* **Whisper Integration:** The backend sends the audio to Groq Whisper for lightning-fast speech-to-text.
+* **Auto-Data Extraction:** The transcribed text is automatically pipelined into Llama-3.3 to extract and auto-fill clinical summaries and structured medication regimens.
+
+### 🔥 Flow B: Local OCR + Regular Expression Fallback
 * Utilizes **`UglyToad.PdfPig`** for digital PDF parsing and local **`Tesseract OCR (eng)`** for text recognition.
 * Runs custom clinical regex parsers to identify common medical keywords and dosages at zero API cost.
 
-### ⚡ Flow B: AI-Powered Structured Extraction (`Groq / Llama-3`)
+### ⚡ Flow C: AI-Powered Structured Extraction (`Groq / Llama-3`)
 * **Text AI Engine (`llama-3.3-70b-versatile` / `grok-beta`):** Prompts the LLM with strict `response_format: { type: "json_object" }` instructions to parse printed lab reports, complete blood counts (`CBC`), and discharge summaries into structured arrays (`Medications`, `LabFindings`, `RadiologyNotes`).
-* **Multimodal Vision AI Fallback (`llama-3.2-90b-vision-preview`):** Automatically triggers when an uploaded image yields low/empty OCR text (`< 30 characters`), routing the Base64 image payload directly to Groq's Vision model. It reads messy cursive handwritten prescriptions (`Rx Amox 625mg TDS x 5 days`) with crystal clarity!
+* **Multimodal Vision AI Fallback (`llama-3.2-90b-vision-preview`):** Automatically triggers when an uploaded image yields low/empty OCR text, routing the Base64 image payload directly to Groq's Vision model. It reads messy cursive handwritten prescriptions (`Rx Amox 625mg TDS x 5 days`) with crystal clarity!
 
 ### 🎨 Sleek UI Integration
 * **Single-Row Header Alignment:** Upload Dropzone title aligned horizontally with the `⚡ AI Extraction (Structured)` toggle switch.
