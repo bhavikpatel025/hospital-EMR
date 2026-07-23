@@ -16,6 +16,7 @@ public class AppDbContext : DbContext
     public DbSet<PatientMedication> PatientMedications => Set<PatientMedication>();
     public DbSet<PatientLabFinding> PatientLabFindings => Set<PatientLabFinding>();
     public DbSet<PatientRadiologyNote> PatientRadiologyNotes => Set<PatientRadiologyNote>();
+    public DbSet<JointAssessment> JointAssessments => Set<JointAssessment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -100,6 +101,12 @@ public class AppDbContext : DbContext
         {
             entity.ToTable("PatientRadiologyNotes");
             entity.HasOne(r => r.Patient).WithMany().HasForeignKey(r => r.PatientId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<JointAssessment>(entity =>
+        {
+            entity.ToTable("JointAssessments");
+            entity.HasOne(a => a.Patient).WithMany().HasForeignKey(a => a.PatientId).OnDelete(DeleteBehavior.Cascade);
         });
 
         base.OnModelCreating(modelBuilder);

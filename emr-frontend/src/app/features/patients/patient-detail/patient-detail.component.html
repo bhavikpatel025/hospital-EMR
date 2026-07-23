@@ -277,6 +277,10 @@
   <p-card styleClass="emr-clinical-tabs shadow-sm rounded-4 border-0 mb-4 overflow-hidden">
     <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
       <p-tablist>
+        <p-tab value="assessments">
+          <i class="pi pi-user text-info me-2"></i>
+          <span class="font-semibold">Joint Assessments</span>
+        </p-tab>
         <p-tab value="records">
           <i class="pi pi-folder me-2"></i>
           <span class="font-semibold">Uploaded Documents</span>
@@ -300,6 +304,14 @@
       </p-tablist>
 
       <p-tabpanels styleClass="p-4 bg-white">
+        <!-- Tab 5: Joint Assessments -->
+        <p-tabpanel value="assessments">
+            <app-joint-assessment 
+              [patientId]="patient.patientId"
+              [appointmentId]="nextAppointment?.appointmentId">
+            </app-joint-assessment>
+        </p-tabpanel>
+
         <!-- Tab 1: Uploaded Documents Archive -->
         <p-tabpanel value="records">
           <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
@@ -493,6 +505,7 @@
             </p-card>
           </div>
         </p-tabpanel>
+
       </p-tabpanels>
     </p-tabs>
   </p-card>

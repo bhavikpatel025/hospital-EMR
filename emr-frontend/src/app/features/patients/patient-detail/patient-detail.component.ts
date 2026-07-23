@@ -33,6 +33,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { TooltipModule } from 'primeng/tooltip';
 import { VoiceDictationComponent } from '../../../shared/components/voice-dictation/voice-dictation.component';
+import { JointAssessmentComponent } from '../../assessments/joint-assessment/joint-assessment.component';
 
 @Component({
   selector: 'app-patient-detail',
@@ -41,7 +42,8 @@ import { VoiceDictationComponent } from '../../../shared/components/voice-dictat
     CommonModule, RouterLink, MatIconModule, MatDialogModule, FormsModule,
     CardModule, TableModule, TabsModule, DialogModule, ButtonModule,
     TagModule, ProgressSpinnerModule, SelectButtonModule, InputTextModule,
-    TextareaModule, TooltipModule, VoiceDictationComponent
+    TextareaModule, TooltipModule, VoiceDictationComponent,
+    JointAssessmentComponent
   ],
   templateUrl: './patient-detail.component.html',
   styleUrl: './patient-detail.component.scss'
@@ -61,7 +63,7 @@ export class PatientDetailComponent implements OnInit {
   protected readonly loading = signal(true);
 
   // Smart Document OCR & Auto-Entry state
-  protected readonly activeTab = signal<string | number>('records');
+  protected readonly activeTab = signal<string | number>('assessments');
   
   // Voice Dictation state
   protected readonly dictatedNote = signal<string>('');

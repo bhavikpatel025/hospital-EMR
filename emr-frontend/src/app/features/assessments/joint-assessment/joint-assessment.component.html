@@ -1,0 +1,145 @@
+<div class="emr-container">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex gap-4 align-items-center">
+      <div>
+        <div class="d-flex align-items-center gap-2">
+          <h5 class="mb-1 fw-bold text-dark fs-6">Joint Assessment</h5>
+          <p-tag *ngIf="isReadOnly()" severity="warning" value="Historical Record - Read Only" styleClass="text-xs px-2 py-0"></p-tag>
+        </div>
+        <p class="text-secondary mb-0" style="font-size: 0.85rem;">Record and track patient joint conditions.</p>
+      </div>
+
+      <div class="border-start ps-4 d-flex flex-column">
+        <label class="small text-muted mb-1 fw-semibold">Visit Date</label>
+        <p-calendar 
+          [ngModel]="selectedDate()" 
+          (onSelect)="onDateSelect($event)"
+          [readonlyInput]="true" 
+          dateFormat="dd M yy" 
+          [showIcon]="true"
+          styleClass="shadow-2xs"
+          placeholder="Select Visit Date">
+          <ng-template pTemplate="date" let-date>
+            <span class="d-flex align-items-center justify-content-center"
+                  [ngClass]="hasAssessment(date) ? 'bg-success text-white rounded-circle' : ''"
+                  style="width: 2rem; height: 2rem; padding: 2px;">
+              {{date.day}}
+            </span>
+          </ng-template>
+        </p-calendar>
+      </div>
+    </div>
+
+    <div class="d-flex gap-2" *ngIf="!isReadOnly()">
+      <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="cancelAssessment()"></p-button>
+      <p-button label="Save Assessment" icon="pi pi-check" (onClick)="saveAssessment()"></p-button>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Left Column: Legend & Quick Select -->
+    <div class="col-lg-3">
+      <div class="emr-card mb-4">
+        <h4 class="mb-3 fs-6 fw-bold">Legend</h4>
+        <div class="d-flex flex-column gap-3">
+          <div class="d-flex align-items-center gap-2" *ngFor="let opt of jointOptions">
+            <span class="color-dot" [style.backgroundColor]="opt.color"></span>
+            <span>{{ opt.label }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="emr-card mb-4">
+        <h4 class="mb-3 fs-6 fw-bold">Quick Select</h4>
+        <div class="d-flex flex-column gap-2">
+          <p-button label="Mark All Normal" styleClass="w-100 p-button-success p-button-outlined" (onClick)="markAllNormal()" [disabled]="isReadOnly()"></p-button>
+          <p-button label="Clear All" styleClass="w-100 p-button-secondary p-button-outlined" (onClick)="clearAll()" [disabled]="isReadOnly()"></p-button>
+        </div>
+      </div>
+
+      <div class="emr-card">
+        <h4 class="mb-3 fs-6 fw-bold">Additional Notes</h4>
+        <div class="position-relative">
+          <textarea pInputTextarea [(ngModel)]="notes" [readonly]="isReadOnly()" [maxlength]="1000" rows="4" class="w-100 p-2 pb-4" placeholder="Enter any additional notes..." style="resize: none; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.9rem;" [class.bg-light]="isReadOnly()"></textarea>
+          <div class="position-absolute text-secondary fw-semibold" style="bottom: 8px; right: 12px; font-size: 0.8rem;">
+            {{ notes.length }}/1000
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Column: The Interactive Body Map -->
+    <div class="col-lg-6">
+      <div class="emr-card text-center d-flex flex-column align-items-center h-100">
+        <h4 class="mb-3 fs-6 fw-bold">Anterior View</h4>
+        
+        <!-- Tooltip hint -->
+        <div class="alert alert-info py-2 px-3 mb-3 d-flex align-items-center gap-2" style="font-size: 0.85rem; border-radius: 8px;">
+          <i class="pi pi-info-circle"></i>
+          <span>Click directly on any joint circle to record its condition.</span>
+        </div>
+
+        <!-- Dynamic SVG Container with Overlay Markers -->
+        <div class="svg-container position-relative mx-auto" style="width: 100%; max-width: 450px;">
+           <img src="assets/images/skeleton.svg" class="img-fluid w-100" alt="Skeleton Anterior View">
+           
+           <div *ngFor="let j of jointList" 
+                class="joint-marker cursor-pointer shadow-sm position-absolute rounded-circle" 
+                [ngStyle]="getJointStyle(j)"
+                (click)="cycleJointState(j)"
+                [title]="j.replace('Right', 'Right ').replace('Left', 'Left ')">
+           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Sidebar List & Summaries -->
+    <div class="col-lg-3">
+      <div class="emr-card mb-4">
+        <h4 class="mb-3 fs-6 fw-bold">Assessment Summary</h4>
+        <div class="row g-3 text-center">
+          <div class="col-6">
+            <h2 class="text-danger mb-0 fw-bold">{{ totalTender() }}</h2>
+            <span class="text-secondary small">Tender</span>
+          </div>
+          <div class="col-6">
+            <h2 class="text-primary mb-0 fw-bold">{{ totalSwollen() }}</h2>
+            <span class="text-secondary small">Swollen</span>
+          </div>
+          <div class="col-6">
+            <h2 class="text-purple mb-0 fw-bold" style="color: #8b5cf6;">{{ totalTenderSwollen() }}</h2>
+            <span class="text-secondary small">Both</span>
+          </div>
+          <div class="col-6">
+            <h2 class="text-success mb-0 fw-bold">{{ totalNormal() }}</h2>
+            <span class="text-secondary small">Normal</span>
+          </div>
+        </div>
+        <div class="mt-3 pt-3 border-top text-center">
+          <h5 class="mb-0 fw-bold">{{ totalAssessed() }}</h5>
+          <span class="text-secondary small">Total Joints Assessed</span>
+        </div>
+      </div>
+
+      <div class="emr-card">
+        <h4 class="mb-3 fs-6 fw-bold">Joint Wise Assessment</h4>
+        <div class="joint-list-scroll">
+          <div class="mb-3" *ngFor="let joint of jointList">
+            <label class="d-block mb-1 small fw-semibold">{{ joint.replace('Right', 'Right ').replace('Left', 'Left ') }}</label>
+            <p-dropdown 
+              [options]="jointOptions" 
+              [ngModel]="jointsState()[joint]" 
+              (ngModelChange)="updateJoint(joint, $event)"
+              optionLabel="label" 
+              optionValue="value" 
+              placeholder="Not Assessed"
+              appendTo="body"
+              [disabled]="isReadOnly()"
+              styleClass="w-100 p-dropdown-sm">
+            </p-dropdown>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

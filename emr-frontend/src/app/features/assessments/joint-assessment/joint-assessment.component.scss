@@ -1,0 +1,47 @@
+.color-dot {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+}
+
+.joint-list-scroll {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 10px;
+
+  /* Custom Scrollbar for sleek UI */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--emr-border);
+    border-radius: 10px;
+  }
+}
+
+.svg-container {
+  aspect-ratio: 1 / 1;
+  position: relative;
+  
+  /* Joint marker overlay circles */
+  .joint-marker {
+    width: 14px;
+    height: 14px;
+    transform: translate(-50%, -50%); /* Center perfectly on the coords */
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    z-index: 5;
+    
+    &:hover {
+      transform: translate(-50%, -50%) scale(1.3);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      z-index: 10;
+    }
+  }
+}
