@@ -19,11 +19,14 @@ An advanced, highly responsive, and AI-augmented **Hospital Electronic Medical R
 * **Angular Route Guards (`AuthGuard`):** Strict frontend route protection ensuring unauthorized users are automatically redirected to the login portal.
 * **Global HTTP Error & Auth Interceptor (`error.interceptor.ts`):** Automatically catches expired sessions (`401 Unauthorized`), server errors (`500`), and network disconnects, alerting users via sleek PrimeNG Toast notifications (`p-toast`).
 
-### 🧑‍⚕️ 2. Comprehensive Patient Management (`Reactive Signals`)
+### 🧑‍⚕️ 2. Comprehensive Patient Profile & AI Summarization
 * **Patient Lifecycle Tracking:** Manage patient demographics, Unique Hospital ID (`UHID`), Age, Gender, Blood Group, Mobile contact, and Active status.
-* **Reactive Angular Signals (`signal<T>`):** Granular UI reactivity ensuring ultra-fast table rendering without `Zone.js` overhead.
-* **Debounced Instant Search & Pagination:** Live search filtering (`debounceTime(400)`) with custom server-side pagination and dynamic `"Showing X to Y of Z entries"` calculations.
-* **Profile Photo Management:** Patient avatar upload and static file hosting.
+* **Executive Clinical Snapshot:** Auto-synthesized view of Active Medications, Key Lab Findings, and Radiology Summaries directly on the patient profile.
+* **AI Clinical Voice Notes (Groq Whisper):** Integrated voice dictation for instant, high-accuracy medical transcription directly into the patient record.
+* **Smart Medical Document Upload:** Drag-and-drop document processing with toggleable structured AI Extraction for Prescriptions, Lab Reports, and Scans.
+
+![Patient Clinical Summary](screenshots/patient-summary.png)
+![Patient AI Extraction](screenshots/patient-ai-extraction.png)
 
 ### 👨‍⚕️ 3. Doctor Roster & OPD Scheduling
 * **Doctor Directory:** Manage specialized doctors, qualifications, experience years, and consultation fee structures.
@@ -35,7 +38,6 @@ An advanced, highly responsive, and AI-augmented **Hospital Electronic Medical R
 * **Appointments Trend:** A Line Chart showing the 30-day trend of OPD appointments.
 * **Patient Demographics:** A dynamic Donut Chart illustrating the gender distribution of registered patients.
 
-*(Add Dashboard Screenshot here)*
 ![Dashboard Analytics](screenshots/dashboard.png)
 
 ### 🦴 5. Interactive Joint Assessment (Rheumatology Module) (New)
@@ -44,7 +46,6 @@ An advanced, highly responsive, and AI-augmented **Hospital Electronic Medical R
 * **Smart Visit History Calendar:** A dedicated Datepicker that highlights past patient visits with a green indicator. Selecting a past date locks the form into a secure Read-Only mode to protect historical clinical data.
 * **Quick Actions & JSON Storage:** Features like "Mark All Normal" for rapid assessment. The entire complex joint state is serialized securely into a single JSON object in the backend.
 
-*(Add Joint Assessment Screenshot here)*
 ![Joint Assessment](screenshots/joint-assessment.png)
 
 ---
