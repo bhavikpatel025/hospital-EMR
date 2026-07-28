@@ -281,19 +281,23 @@
           <i class="pi pi-user text-info me-2"></i>
           <span class="font-semibold">Joint Assessments</span>
         </p-tab>
+        <p-tab value="prescription">
+          <i class="pi pi-file-edit text-danger me-2"></i>
+          <span class="font-semibold">E-Prescription</span>
+        </p-tab>
         <p-tab value="records">
           <i class="pi pi-folder me-2"></i>
-          <span class="font-semibold">Uploaded Documents</span>
+          <span class="font-semibold">Documents</span>
           <p-tag [value]="uploadedDocuments().length.toString()" severity="secondary" styleClass="ms-2 px-2 py-0 text-xs rounded-pill"></p-tag>
         </p-tab>
         <p-tab value="meds">
           <i class="pi pi-box me-2 text-primary"></i>
-          <span class="font-semibold">Medications Roster</span>
+          <span class="font-semibold">Medications</span>
           <p-tag [value]="patientMedications().length.toString()" severity="info" styleClass="ms-2 px-2 py-0 text-xs rounded-pill"></p-tag>
         </p-tab>
         <p-tab value="labs">
           <i class="pi pi-chart-line me-2 text-success"></i>
-          <span class="font-semibold">Lab Results History</span>
+          <span class="font-semibold">Lab History</span>
           <p-tag [value]="patientLabs().length.toString()" severity="success" styleClass="ms-2 px-2 py-0 text-xs rounded-pill"></p-tag>
         </p-tab>
         <p-tab value="imaging">
@@ -310,6 +314,14 @@
               [patientId]="patient.patientId"
               [appointmentId]="nextAppointment?.appointmentId">
             </app-joint-assessment>
+        </p-tabpanel>
+
+        <!-- Tab 6: E-Prescription -->
+        <p-tabpanel value="prescription">
+            <app-e-prescription 
+              [patientId]="patient.patientId"
+              [appointmentId]="nextAppointment?.appointmentId">
+            </app-e-prescription>
         </p-tabpanel>
 
         <!-- Tab 1: Uploaded Documents Archive -->

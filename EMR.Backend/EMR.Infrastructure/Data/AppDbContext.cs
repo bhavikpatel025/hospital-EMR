@@ -17,6 +17,8 @@ public class AppDbContext : DbContext
     public DbSet<PatientLabFinding> PatientLabFindings => Set<PatientLabFinding>();
     public DbSet<PatientRadiologyNote> PatientRadiologyNotes => Set<PatientRadiologyNote>();
     public DbSet<JointAssessment> JointAssessments => Set<JointAssessment>();
+    public DbSet<Prescription> Prescriptions => Set<Prescription>();
+    public DbSet<PrescribedMedication> PrescribedMedications => Set<PrescribedMedication>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

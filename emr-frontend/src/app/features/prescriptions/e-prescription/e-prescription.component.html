@@ -1,0 +1,142 @@
+<div class="e-prescription-container" [formGroup]="prescriptionForm">
+  
+  <!-- Action Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-white rounded-3 shadow-sm print-hide">
+    <div class="d-flex align-items-center gap-2">
+      <i class="pi pi-file-edit text-primary fs-4"></i>
+      <h4 class="mb-0 fs-5 fw-bold">E-Prescription</h4>
+    </div>
+    <div class="d-flex gap-2">
+      <p-button *ngIf="hasHistory" 
+                label="Copy Previous Rx" 
+                icon="pi pi-history" 
+                severity="info" 
+                variant="outlined" 
+                [loading]="isLoadingHistory"
+                (onClick)="loadPreviousPrescription()">
+      </p-button>
+      <p-button label="Save Rx" icon="pi pi-save" severity="success" (onClick)="savePrescription()"></p-button>
+      <p-button label="Print / PDF" icon="pi pi-print" severity="secondary" variant="outlined" (onClick)="printPrescription()"></p-button>
+    </div>
+  </div>
+
+  <!-- Printable Area -->
+  <div class="print-area bg-white p-4 p-md-5 rounded-4 shadow-sm border">
+    
+    <!-- Print Header (Hidden on screen, visible on print) -->
+    <div class="print-only-header mb-4 pb-3 border-bottom d-none">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h2 class="fw-bold text-primary mb-1">CITY CARE HOSPITAL</h2>
+          <p class="text-muted mb-0 small">123 Health Avenue, Medical District</p>
+          <p class="text-muted mb-0 small">Phone: +1 234 567 8900</p>
+        </div>
+        <div class="text-end">
+          <h5 class="fw-bold mb-1">Dr. Smith (MD, MBBS)</h5>
+          <p class="text-muted mb-0 small">Reg No: MED-998877</p>
+          <p class="text-muted mb-0 small">Date: {{ todayDate | date:'mediumDate' }}</p>
+        </div>
+      </div>
+      <div class="mt-3 pt-3 border-top d-flex justify-content-between">
+        <span class="fw-bold">Patient ID: #{{ patientId }}</span>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <!-- Left Column: Summary -->
+      <div class="col-lg-4 col-md-5">
+        
+        <div class="mb-4" [class.print-hide]="!prescriptionForm.get('chiefComplaints')?.value">
+          <h6 class="fw-bold text-secondary mb-2 text-uppercase" style="letter-spacing: 1px; font-size: 0.8rem;">Chief Complaints</h6>
+          <textarea pInputTextarea formControlName="chiefComplaints" class="w-100 border-0 bg-light p-2 rounded" rows="3" placeholder="Enter Chief Complaints"></textarea>
+        </div>
+
+        <div class="mb-4" [class.print-hide]="!prescriptionForm.get('vitals')?.value">
+          <h6 class="fw-bold text-secondary mb-2 text-uppercase" style="letter-spacing: 1px; font-size: 0.8rem;">Vitals</h6>
+          <textarea pInputTextarea formControlName="vitals" class="w-100 border-0 bg-light p-2 rounded" rows="2" placeholder="Enter Vitals"></textarea>
+        </div>
+
+        <div class="mb-4" [class.print-hide]="!prescriptionForm.get('diagnosis')?.value">
+          <h6 class="fw-bold text-secondary mb-2 text-uppercase" style="letter-spacing: 1px; font-size: 0.8rem;">Diagnosis</h6>
+          <textarea pInputTextarea formControlName="diagnosis" class="w-100 border-0 bg-light p-2 rounded" rows="2" placeholder="Enter Diagnosis"></textarea>
+        </div>
+
+        <div class="mb-4" [class.print-hide]="!prescriptionForm.get('investigationsOrdered')?.value">
+          <h6 class="fw-bold text-secondary mb-2 text-uppercase" style="letter-spacing: 1px; font-size: 0.8rem;">Investigations Ordered</h6>
+          <textarea pInputTextarea formControlName="investigationsOrdered" class="w-100 border-0 bg-light p-2 rounded" rows="2" placeholder="Enter Investigations"></textarea>
+        </div>
+
+        <div class="mb-4" [class.print-hide]="!prescriptionForm.get('nextFollowUpDate')?.value">
+          <h6 class="fw-bold text-secondary mb-2 text-uppercase" style="letter-spacing: 1px; font-size: 0.8rem;">Next Follow Up</h6>
+          <input pInputText formControlName="nextFollowUpDate" class="w-100 border-0 bg-light p-2 rounded" placeholder="Enter Follow Up Date">
+        </div>
+
+        <div class="mb-4" [class.print-hide]="!prescriptionForm.get('guidelines')?.value">
+          <h6 class="fw-bold text-secondary mb-2 text-uppercase" style="letter-spacing: 1px; font-size: 0.8rem;">Guidelines</h6>
+          <textarea pInputTextarea formControlName="guidelines" class="w-100 border-0 bg-light p-2 rounded" rows="2" placeholder="Enter Guidelines"></textarea>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Medications -->
+      <div class="col-lg-8 col-md-7 ps-md-4" style="border-left: 1px solid #e2e8f0;">
+        
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold d-flex align-items-center gap-2 mb-0">
+            <span class="fs-3 text-primary rx-symbol">℞</span> Medications
+          </h5>
+          <p-button icon="pi pi-plus" label="Add Medicine" size="small" variant="text" (onClick)="addMedication()" class="print-hide"></p-button>
+        </div>
+
+        <div formArrayName="medications">
+          <div *ngFor="let med of medications.controls; let i = index" [formGroupName]="i" class="medication-row mb-3 p-3 rounded-3 border position-relative" [class.bg-light]="i % 2 !== 0">
+            
+            <p-button icon="pi pi-times" severity="danger" [rounded]="true" [text]="true" size="small" class="position-absolute top-0 end-0 mt-1 me-1 print-hide" (onClick)="removeMedication(i)"></p-button>
+
+            <div class="row g-2 align-items-center">
+              <div class="col-12 mb-2">
+                <span class="fw-bold text-primary me-2">{{ i + 1 }}.</span>
+                <input pInputText formControlName="medicineName" class="w-75 border-bottom-only fw-bold" placeholder="Enter Medicine Name (e.g. Cipro 250mg Tablet)">
+              </div>
+              
+              <div class="col-md-3 col-6">
+                <label class="text-muted text-xs d-block mb-1">Dosage</label>
+                <p-dropdown [options]="dosageOptions" formControlName="dosage" placeholder="Select" [editable]="true" styleClass="w-100 border-0 bg-white shadow-sm"></p-dropdown>
+              </div>
+              
+              <div class="col-md-3 col-6">
+                <label class="text-muted text-xs d-block mb-1">Frequency</label>
+                <p-dropdown [options]="frequencyOptions" formControlName="frequency" placeholder="Select" [editable]="true" styleClass="w-100 border-0 bg-white shadow-sm"></p-dropdown>
+              </div>
+              
+              <div class="col-md-3 col-6 mt-2 mt-md-0">
+                <label class="text-muted text-xs d-block mb-1">Instructions</label>
+                <p-dropdown [options]="instructionOptions" formControlName="instructions" placeholder="Select" [editable]="true" styleClass="w-100 border-0 bg-white shadow-sm"></p-dropdown>
+              </div>
+
+              <div class="col-md-3 col-6 mt-2 mt-md-0">
+                <label class="text-muted text-xs d-block mb-1">Duration</label>
+                <p-dropdown [options]="durationOptions" formControlName="duration" placeholder="Select" [editable]="true" styleClass="w-100 border-0 bg-white shadow-sm"></p-dropdown>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        
+        <div *ngIf="medications.length === 0" class="text-center p-4 bg-light rounded-3 text-muted">
+          No medications added. Click "Add Medicine" to prescribe.
+        </div>
+
+      </div>
+    </div>
+    
+    <!-- Print Footer -->
+    <div class="print-only-footer mt-5 pt-4 d-none text-end">
+      <div class="d-inline-block text-center" style="width: 200px;">
+        <div style="border-bottom: 1px solid #000; height: 50px;"></div>
+        <p class="mt-2 mb-0 fw-bold">Doctor's Signature</p>
+      </div>
+    </div>
+
+  </div>
+</div>

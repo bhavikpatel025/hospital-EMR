@@ -32,8 +32,10 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { TooltipModule } from 'primeng/tooltip';
+import { DropdownModule } from 'primeng/dropdown';
 import { VoiceDictationComponent } from '../../../shared/components/voice-dictation/voice-dictation.component';
 import { JointAssessmentComponent } from '../../assessments/joint-assessment/joint-assessment.component';
+import { EPrescriptionComponent } from '../../prescriptions/e-prescription/e-prescription.component';
 
 @Component({
   selector: 'app-patient-detail',
@@ -42,8 +44,8 @@ import { JointAssessmentComponent } from '../../assessments/joint-assessment/joi
     CommonModule, RouterLink, MatIconModule, MatDialogModule, FormsModule,
     CardModule, TableModule, TabsModule, DialogModule, ButtonModule,
     TagModule, ProgressSpinnerModule, SelectButtonModule, InputTextModule,
-    TextareaModule, TooltipModule, VoiceDictationComponent,
-    JointAssessmentComponent
+    TextareaModule, TooltipModule, DropdownModule, VoiceDictationComponent,
+    JointAssessmentComponent, EPrescriptionComponent
   ],
   templateUrl: './patient-detail.component.html',
   styleUrl: './patient-detail.component.scss'
