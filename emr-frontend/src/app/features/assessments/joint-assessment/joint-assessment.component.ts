@@ -9,6 +9,7 @@ import { InputTextarea } from 'primeng/inputtextarea';
 import { TagModule } from 'primeng/tag';
 import { CalendarModule } from 'primeng/calendar';
 import { JointAssessmentService, JointAssessmentDto } from '../../../core/services/joint-assessment.service';
+import { VoiceService } from '../../../core/services/voice.service';
 import { MessageService } from 'primeng/api';
 
 // Defined Joint states
@@ -40,6 +41,7 @@ export class JointAssessmentComponent implements OnInit {
   private sanitizer = inject(DomSanitizer);
   private assessmentService = inject(JointAssessmentService);
   private messageService = inject(MessageService);
+  public voiceService = inject(VoiceService);
 
   @ViewChild('svgWrapper', { static: false }) svgWrapper!: ElementRef;
 
@@ -259,5 +261,28 @@ export class JointAssessmentComponent implements OnInit {
       },
       error: () => this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to save' })
     });
+  }
+
+  async toggleVoiceDictation() {
+    if (this.isReadOnly()) return;
+
+    if (this.voiceService.isRecording()) {
+      try {
+        const text = await this.voiceService.stopRecording();
+        if (text && text.trim()) {
+          this.notes = (this.notes ? this.notes + ' ' : '') + text.trim();
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Voice note added' });
+        }
+      } catch (error) {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to transcribe audio' });
+      }
+    } else {
+      try {
+        await this.voiceService.startRecording();
+        this.messageService.add({ severity: 'info', summary: 'Recording', detail: 'Speak your notes now...' });
+      } catch (error) {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Microphone access denied' });
+      }
+    }
   }
 }

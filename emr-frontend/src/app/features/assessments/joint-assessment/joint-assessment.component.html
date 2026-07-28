@@ -58,7 +58,22 @@
       </div>
 
       <div class="emr-card">
-        <h4 class="mb-3 fs-6 fw-bold">Additional Notes</h4>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4 class="mb-0 fs-6 fw-bold">Additional Notes</h4>
+          <div class="d-flex align-items-center gap-2">
+            <span *ngIf="voiceService.isRecording()" class="text-danger small fw-bold blinking-text">Recording...</span>
+            <span *ngIf="voiceService.isTranscribing()" class="text-primary small fw-bold"><i class="pi pi-spinner pi-spin me-1"></i>Transcribing...</span>
+            <p-button 
+              [icon]="voiceService.isRecording() ? 'pi pi-stop-circle' : 'pi pi-microphone'" 
+              [severity]="voiceService.isRecording() ? 'danger' : 'secondary'"
+              [text]="true"
+              [rounded]="true"
+              [disabled]="isReadOnly() || voiceService.isTranscribing()"
+              (onClick)="toggleVoiceDictation()"
+              pTooltip="AI Voice to Text">
+            </p-button>
+          </div>
+        </div>
         <div class="position-relative">
           <textarea pInputTextarea [(ngModel)]="notes" [readonly]="isReadOnly()" [maxlength]="1000" rows="4" class="w-100 p-2 pb-4" placeholder="Enter any additional notes..." style="resize: none; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.9rem;" [class.bg-light]="isReadOnly()"></textarea>
           <div class="position-absolute text-secondary fw-semibold" style="bottom: 8px; right: 12px; font-size: 0.8rem;">
@@ -73,14 +88,8 @@
       <div class="emr-card text-center d-flex flex-column align-items-center h-100">
         <h4 class="mb-3 fs-6 fw-bold">Anterior View</h4>
         
-        <!-- Tooltip hint -->
-        <div class="alert alert-info py-2 px-3 mb-3 d-flex align-items-center gap-2" style="font-size: 0.85rem; border-radius: 8px;">
-          <i class="pi pi-info-circle"></i>
-          <span>Click directly on any joint circle to record its condition.</span>
-        </div>
-
         <!-- Dynamic SVG Container with Overlay Markers -->
-        <div class="svg-container position-relative mx-auto" style="width: 100%; max-width: 450px;">
+        <div class="svg-container position-relative mx-auto mb-4" style="width: 100%; max-width: 450px;">
            <img src="assets/images/skeleton.svg" class="img-fluid w-100" alt="Skeleton Anterior View">
            
            <div *ngFor="let j of jointList" 
@@ -89,6 +98,12 @@
                 (click)="cycleJointState(j)"
                 [title]="j.replace('Right', 'Right ').replace('Left', 'Left ')">
            </div>
+        </div>
+
+        <!-- Tooltip hint -->
+        <div class="alert alert-info py-2 px-3 mb-0 d-flex align-items-center gap-2" style="font-size: 0.85rem; border-radius: 8px;">
+          <i class="pi pi-info-circle"></i>
+          <span>Click directly on any joint circle to record its condition.</span>
         </div>
       </div>
     </div>
