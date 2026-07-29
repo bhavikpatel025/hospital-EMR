@@ -2,6 +2,7 @@
   .rx-symbol {
     font-family: serif;
     font-style: italic;
+    padding-left: 4px;
   }
 
   .border-bottom-only {
@@ -35,12 +36,25 @@
 
 /* Print Specific Styles */
 @media print {
-  body * {
-    visibility: hidden;
-  }
-  
-  .print-area, .print-area * {
-    visibility: visible;
+  ::ng-deep {
+    body * {
+      visibility: hidden !important;
+    }
+    
+    /* Make the component host and print area visible */
+    app-e-prescription, 
+    app-e-prescription *,
+    .e-prescription-container,
+    .e-prescription-container * {
+      visibility: visible !important;
+    }
+    
+    app-e-prescription {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+    }
   }
   
   .print-area {
@@ -54,11 +68,25 @@
     box-shadow: none !important;
   }
 
+  .medication-row {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin-bottom: 15px !important;
+  }
+
   .print-hide {
     display: none !important;
   }
 
-  .print-only-header, .print-only-footer {
+  .print-full-width {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+    border-left: none !important;
+  }
+
+  .print-only-header, .print-only-footer, .print-only-med {
     display: block !important;
   }
 

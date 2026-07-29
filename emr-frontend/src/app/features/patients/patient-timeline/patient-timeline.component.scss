@@ -1,0 +1,37 @@
+.emr-patient-timeline {
+  /* Customize PrimeNG timeline connecting line */
+  ::ng-deep .p-timeline .p-timeline-event-connector {
+    background-color: #cbd5e1;
+    width: 3px;
+  }
+
+  /* Make the card transition nicely */
+  .timeline-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
+    }
+  }
+
+  /* Ensure marker is placed correctly */
+  .custom-marker {
+    z-index: 1;
+    border: 3px solid #ffffff; /* White ring around the marker */
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.05);
+  }
+
+  /* Fix alternate alignment margins on smaller screens */
+  ::ng-deep .p-timeline-event-opposite {
+    display: none; /* Hide opposite empty side to save space on smaller screens, or keep it standard */
+  }
+
+  @media (min-width: 768px) {
+    ::ng-deep .p-timeline-event-opposite {
+      display: block; /* Show on desktop */
+      flex: 1;
+      padding: 0 1rem;
+    }
+  }
+}

@@ -44,6 +44,7 @@ namespace EMR.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+
             migrationBuilder.CreateTable(
                 name: "PrescribedMedications",
                 columns: table => new

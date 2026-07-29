@@ -277,6 +277,10 @@
   <p-card styleClass="emr-clinical-tabs shadow-sm rounded-4 border-0 mb-4 overflow-hidden">
     <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
       <p-tablist>
+        <!-- <p-tab value="timeline">
+          <i class="pi pi-history text-indigo-500 me-2"></i>
+          <span class="font-semibold">Timeline</span>
+        </p-tab> -->
         <p-tab value="assessments">
           <i class="pi pi-user text-info me-2"></i>
           <span class="font-semibold">Joint Assessments</span>
@@ -308,7 +312,13 @@
       </p-tablist>
 
       <p-tabpanels styleClass="p-4 bg-white">
-        <!-- Tab 5: Joint Assessments -->
+        <!-- Tab 0: Timeline 
+        <p-tabpanel value="timeline">
+            <app-patient-timeline [patientId]="patient.patientId"></app-patient-timeline>
+        </p-tabpanel>
+        -->
+
+        <!-- Tab 1: Joint Assessments -->
         <p-tabpanel value="assessments">
             <app-joint-assessment 
               [patientId]="patient.patientId"

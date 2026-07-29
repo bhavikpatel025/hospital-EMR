@@ -44,7 +44,7 @@
 
     <div class="row g-4">
       <!-- Left Column: Summary -->
-      <div class="col-lg-4 col-md-5">
+      <div class="col-lg-4 col-md-5 print-hide">
         
         <div class="mb-4" [class.print-hide]="!prescriptionForm.get('chiefComplaints')?.value">
           <h6 class="fw-bold text-secondary mb-2 text-uppercase" style="letter-spacing: 1px; font-size: 0.8rem;">Chief Complaints</h6>
@@ -79,7 +79,7 @@
       </div>
 
       <!-- Right Column: Medications -->
-      <div class="col-lg-8 col-md-7 ps-md-4" style="border-left: 1px solid #e2e8f0;">
+      <div class="col-lg-8 col-md-7 ps-md-4 print-full-width" style="border-left: 1px solid #e2e8f0;">
         
         <div class="d-flex justify-content-between align-items-center mb-3">
           <h5 class="fw-bold d-flex align-items-center gap-2 mb-0">
@@ -93,7 +93,8 @@
             
             <p-button icon="pi pi-times" severity="danger" [rounded]="true" [text]="true" size="small" class="position-absolute top-0 end-0 mt-1 me-1 print-hide" (onClick)="removeMedication(i)"></p-button>
 
-            <div class="row g-2 align-items-center">
+            <!-- SCREEN UI (Hidden on Print) -->
+            <div class="row g-2 align-items-center print-hide">
               <div class="col-12 mb-2">
                 <span class="fw-bold text-primary me-2">{{ i + 1 }}.</span>
                 <input pInputText formControlName="medicineName" class="w-75 border-bottom-only fw-bold" placeholder="Enter Medicine Name (e.g. Cipro 250mg Tablet)">
@@ -120,6 +121,23 @@
               </div>
             </div>
 
+            <!-- PRINT UI (Visible ONLY on Print) -->
+            <div class="print-only-med d-none">
+              <div class="fw-bold fs-6 mb-1 text-dark">
+                {{ i + 1 }}. {{ med.get('medicineName')?.value || '--------------------' }}
+              </div>
+              <div class="ps-3 ms-2 mb-1 text-dark small" style="border-left: 2px solid #e2e8f0;">
+                <div class="d-flex gap-4 mb-1">
+                  <span *ngIf="med.get('dosage')?.value"><strong>Dosage:</strong> {{ med.get('dosage')?.value }}</span>
+                  <span *ngIf="med.get('frequency')?.value"><strong>Frequency:</strong> {{ med.get('frequency')?.value }}</span>
+                  <span *ngIf="med.get('duration')?.value"><strong>Duration:</strong> {{ med.get('duration')?.value }}</span>
+                </div>
+                <div *ngIf="med.get('instructions')?.value">
+                  <strong>Instructions:</strong> {{ med.get('instructions')?.value }}
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
         
@@ -133,7 +151,9 @@
     <!-- Print Footer -->
     <div class="print-only-footer mt-5 pt-4 d-none text-end">
       <div class="d-inline-block text-center" style="width: 200px;">
-        <div style="border-bottom: 1px solid #000; height: 50px;"></div>
+        <div style="height: 50px; display: flex; align-items: flex-end; justify-content: center; border-bottom: 1px solid #000; padding-bottom: 5px;">
+          <span style="font-family: 'Brush Script MT', 'Lucida Handwriting', cursive; font-size: 2.2rem; color: #000080; transform: rotate(-3deg);">Dr. Smith</span>
+        </div>
         <p class="mt-2 mb-0 fw-bold">Doctor's Signature</p>
       </div>
     </div>

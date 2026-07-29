@@ -1,0 +1,30 @@
+<div class="emr-patient-timeline p-3">
+  <div *ngIf="isLoading" class="text-center p-5 text-muted">
+    <i class="pi pi-spin pi-spinner fs-2 mb-2"></i>
+    <p>Loading medical history...</p>
+  </div>
+
+  <div *ngIf="!isLoading && events.length === 0" class="text-center p-5 text-muted">
+    <i class="pi pi-history fs-1 mb-3 text-secondary opacity-50"></i>
+    <h5>No Timeline Events</h5>
+    <p class="small">There are no recorded appointments, prescriptions, or documents for this patient yet.</p>
+  </div>
+
+  <p-timeline *ngIf="!isLoading && events.length > 0" [value]="events" align="alternate" styleClass="w-100 mt-2">
+    <ng-template pTemplate="marker" let-event>
+      <span class="custom-marker shadow-sm d-flex align-items-center justify-content-center rounded-circle" [style.backgroundColor]="event.color" style="width: 2.5rem; height: 2.5rem; color: white;">
+        <i [class]="event.icon" class="fs-5"></i>
+      </span>
+    </ng-template>
+    
+    <ng-template pTemplate="content" let-event>
+      <p-card styleClass="mb-4 shadow-sm border-0 border-start border-4 rounded-3 timeline-card" [style.borderLeftColor]="event.color">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h6 class="fw-bold mb-0 text-dark">{{ event.title }}</h6>
+          <small class="text-muted fw-semibold badge bg-light text-secondary ms-2">{{ event.eventDate | date:'MMM dd, yyyy - hh:mm a' }}</small>
+        </div>
+        <p class="text-secondary mb-0 small">{{ event.description }}</p>
+      </p-card>
+    </ng-template>
+  </p-timeline>
+</div>

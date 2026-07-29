@@ -19,6 +19,7 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
 import { VoiceService } from '../../../core/services/voice.service';
 import { environment } from '../../../../environments/environment';
 import { finalize } from 'rxjs';
+import { ToastModule } from 'primeng/toast';
 
 // PrimeNG v19/v21 Standalone Component Imports
 import { CardModule } from 'primeng/card';
@@ -36,6 +37,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { VoiceDictationComponent } from '../../../shared/components/voice-dictation/voice-dictation.component';
 import { JointAssessmentComponent } from '../../assessments/joint-assessment/joint-assessment.component';
 import { EPrescriptionComponent } from '../../prescriptions/e-prescription/e-prescription.component';
+// import { PatientTimelineComponent } from '../patient-timeline/patient-timeline.component';
 
 @Component({
   selector: 'app-patient-detail',
@@ -45,7 +47,8 @@ import { EPrescriptionComponent } from '../../prescriptions/e-prescription/e-pre
     CardModule, TableModule, TabsModule, DialogModule, ButtonModule,
     TagModule, ProgressSpinnerModule, SelectButtonModule, InputTextModule,
     TextareaModule, TooltipModule, DropdownModule, VoiceDictationComponent,
-    JointAssessmentComponent, EPrescriptionComponent
+    JointAssessmentComponent, EPrescriptionComponent, ToastModule,
+    // PatientTimelineComponent
   ],
   templateUrl: './patient-detail.component.html',
   styleUrl: './patient-detail.component.scss'

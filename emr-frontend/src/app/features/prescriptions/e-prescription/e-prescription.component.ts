@@ -189,6 +189,15 @@ export class EPrescriptionComponent implements OnInit {
   }
 
   printPrescription() {
+    const originalTitle = document.title;
+    const dateStr = new Date().toISOString().split('T')[0];
+    
+    // Set a professional filename for the PDF download
+    document.title = `Rx_Patient_${this.patientId}_${dateStr}`;
+    
     window.print();
+    
+    // Restore the original title so the browser tab name goes back to normal
+    document.title = originalTitle;
   }
 }
