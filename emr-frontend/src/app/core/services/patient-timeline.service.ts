@@ -9,6 +9,7 @@ export interface TimelineEventDto {
   eventDate: string;
   title: string;
   description: string;
+  additionalInfo?: string;
   icon: string;
   color: string;
 }

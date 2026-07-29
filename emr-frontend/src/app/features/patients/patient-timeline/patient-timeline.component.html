@@ -10,21 +10,40 @@
     <p class="small">There are no recorded appointments, prescriptions, or documents for this patient yet.</p>
   </div>
 
-  <p-timeline *ngIf="!isLoading && events.length > 0" [value]="events" align="alternate" styleClass="w-100 mt-2">
-    <ng-template pTemplate="marker" let-event>
-      <span class="custom-marker shadow-sm d-flex align-items-center justify-content-center rounded-circle" [style.backgroundColor]="event.color" style="width: 2.5rem; height: 2.5rem; color: white;">
-        <i [class]="event.icon" class="fs-5"></i>
-      </span>
-    </ng-template>
-    
-    <ng-template pTemplate="content" let-event>
-      <p-card styleClass="mb-4 shadow-sm border-0 border-start border-4 rounded-3 timeline-card" [style.borderLeftColor]="event.color">
-        <div class="d-flex justify-content-between align-items-start mb-2">
-          <h6 class="fw-bold mb-0 text-dark">{{ event.title }}</h6>
-          <small class="text-muted fw-semibold badge bg-light text-secondary ms-2">{{ event.eventDate | date:'MMM dd, yyyy - hh:mm a' }}</small>
-        </div>
-        <p class="text-secondary mb-0 small">{{ event.description }}</p>
-      </p-card>
-    </ng-template>
-  </p-timeline>
+  <p-accordion [multiple]="true" *ngIf="!isLoading && groupedEvents.length > 0">
+    <p-accordionTab *ngFor="let group of groupedEvents; let first = first" [selected]="first">
+      <ng-template pTemplate="header">
+          <div class="d-flex align-items-center gap-2">
+              <i class="pi pi-calendar text-primary"></i>
+              <span class="fw-bold">{{ group.date | date:'mediumDate' }}</span>
+              <p-badge [value]="group.events.length.toString()" severity="info" styleClass="ms-2"></p-badge>
+          </div>
+      </ng-template>
+      
+      <div class="d-flex flex-column gap-3 pt-2">
+          <div *ngFor="let event of group.events" class="p-3 border rounded shadow-sm d-flex gap-3 align-items-start bg-white" [style.borderLeft]="'4px solid ' + event.color">
+               <div class="rounded-circle d-flex align-items-center justify-content-center text-white" [style.backgroundColor]="event.color" style="width: 40px; height: 40px; min-width: 40px;">
+                   <i [class]="event.icon" class="fs-5"></i>
+               </div>
+               <div class="flex-grow-1">
+                   <div class="d-flex justify-content-between align-items-start">
+                       <div class="d-flex align-items-center gap-2 mb-1">
+                           <h6 class="fw-bold mb-0">{{ event.title }}</h6>
+                           <p-button *ngIf="event.additionalInfo" icon="pi pi-info-circle fs-5" [rounded]="true" [text]="true" (onClick)="openInfo(event)" styleClass="p-0 text-primary" [style]="{width: '2.5rem', height: '2.5rem'}" pTooltip="View Details" tooltipPosition="top"></p-button>
+                       </div>
+                       <small class="text-muted"><i class="pi pi-clock me-1"></i>{{ event.eventDate | date:'shortTime' }}</small>
+                   </div>
+                   <p class="mb-0 text-secondary small">{{ event.description }}</p>
+               </div>
+          </div>
+      </div>
+    </p-accordionTab>
+  </p-accordion>
+
+  <!-- Document / Event Info Modal -->
+  <p-dialog [header]="selectedEventTitle" [(visible)]="showInfoModal" [modal]="true" [style]="{width: '50vw'}" [breakpoints]="{'960px': '75vw', '640px': '95vw'}">
+      <div class="p-3 bg-light rounded-3">
+          <p class="mb-0" style="white-space: pre-wrap; line-height: 1.6;">{{ selectedEventInfo }}</p>
+      </div>
+  </p-dialog>
 </div>

@@ -273,14 +273,25 @@
     </div>
   </p-card>
 
+  <!-- Past Visits Section (Moved outside tabs for better visibility) -->
+  <p-accordion class="w-100 mb-4 d-block">
+    <p-accordionTab>
+      <ng-template pTemplate="header">
+        <div class="d-flex align-items-center gap-2">
+          <i class="pi pi-history text-indigo-500 fs-5"></i>
+          <span class="font-semibold fs-6">Past Visits & Clinical Encounters History</span>
+        </div>
+      </ng-template>
+      <div class="bg-light rounded p-1">
+        <app-patient-timeline *ngIf="patient?.patientId" [patientId]="patient.patientId"></app-patient-timeline>
+      </div>
+    </p-accordionTab>
+  </p-accordion>
+
   <!-- Clinical Tabs & Database Content Section -->
   <p-card styleClass="emr-clinical-tabs shadow-sm rounded-4 border-0 mb-4 overflow-hidden">
     <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
       <p-tablist>
-        <!-- <p-tab value="timeline">
-          <i class="pi pi-history text-indigo-500 me-2"></i>
-          <span class="font-semibold">Timeline</span>
-        </p-tab> -->
         <p-tab value="assessments">
           <i class="pi pi-user text-info me-2"></i>
           <span class="font-semibold">Joint Assessments</span>
@@ -312,12 +323,6 @@
       </p-tablist>
 
       <p-tabpanels styleClass="p-4 bg-white">
-        <!-- Tab 0: Timeline 
-        <p-tabpanel value="timeline">
-            <app-patient-timeline [patientId]="patient.patientId"></app-patient-timeline>
-        </p-tabpanel>
-        -->
-
         <!-- Tab 1: Joint Assessments -->
         <p-tabpanel value="assessments">
             <app-joint-assessment 

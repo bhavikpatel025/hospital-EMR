@@ -93,6 +93,7 @@ namespace EMR.Infrastructure.Repositories
                     EventDate = doc.UploadedAt,
                     Title = $"{doc.Category} Document Uploaded",
                     Description = $"File: {doc.FileName}",
+                    AdditionalInfo = string.IsNullOrWhiteSpace(doc.RawTextSummary) ? "No clinical summary extracted yet." : doc.RawTextSummary,
                     Icon = doc.Category == "LabReport" ? "pi pi-chart-line" : "pi pi-folder",
                     Color = doc.Category == "LabReport" ? "#22c55e" : "#f59e0b" // green or yellow
                 });

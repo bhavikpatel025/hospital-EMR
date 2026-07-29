@@ -25,6 +25,7 @@ import { ToastModule } from 'primeng/toast';
 import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
 import { TabsModule } from 'primeng/tabs';
+import { AccordionModule } from 'primeng/accordion';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
@@ -37,18 +38,18 @@ import { DropdownModule } from 'primeng/dropdown';
 import { VoiceDictationComponent } from '../../../shared/components/voice-dictation/voice-dictation.component';
 import { JointAssessmentComponent } from '../../assessments/joint-assessment/joint-assessment.component';
 import { EPrescriptionComponent } from '../../prescriptions/e-prescription/e-prescription.component';
-// import { PatientTimelineComponent } from '../patient-timeline/patient-timeline.component';
+import { PatientTimelineComponent } from '../patient-timeline/patient-timeline.component';
 
 @Component({
   selector: 'app-patient-detail',
   standalone: true,
   imports: [
     CommonModule, RouterLink, MatIconModule, MatDialogModule, FormsModule,
-    CardModule, TableModule, TabsModule, DialogModule, ButtonModule,
+    CardModule, TableModule, TabsModule, AccordionModule, DialogModule, ButtonModule,
     TagModule, ProgressSpinnerModule, SelectButtonModule, InputTextModule,
     TextareaModule, TooltipModule, DropdownModule, VoiceDictationComponent,
     JointAssessmentComponent, EPrescriptionComponent, ToastModule,
-    // PatientTimelineComponent
+    PatientTimelineComponent
   ],
   templateUrl: './patient-detail.component.html',
   styleUrl: './patient-detail.component.scss'
