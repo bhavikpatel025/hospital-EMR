@@ -8,7 +8,7 @@
 
 An advanced, highly responsive, and AI-augmented **Hospital Electronic Medical Records (EMR) System** engineered from scratch using **Clean Architecture** on the backend (.NET 8 Web API + Entity Framework Core) and reactive **Angular Signals** + **PrimeNG** on the frontend.
 
-**Enterprise-grade Hospital EMR system built with .NET 8 Web API (Clean Architecture) and Angular 18 (Reactive Signals). Features JWT RBAC, OPD scheduling, and a Hybrid AI Engine using Local OCR + Groq AI (Llama-3.3 Text / Vision) for document extraction, alongside real-time Voice Dictation (Groq Whisper AI) to auto-fill prescriptions, clinical summaries, and lab reports.**
+**Enterprise-grade Hospital EMR system built with .NET 8 Web API (Clean Architecture) and Angular 18 (Reactive Signals). Features JWT RBAC, OPD scheduling, and a Hybrid AI Engine using Local OCR + Groq AI (Llama-3.3 Text / Vision) for document extraction, Multilingual E-Prescriptions, and real-time Voice Dictation (Groq Whisper AI) to auto-fill prescriptions, clinical summaries, and lab reports.**
 
 ---
 
@@ -47,6 +47,20 @@ An advanced, highly responsive, and AI-augmented **Hospital Electronic Medical R
 * **Quick Actions & JSON Storage:** Features like "Mark All Normal" for rapid assessment. The entire complex joint state is serialized securely into a single JSON object in the backend.
 
 ![Joint Assessment](screenshots/joint-assessment.png)
+
+### 📝 6. Multilingual E-Prescription & Auto-Translation (New)
+* **Smart Prescription Builder:** Easily search and add medications, dosages, frequency, and custom instructions.
+* **Instant Auto-Translation:** Features a real-time Groq Llama 3-powered translation engine. When a doctor types instructions in English, it instantly translates them to the patient's preferred language (e.g., Hindi, Gujarati). 
+* **Smart Hybrid DB Dictionary:** Uses a hybrid local database dictionary to cache translations and save Groq API calls for common medical terms!
+* **Print-Ready PDFs:** Clean, professional print templates for prescriptions in the patient's native language.
+
+![Multilingual E-Prescription](screenshots/e-prescription.png)
+
+### 🗓️ 7. Intelligent Past Visits Feed (New)
+* **Chronological Accordion Groups:** Clinical events (Assessments, Prescriptions, Document Uploads) are beautifully grouped by date using an interactive PrimeNG Accordion for a clutter-free UI.
+* **Instant Document Previews:** Click the 'Info' tooltip `(i)` on any uploaded document in the timeline to instantly read its AI-extracted clinical summary—no need to download or switch tabs!
+
+![Past Visits Feed](screenshots/past-visits.png)
 
 ---
 
