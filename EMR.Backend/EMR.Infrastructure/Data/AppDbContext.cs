@@ -19,6 +19,7 @@ public class AppDbContext : DbContext
     public DbSet<JointAssessment> JointAssessments => Set<JointAssessment>();
     public DbSet<Prescription> Prescriptions => Set<Prescription>();
     public DbSet<PrescribedMedication> PrescribedMedications => Set<PrescribedMedication>();
+    public DbSet<TranslationDictionary> Translations => Set<TranslationDictionary>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

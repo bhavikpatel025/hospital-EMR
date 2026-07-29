@@ -40,6 +40,8 @@ builder.Services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
 builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
 builder.Services.AddScoped<IPatientTimelineRepository, PatientTimelineRepository>();
 builder.Services.AddScoped<IPatientTimelineService, PatientTimelineService>();
+builder.Services.AddScoped<ITranslationRepository, TranslationRepository>();
+builder.Services.AddScoped<ITranslationService, TranslationService>();
 
 // 4. JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

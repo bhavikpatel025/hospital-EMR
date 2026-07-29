@@ -7,6 +7,7 @@
       <h4 class="mb-0 fs-5 fw-bold">E-Prescription</h4>
     </div>
     <div class="d-flex gap-2">
+      <p-dropdown [options]="languageOptions" [(ngModel)]="selectedLanguage" [ngModelOptions]="{standalone: true}" optionLabel="label" optionValue="value" styleClass="print-hide border-0 shadow-sm" class="me-2"></p-dropdown>
       <p-button *ngIf="hasHistory" 
                 label="Copy Previous Rx" 
                 icon="pi pi-history" 
@@ -16,7 +17,7 @@
                 (onClick)="loadPreviousPrescription()">
       </p-button>
       <p-button label="Save Rx" icon="pi pi-save" severity="success" (onClick)="savePrescription()"></p-button>
-      <p-button label="Print / PDF" icon="pi pi-print" severity="secondary" variant="outlined" (onClick)="printPrescription()"></p-button>
+      <p-button label="Print / PDF" icon="pi pi-print" severity="secondary" variant="outlined" [loading]="isTranslating" (onClick)="printPrescription()"></p-button>
     </div>
   </div>
 
@@ -128,12 +129,12 @@
               </div>
               <div class="ps-3 ms-2 mb-1 text-dark small" style="border-left: 2px solid #e2e8f0;">
                 <div class="d-flex gap-4 mb-1">
-                  <span *ngIf="med.get('dosage')?.value"><strong>Dosage:</strong> {{ med.get('dosage')?.value }}</span>
-                  <span *ngIf="med.get('frequency')?.value"><strong>Frequency:</strong> {{ med.get('frequency')?.value }}</span>
-                  <span *ngIf="med.get('duration')?.value"><strong>Duration:</strong> {{ med.get('duration')?.value }}</span>
+                  <span *ngIf="med.get('dosage')?.value"><strong>{{ translate('Dosage:') }}</strong> {{ translate(med.get('dosage')?.value) }}</span>
+                  <span *ngIf="med.get('frequency')?.value"><strong>{{ translate('Frequency:') }}</strong> {{ translate(med.get('frequency')?.value) }}</span>
+                  <span *ngIf="med.get('duration')?.value"><strong>{{ translate('Duration:') }}</strong> {{ translate(med.get('duration')?.value) }}</span>
                 </div>
                 <div *ngIf="med.get('instructions')?.value">
-                  <strong>Instructions:</strong> {{ med.get('instructions')?.value }}
+                  <strong>{{ translate('Instructions:') }}</strong> {{ translate(med.get('instructions')?.value) }}
                 </div>
               </div>
             </div>
