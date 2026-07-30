@@ -71,11 +71,15 @@
             <div class="emr-input-wrapper">
               <mat-icon class="emr-input-icon">lock</mat-icon>
               <input
-                type="password"
+                [type]="showPassword() ? 'text' : 'password'"
                 class="emr-input w-100 emr-input--with-icon"
+                style="padding-right: 45px;"
                 formControlName="password"
                 placeholder="Enter your password"
                 [class.is-invalid]="password?.invalid && password?.touched" />
+              <button type="button" class="emr-password-toggle bg-transparent border-0 d-flex align-items-center position-absolute" style="right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #64748b;" (click)="togglePassword()">
+                <mat-icon style="font-size: 20px; width: 20px; height: 20px;">{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
             </div>
             <div class="emr-error" *ngIf="password?.errors?.['required'] && password?.touched">
               Password is required

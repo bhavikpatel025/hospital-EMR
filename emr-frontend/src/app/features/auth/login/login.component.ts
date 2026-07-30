@@ -19,6 +19,7 @@ export class LoginComponent {
 
   loading = signal(false);
   errorMsg = signal('');
+  showPassword = signal(false);
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -27,6 +28,10 @@ export class LoginComponent {
 
   get email() { return this.loginForm.get('email'); }
   get password() { return this.loginForm.get('password'); }
+
+  togglePassword(): void {
+    this.showPassword.update(v => !v);
+  }
 
   onSubmit(): void {
     if (this.loginForm.invalid) {
