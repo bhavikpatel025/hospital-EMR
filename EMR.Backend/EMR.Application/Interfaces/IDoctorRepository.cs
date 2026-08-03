@@ -1,4 +1,4 @@
-﻿using EMR.Application.DTOs.Doctors;
+using EMR.Application.DTOs.Doctors;
 using EMR.Domain.Entities;
 using EMR.Shared.Common;
 
@@ -12,4 +12,5 @@ public interface IDoctorRepository
     Task UpdateAsync(Doctor doctor);
     Task<bool> DeleteAsync(int id);
     Task<List<Doctor>> GetActiveDoctorsAsync();
+    Task<Doctor?> GetByUserIdAsync(int userId);
 }

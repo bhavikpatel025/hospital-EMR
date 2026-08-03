@@ -157,7 +157,7 @@
   </p-card>
 
   <!-- 🎙️ AI Voice Clinical Notes Dictation -->
-  <p-card styleClass="emr-voice-dictation rounded-4 mb-4 border-0 shadow-sm">
+  <p-card *ngIf="!authService.isReceptionist()" styleClass="emr-voice-dictation rounded-4 mb-4 border-0 shadow-sm">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-3">
       <div>
         <h5 class="fw-bold text-dark d-flex align-items-center gap-2 mb-1 fs-6">
@@ -202,7 +202,7 @@
   </p-card>
 
   <!-- ⚡ Smart OCR & AI Document Upload Zone -->
-  <p-card styleClass="emr-ocr-center rounded-4 mb-4">
+  <p-card *ngIf="!authService.isReceptionist()" styleClass="emr-ocr-center rounded-4 mb-4">
     <!-- Row 1: Title & Subtitle on Left, AI Toggle Switch on Right (Same Row) -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-3">
       <div>
@@ -292,11 +292,11 @@
   <p-card styleClass="emr-clinical-tabs shadow-sm rounded-4 border-0 mb-4 overflow-hidden">
     <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
       <p-tablist>
-        <p-tab value="assessments">
+        <p-tab value="assessments" *ngIf="!authService.isReceptionist()">
           <i class="pi pi-user text-info me-2"></i>
           <span class="font-semibold">Joint Assessments</span>
         </p-tab>
-        <p-tab value="prescription">
+        <p-tab value="prescription" *ngIf="!authService.isReceptionist()">
           <i class="pi pi-file-edit text-danger me-2"></i>
           <span class="font-semibold">E-Prescription</span>
         </p-tab>
@@ -305,17 +305,17 @@
           <span class="font-semibold">Documents</span>
           <p-tag [value]="uploadedDocuments().length.toString()" severity="secondary" styleClass="ms-2 px-2 py-0 text-xs rounded-pill"></p-tag>
         </p-tab>
-        <p-tab value="meds">
+        <p-tab value="meds" *ngIf="!authService.isReceptionist()">
           <i class="pi pi-box me-2 text-primary"></i>
           <span class="font-semibold">Medications</span>
           <p-tag [value]="patientMedications().length.toString()" severity="info" styleClass="ms-2 px-2 py-0 text-xs rounded-pill"></p-tag>
         </p-tab>
-        <p-tab value="labs">
+        <p-tab value="labs" *ngIf="!authService.isReceptionist()">
           <i class="pi pi-chart-line me-2 text-success"></i>
           <span class="font-semibold">Lab History</span>
           <p-tag [value]="patientLabs().length.toString()" severity="success" styleClass="ms-2 px-2 py-0 text-xs rounded-pill"></p-tag>
         </p-tab>
-        <p-tab value="imaging">
+        <p-tab value="imaging" *ngIf="!authService.isReceptionist()">
           <i class="pi pi-images me-2 text-warning"></i>
           <span class="font-semibold">Radiology & MRI/CT</span>
           <p-tag [value]="patientImaging().length.toString()" severity="warn" styleClass="ms-2 px-2 py-0 text-xs rounded-pill"></p-tag>

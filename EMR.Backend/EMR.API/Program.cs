@@ -43,6 +43,9 @@ builder.Services.AddScoped<IPatientTimelineService, PatientTimelineService>();
 builder.Services.AddScoped<ITranslationRepository, TranslationRepository>();
 builder.Services.AddScoped<ITranslationService, TranslationService>();
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
 // 4. JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -121,5 +124,11 @@ app.MapControllers();
 //EMR.Shared.Common.PasswordHasher.CreateHash("Admin@123", out var testHash, out var testSalt);
 //Console.WriteLine($"HASH: {testHash}");
 //Console.WriteLine($"SALT: {testSalt}");
+
+// 6. Seed Data (Receptionist)
+using (var scope = app.Services.CreateScope())
+{
+    await DbSeeder.SeedAsync(scope.ServiceProvider);
+}
 
 app.Run();

@@ -57,4 +57,16 @@ export class AuthService {
   getRole(): string | null {
     return this.getUser()?.role ?? null;
   }
+
+  isAdmin(): boolean {
+    return this.getRole() === 'Admin';
+  }
+
+  isDoctor(): boolean {
+    return this.getRole() === 'Doctor';
+  }
+
+  isReceptionist(): boolean {
+    return this.getRole() === 'Receptionist';
+  }
 }

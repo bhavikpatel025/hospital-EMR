@@ -37,7 +37,7 @@ export class AppointmentListComponent implements OnInit {
   todayCount = signal(0);
   upcomingCount = signal(0);
   completedCount = signal(0);
-  cancelledCount = signal(0);
+  pendingCount = signal(0);
 
   searchTerm = '';
   doctorFilter: number | null = null;
@@ -110,12 +110,12 @@ export class AppointmentListComponent implements OnInit {
       today: this.appointmentService.getToday().pipe(catchError(() => of([]))),
       upcoming: this.appointmentService.getUpcoming().pipe(catchError(() => of([]))),
       completed: this.appointmentService.getAll({ pageNumber: 1, pageSize: 1, status: 2 }).pipe(catchError(() => of({ items: [], totalCount: 0 } as any))),
-      cancelled: this.appointmentService.getAll({ pageNumber: 1, pageSize: 1, status: 3 }).pipe(catchError(() => of({ items: [], totalCount: 0 } as any)))
+      pending: this.appointmentService.getAll({ pageNumber: 1, pageSize: 1, status: 0 }).pipe(catchError(() => of({ items: [], totalCount: 0 } as any)))
     }).subscribe(result => {
       this.todayCount.set(result.today.length);
       this.upcomingCount.set(result.upcoming.length);
       this.completedCount.set(result.completed.totalCount ?? 0);
-      this.cancelledCount.set(result.cancelled.totalCount ?? 0);
+      this.pendingCount.set(result.pending.totalCount ?? 0);
     });
   }
 

@@ -38,13 +38,7 @@ export class EmrShellComponent {
     weekday: 'long'
   }).format(new Date());
 
-  protected readonly primaryNav: NavItem[] = [
-    { label: 'Dashboard', icon: 'dashboard', primeIcon: 'pi pi-th-large', qaColor: 'qa-blue', route: '/dashboard', exact: true },
-    { label: 'Patients', icon: 'groups', primeIcon: 'pi pi-users', qaColor: 'qa-green', route: '/patients' },
-    { label: 'Appointments', icon: 'calendar_month', primeIcon: 'pi pi-calendar-plus', qaColor: 'qa-purple', route: '/appointments', exact: true },
-    { label: 'Calendar', icon: 'calendar_view_month', primeIcon: 'pi pi-calendar', qaColor: 'qa-orange', route: '/appointments/calendar' },
-    { label: 'Doctors', icon: 'medical_services', primeIcon: 'pi pi-id-card', qaColor: 'qa-teal', route: '/doctors' }
-  ];
+  protected primaryNav: NavItem[] = [];
 
   protected readonly secondaryNav: NavItem[] = [
     { label: 'Consultation', icon: 'health_and_safety' },
@@ -54,6 +48,7 @@ export class EmrShellComponent {
   ];
 
   constructor() {
+    this.buildNavigation();
     this.updateTitle();
     this.router.events
       .pipe(
@@ -76,6 +71,26 @@ export class EmrShellComponent {
   protected logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  private buildNavigation() {
+    const allNavs: NavItem[] = [
+      { label: 'Dashboard', icon: 'dashboard', primeIcon: 'pi pi-th-large', qaColor: 'qa-blue', route: '/app/dashboard', exact: true },
+      { label: 'Patients', icon: 'groups', primeIcon: 'pi pi-users', qaColor: 'qa-green', route: '/app/patients' },
+      { label: 'Appointments', icon: 'calendar_month', primeIcon: 'pi pi-calendar-plus', qaColor: 'qa-purple', route: '/app/appointments', exact: true },
+      { label: 'Calendar', icon: 'calendar_view_month', primeIcon: 'pi pi-calendar', qaColor: 'qa-orange', route: '/app/appointments/calendar' },
+      { label: 'Doctors', icon: 'medical_services', primeIcon: 'pi pi-id-card', qaColor: 'qa-teal', route: '/app/doctors' }
+    ];
+
+    if (this.authService.isAdmin()) {
+      this.primaryNav = allNavs;
+    } else if (this.authService.isDoctor()) {
+      this.primaryNav = allNavs.filter(n => n.label !== 'Doctors');
+    } else if (this.authService.isReceptionist()) {
+      this.primaryNav = allNavs.filter(n => n.label !== 'Doctors');
+    } else {
+      this.primaryNav = allNavs; // fallback
+    }
   }
 
   private updateTitle(): void {

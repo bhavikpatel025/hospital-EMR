@@ -92,4 +92,9 @@ public class PatientRepository : IPatientRepository
             p.IsActive &&
             (!excludePatientId.HasValue || p.PatientId != excludePatientId.Value));
     }
+
+    public async Task<Patient?> GetByMobileAsync(string mobile)
+    {
+        return await _context.Patients.FirstOrDefaultAsync(p => p.Mobile == mobile && p.IsActive);
+    }
 }

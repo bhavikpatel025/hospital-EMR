@@ -14,12 +14,14 @@ namespace EMR.Application.Services;
 public class AuthService : IAuthService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IDoctorRepository _doctorRepository;
     private readonly IConfiguration _configuration;
     private readonly IMapper _mapper;
 
-    public AuthService(IUserRepository userRepository, IConfiguration configuration, IMapper mapper)
+    public AuthService(IUserRepository userRepository, IDoctorRepository doctorRepository, IConfiguration configuration, IMapper mapper)
     {
         _userRepository = userRepository;
+        _doctorRepository = doctorRepository;
         _configuration = configuration;
         _mapper = mapper;
     }
@@ -34,7 +36,14 @@ public class AuthService : IAuthService
         if (!PasswordHasher.VerifyHash(request.Password, user.PasswordHash, user.PasswordSalt))
             return null;
 
-        var (token, expiresAt) = GenerateJwtToken(user);
+        int? doctorId = null;
+        if (user.Role.RoleName == "Doctor")
+        {
+            var doctor = await _doctorRepository.GetByUserIdAsync(user.UserId);
+            doctorId = doctor?.DoctorId;
+        }
+
+        var (token, expiresAt) = GenerateJwtToken(user, doctorId);
         var refreshToken = GenerateRefreshToken();
         var refreshExpiresAt = DateTime.UtcNow.AddDays(30);
 
@@ -63,7 +72,14 @@ public class AuthService : IAuthService
             return null;
 
         // Sliding window token rotation: Issue a brand new Access Token and a brand new Refresh Token
-        var (token, expiresAt) = GenerateJwtToken(user);
+        int? doctorId = null;
+        if (user.Role.RoleName == "Doctor")
+        {
+            var doctor = await _doctorRepository.GetByUserIdAsync(user.UserId);
+            doctorId = doctor?.DoctorId;
+        }
+
+        var (token, expiresAt) = GenerateJwtToken(user, doctorId);
         var newRefreshToken = GenerateRefreshToken();
         var refreshExpiresAt = DateTime.UtcNow.AddDays(30);
 
@@ -86,7 +102,7 @@ public class AuthService : IAuthService
         return Guid.NewGuid().ToString("N") + Guid.NewGuid().ToString("N");
     }
 
-    private (string Token, DateTime ExpiresAt) GenerateJwtToken(User user)
+    private (string Token, DateTime ExpiresAt) GenerateJwtToken(User user, int? doctorId = null)
     {
         var claims = new List<Claim>
         {
@@ -95,6 +111,11 @@ public class AuthService : IAuthService
             new(ClaimTypes.Email, user.Email),
             new(ClaimTypes.Role, user.Role.RoleName)
         };
+
+        if (doctorId.HasValue)
+        {
+            claims.Add(new Claim("DoctorId", doctorId.Value.ToString()));
+        }
 
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));

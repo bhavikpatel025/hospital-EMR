@@ -1,4 +1,4 @@
-﻿using EMR.Application.DTOs.Appointments;
+using EMR.Application.DTOs.Appointments;
 using EMR.Application.Interfaces;
 using EMR.Domain.Entities;
 using EMR.Domain.Enums;
@@ -9,10 +9,12 @@ namespace EMR.Application.Services;
 public class AppointmentService : IAppointmentService
 {
     private readonly IAppointmentRepository _repository;
+    private readonly IPatientRepository _patientRepository;
 
-    public AppointmentService(IAppointmentRepository repository)
+    public AppointmentService(IAppointmentRepository repository, IPatientRepository patientRepository)
     {
         _repository = repository;
+        _patientRepository = patientRepository;
     }
 
     public async Task<PagedResult<AppointmentListDto>> GetAllAsync(AppointmentQueryParams queryParams)
@@ -49,12 +51,47 @@ public class AppointmentService : IAppointmentService
             EndTime = dto.EndTime,
             Reason = dto.Reason,
             Notes = dto.Notes,
-            Status = AppointmentStatus.Pending
+            Status = AppointmentStatus.Confirmed // Receptionist manual booking is auto-confirmed
         };
 
         var created = await _repository.AddAsync(appointment);
+        var fullAppointment = await _repository.GetByIdAsync(created.AppointmentId);
+        return MapToDetailDto(fullAppointment!);
+    }
 
-        // Repository se dobara fetch karenge taaki Patient/Doctor navigation properties load ho jayein
+    public async Task<AppointmentDetailDto> BookPublicAsync(PublicAppointmentCreateDto dto)
+    {
+        ValidateTimeRange(dto.StartTime, dto.EndTime);
+
+        if (await _repository.HasConflictAsync(dto.DoctorId, dto.AppointmentDate, dto.StartTime, dto.EndTime))
+            throw new InvalidOperationException("The selected time slot is no longer available.");
+
+        // Check if patient exists by mobile
+        var patient = await _patientRepository.GetByMobileAsync(dto.Mobile);
+
+        if (patient == null)
+        {
+            patient = new Patient
+            {
+                FullName = $"{dto.FirstName} {dto.LastName}".Trim(),
+                Mobile = dto.Mobile,
+                IsActive = true
+            };
+            await _patientRepository.AddAsync(patient);
+        }
+
+        var appointment = new Appointment
+        {
+            PatientId = patient.PatientId,
+            DoctorId = dto.DoctorId,
+            AppointmentDate = dto.AppointmentDate.Date,
+            StartTime = dto.StartTime,
+            EndTime = dto.EndTime,
+            Reason = dto.Reason ?? "Web Booking",
+            Status = AppointmentStatus.Pending // Explicitly set to Pending for Receptionist approval
+        };
+
+        var created = await _repository.AddAsync(appointment);
         var fullAppointment = await _repository.GetByIdAsync(created.AppointmentId);
         return MapToDetailDto(fullAppointment!);
     }

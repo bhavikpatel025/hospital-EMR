@@ -1,0 +1,197 @@
+<p-toast></p-toast>
+
+<div class="booking-wrapper">
+  <!-- Dynamic Background with glassmorphism blobs -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <div class="container py-5">
+    <div class="row align-items-start g-5 pt-4">
+      
+      <!-- Left Column: Header & Branding -->
+      <div class="col-12 col-lg-5 text-center text-lg-start pe-lg-5">
+        <div class="booking-header mb-4 fade-in">
+          <h1 class="fw-bold text-dark mb-3 display-5 mt-3" style="letter-spacing: -1px; line-height: 1.2;">Book Your Appointment</h1>
+          <p class="text-secondary fs-5 mb-5" style="line-height: 1.6;">Premium Healthcare, Just a Click Away. Fill out the form to schedule a consultation with our experts.</p>
+          
+          <div class="d-none d-lg-block mt-5 text-center">
+            <img src="assets/images/booking.png" alt="Booking Illustration" class="img-fluid w-100" style="max-height: 400px; object-fit: contain; mix-blend-mode: multiply; filter: brightness(1.1) contrast(1.2);">
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: The Form -->
+      <div class="col-12 col-lg-7">
+        <p-card styleClass="booking-card shadow-lg border-0 rounded-4 overflow-hidden">
+          
+          <!-- Success State -->
+          <div *ngIf="isSuccess()" class="text-center py-5 px-3 fade-in">
+            <div class="success-icon mb-4 mx-auto">
+              <i class="pi pi-check"></i>
+            </div>
+            <h2 class="fw-bold text-success mb-3">Booking Requested!</h2>
+            <p class="text-muted mb-4 fs-5">Your appointment request has been sent to the hospital. A receptionist will review and confirm it shortly.</p>
+            <div class="d-flex justify-content-center gap-3">
+              <p-button label="Go to Home" icon="pi pi-home" severity="secondary" variant="outlined" (onClick)="goHome()"></p-button>
+              <p-button label="Book Another" icon="pi pi-plus" (onClick)="bookAnother()"></p-button>
+            </div>
+          </div>
+
+          <!-- Booking Form -->
+          <form *ngIf="!isSuccess()" [formGroup]="bookingForm" (ngSubmit)="onSubmit()" class="fade-in p-2 p-md-4">
+            
+            <h5 class="fw-bold mb-4 text-primary d-flex align-items-center gap-2">
+              <i class="pi pi-user text-xl"></i> Patient Details
+            </h5>
+            
+            <div class="row g-4 mb-4">
+              <div class="col-12 col-md-6">
+                <div class="d-flex flex-column gap-2">
+                  <label class="font-semibold text-sm">First Name *</label>
+                  <input pInputText formControlName="firstName" placeholder="Enter first name" class="w-100 p-3 bg-light rounded-3 border-0" />
+                  <small class="text-danger" *ngIf="bookingForm.get('firstName')?.touched && bookingForm.get('firstName')?.invalid">First name is required</small>
+                </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <div class="d-flex flex-column gap-2">
+                  <label class="font-semibold text-sm">Last Name *</label>
+                  <input pInputText formControlName="lastName" placeholder="Enter last name" class="w-100 p-3 bg-light rounded-3 border-0" />
+                  <small class="text-danger" *ngIf="bookingForm.get('lastName')?.touched && bookingForm.get('lastName')?.invalid">Last name is required</small>
+                </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <div class="d-flex flex-column gap-2">
+                  <label class="font-semibold text-sm">Mobile Number *</label>
+                  <input pInputText formControlName="mobile" placeholder="10-digit mobile number" class="w-100 p-3 bg-light rounded-3 border-0" />
+                  <small class="text-danger" *ngIf="bookingForm.get('mobile')?.touched && bookingForm.get('mobile')?.invalid">Valid 10-digit number is required</small>
+                </div>
+              </div>
+            </div>
+
+            <hr class="text-muted opacity-25 my-4">
+
+            <h5 class="fw-bold mb-4 text-primary d-flex align-items-center gap-2">
+              <i class="pi pi-calendar text-xl"></i> Appointment Details
+            </h5>
+
+            <div class="row g-4 mb-4">
+              <div class="col-12">
+                <div class="d-flex flex-column gap-2">
+                  <label class="font-semibold text-sm">Select Doctor *</label>
+                  <p-dropdown 
+                    [options]="doctors()" 
+                    formControlName="doctorId" 
+                    optionLabel="doctorName" 
+                    optionValue="doctorId"
+                    placeholder="Choose a Specialist" 
+                    [loading]="isLoadingDoctors()"
+                    styleClass="w-100 bg-light rounded-3 border-0 p-1"
+                    [showClear]="true">
+                    <ng-template pTemplate="item" let-doctor>
+                      <div class="d-flex align-items-center gap-3">
+                        <div class="avatar-circle bg-primary-subtle text-primary fw-bold">
+                          {{ doctor.doctorName.charAt(0) }}
+                        </div>
+                        <div>
+                          <div class="fw-bold">{{ doctor.doctorName }}</div>
+                          <div class="text-muted text-xs">{{ doctor.specialization }} &bull; {{ doctor.qualification }}</div>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </p-dropdown>
+                  <small class="text-danger" *ngIf="bookingForm.get('doctorId')?.touched && bookingForm.get('doctorId')?.invalid">Please select a doctor</small>
+                </div>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <div class="d-flex flex-column gap-2">
+                  <label class="font-semibold text-sm">Preferred Date *</label>
+                  <p-calendar 
+                    formControlName="appointmentDate" 
+                    placeholder="Select Date" 
+                    [minDate]="today"
+                    styleClass="w-100" 
+                    inputStyleClass="w-100 p-3 bg-light rounded-3 border-0"
+                    [showIcon]="true">
+                  </p-calendar>
+                  <small class="text-danger" *ngIf="bookingForm.get('appointmentDate')?.touched && bookingForm.get('appointmentDate')?.invalid">Date is required</small>
+                </div>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <div class="d-flex flex-column gap-2">
+                  <label class="font-semibold text-sm">Preferred Time *</label>
+                  <div class="emr-time-widget d-inline-flex align-items-center gap-2 p-2 rounded-3 border bg-light w-100 justify-content-center">
+                    <!-- Hour -->
+                    <div class="d-flex flex-column align-items-center">
+                      <button type="button" class="btn-time-arrow" (click)="incrementHour()" title="Next Hour">
+                        <i class="pi pi-chevron-up text-success fw-bold"></i>
+                      </button>
+                      <input 
+                        type="text" 
+                        class="time-box-input text-center fw-bold" 
+                        [value]="startHour()" 
+                        (change)="startHour.set($any($event.target).value); onTimeInputChange()" 
+                        maxlength="2" />
+                      <button type="button" class="btn-time-arrow" (click)="decrementHour()" title="Previous Hour">
+                        <i class="pi pi-chevron-down text-success fw-bold"></i>
+                      </button>
+                    </div>
+
+                    <span class="fw-bold fs-4 text-secondary mb-1">:</span>
+
+                    <!-- Minute -->
+                    <div class="d-flex flex-column align-items-center">
+                      <button type="button" class="btn-time-arrow" (click)="incrementMinute()" title="Next Minute">
+                        <i class="pi pi-chevron-up text-success fw-bold"></i>
+                      </button>
+                      <input 
+                        type="text" 
+                        class="time-box-input text-center fw-bold" 
+                        [value]="startMinute()" 
+                        (change)="startMinute.set($any($event.target).value); onTimeInputChange()" 
+                        maxlength="2" />
+                      <button type="button" class="btn-time-arrow" (click)="decrementMinute()" title="Previous Minute">
+                        <i class="pi pi-chevron-down text-success fw-bold"></i>
+                      </button>
+                    </div>
+
+                    <!-- AM/PM Toggle -->
+                    <div class="ms-2 d-flex align-items-center">
+                      <button type="button" class="btn-ampm-toggle px-3 py-2 fw-bold rounded-3 shadow-sm" (click)="toggleAmPm()" [class.is-pm]="startAmPm() === 'PM'">
+                        {{ startAmPm() }}
+                      </button>
+                    </div>
+                  </div>
+                  <small class="text-danger" *ngIf="bookingForm.get('startTime')?.touched && bookingForm.get('startTime')?.invalid">Time is required</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex flex-column gap-2 mb-5">
+              <label class="font-semibold text-sm">Reason for Visit (Optional)</label>
+              <textarea pInputTextarea formControlName="reason" rows="3" placeholder="Briefly describe your symptoms or reason for visit" class="w-100 p-3 bg-light rounded-3 border-0" style="resize: none;"></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <button 
+              type="submit" 
+              class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow d-flex align-items-center justify-content-center gap-2 fs-5"
+              [disabled]="isSubmitting()">
+              <i class="pi pi-calendar-plus" *ngIf="!isSubmitting()"></i>
+              <i class="pi pi-spin pi-spinner" *ngIf="isSubmitting()"></i>
+              <span>{{ isSubmitting() ? 'Sending Request...' : 'Book Appointment' }}</span>
+            </button>
+
+          </form>
+        </p-card>
+
+        <div class="text-center mt-4 text-muted small">
+          &copy; 2026 EMR NextGen. All rights reserved. <br>
+          For emergencies, please call <strong>911</strong> or visit the nearest ER immediately.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
   {
@@ -9,6 +10,23 @@ export const routes: Routes = [
   },
   {
     path: '',
+    loadComponent: () => import('./shared/layouts/public-shell/public-shell.component').then(m => m.PublicShellComponent),
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./features/public/landing-page/landing-page.component').then(m => m.LandingPageComponent),
+        data: { title: 'Welcome to NextGen Hospital' }
+      },
+      {
+        path: 'book-appointment',
+        loadComponent: () =>
+          import('./features/public/patient-booking/patient-booking.component').then(m => m.PatientBookingComponent),
+        data: { title: 'Book Appointment' }
+      }
+    ]
+  },
+  {
+    path: 'app',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./shared/layouts/emr-shell/emr-shell.component').then(m => m.EmrShellComponent),
@@ -46,6 +64,8 @@ export const routes: Routes = [
       },
       {
         path: 'doctors',
+        canActivate: [roleGuard],
+        data: { roles: ['Admin'] },
         children: [
           { path: '', loadComponent: () => import('./features/doctors/doctor-list/doctor-list.component').then(m => m.DoctorListComponent), data: { title: 'Doctors' } },
           { path: 'add', loadComponent: () => import('./features/doctors/doctor-form/doctor-form.component').then(m => m.DoctorFormComponent), data: { title: 'Add Doctor' } },

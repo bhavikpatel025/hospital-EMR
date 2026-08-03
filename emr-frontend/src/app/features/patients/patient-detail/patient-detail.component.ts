@@ -14,6 +14,7 @@ import {
 } from '../../../core/models/patient.model';
 import { AppointmentService } from '../../../core/services/appointment.service';
 import { PatientService } from '../../../core/services/patient.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { VoiceService } from '../../../core/services/voice.service';
@@ -63,6 +64,7 @@ export class PatientDetailComponent implements OnInit {
   private readonly sanitizer = inject(DomSanitizer);
   private readonly dialog = inject(MatDialog);
   private readonly voiceService = inject(VoiceService);
+  protected readonly authService = inject(AuthService);
 
   protected readonly patient = signal<PatientDetailDto | null>(null);
   protected readonly appointments = signal<AppointmentListDto[]>([]);

@@ -1,0 +1,107 @@
+<div class="public-shell-wrapper d-flex flex-column min-vh-100">
+  <!-- Navbar -->
+  <nav class="public-navbar">
+    <div class="container h-100 d-flex align-items-center justify-content-between">
+      
+      <!-- Brand Logo -->
+      <a routerLink="/" class="navbar-brand d-flex align-items-center gap-2 text-decoration-none">
+        <div class="brand-icon">
+          <i class="pi pi-heart-fill"></i>
+        </div>
+        <span class="brand-text">EMR <span class="fw-light">NextGen</span></span>
+      </a>
+
+      <!-- Desktop Links -->
+      <div class="nav-links d-none d-md-flex align-items-center gap-4">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item">Home</a>
+        <a href="/#about" class="nav-item">About Us</a>
+        <a href="/#services" class="nav-item">Services</a>
+        <a href="/#doctors" class="nav-item">Doctors</a>
+      </div>
+
+      <!-- Actions -->
+      <div class="nav-actions d-flex align-items-center gap-3">
+        <a routerLink="/login" class="btn-staff-login d-none d-sm-inline-flex">
+          <i class="pi pi-user"></i> Staff Login
+        </a>
+        <a routerLink="/book-appointment" class="btn-book-nav shadow-sm">
+          Book Appointment
+        </a>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- Main Content (Landing Page or Booking Form) -->
+  <main class="flex-grow-1">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Footer -->
+  <footer class="public-footer">
+    <div class="container py-5">
+      <div class="row g-4">
+        
+        <div class="col-lg-4 col-md-6">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <div class="brand-icon brand-icon--small">
+              <i class="pi pi-heart-fill"></i>
+            </div>
+            <span class="fs-5 fw-bold text-white">EMR <span class="fw-light">NextGen</span></span>
+          </div>
+          <p class="text-white-50 small mb-4">
+            A state-of-the-art healthcare facility providing compassionate care with modern technology. We are dedicated to your well-being, 24 hours a day, 7 days a week.
+          </p>
+          <div class="social-links d-flex gap-3">
+            <a href="#" class="social-btn"><i class="pi pi-facebook"></i></a>
+            <a href="#" class="social-btn"><i class="pi pi-twitter"></i></a>
+            <a href="#" class="social-btn"><i class="pi pi-instagram"></i></a>
+          </div>
+        </div>
+
+        <div class="col-lg-2 col-md-6">
+          <h5 class="text-white mb-3">Quick Links</h5>
+          <ul class="list-unstyled footer-links">
+            <li><a routerLink="/">Home</a></li>
+            <li><a href="/#about">About Us</a></li>
+            <li><a href="/#services">Services</a></li>
+            <li><a href="/#doctors">Top Doctors</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <h5 class="text-white mb-3">Departments</h5>
+          <ul class="list-unstyled footer-links">
+            <li><a href="#">Cardiology</a></li>
+            <li><a href="#">Neurology</a></li>
+            <li><a href="#">Orthopedics</a></li>
+            <li><a href="#">Pediatrics</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <h5 class="text-white mb-3">Contact Us</h5>
+          <ul class="list-unstyled footer-contact">
+            <li>
+              <i class="pi pi-map-marker"></i>
+              <span>123 Health Avenue, Medical District, NY 10001</span>
+            </li>
+            <li>
+              <i class="pi pi-phone"></i>
+              <span>1-800-EMR-NEXT (367-6398)</span>
+            </li>
+            <li>
+              <i class="pi pi-envelope"></i>
+              <span>contact&#64;emrnextgen.com</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+      
+      <div class="footer-bottom mt-5 pt-4 border-top border-secondary text-center text-white-50 small">
+        <p class="mb-0">&copy; {{ currentYear }} EMR NextGen. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+</div>

@@ -1,4 +1,4 @@
-﻿using EMR.Application.DTOs.Appointments;
+using EMR.Application.DTOs.Appointments;
 using EMR.Application.Interfaces;
 using EMR.Domain.Entities;
 using EMR.Domain.Enums;
@@ -11,7 +11,13 @@ namespace EMR.Infrastructure.Repositories;
 public class AppointmentRepository : IAppointmentRepository
 {
     private readonly AppDbContext _context;
-    public AppointmentRepository(AppDbContext context) => _context = context;
+    private readonly ICurrentUserService _currentUserService;
+
+    public AppointmentRepository(AppDbContext context, ICurrentUserService currentUserService)
+    {
+        _context = context;
+        _currentUserService = currentUserService;
+    }
 
     private IQueryable<Appointment> BaseQuery() =>
         _context.Appointments
@@ -21,6 +27,12 @@ public class AppointmentRepository : IAppointmentRepository
     public async Task<PagedResult<Appointment>> GetAllAsync(AppointmentQueryParams q)
     {
         var query = BaseQuery().AsQueryable();
+
+        // RBAC: Data-level security
+        if (_currentUserService.IsDoctor && _currentUserService.DoctorId.HasValue)
+        {
+            query = query.Where(a => a.DoctorId == _currentUserService.DoctorId.Value);
+        }
 
         if (!string.IsNullOrWhiteSpace(q.SearchTerm))
         {

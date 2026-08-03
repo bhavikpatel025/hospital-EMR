@@ -31,13 +31,13 @@
         </div>
       </div>
     </article>
-    <article class="emr-kpi-card">
+    <article class="emr-kpi-card" style="cursor: pointer;" (click)="statusFilter = 0; loadAppointments()">
       <div class="d-flex align-items-start gap-3">
-        <div class="qa-icon-box qa-red" style="width: 44px; height: 44px; font-size: 1.25rem;"><i class="pi pi-times-circle"></i></div>
+        <div class="qa-icon-box qa-yellow" style="width: 44px; height: 44px; font-size: 1.25rem; background-color: #fef3c7; color: #d97706;"><i class="pi pi-exclamation-circle"></i></div>
         <div>
-          <div class="emr-kpi-card__meta mb-1" style="font-weight: 600; color: #334155; font-size: 0.88rem;">Cancelled</div>
-          <div class="emr-kpi-card__value mb-1" style="font-size: 1.85rem; font-weight: 800; color: #0f172a; line-height: 1;">{{ cancelledCount() }}</div>
-          <div style="font-size: 0.78rem; font-weight: 600; color: #e11d48;">Needs rebooking</div>
+          <div class="emr-kpi-card__meta mb-1" style="font-weight: 600; color: #334155; font-size: 0.88rem;">Pending Action</div>
+          <div class="emr-kpi-card__value mb-1" style="font-size: 1.85rem; font-weight: 800; color: #0f172a; line-height: 1;">{{ pendingCount() }}</div>
+          <div style="font-size: 0.78rem; font-weight: 600; color: #d97706;">Needs Confirmation</div>
         </div>
       </div>
     </article>

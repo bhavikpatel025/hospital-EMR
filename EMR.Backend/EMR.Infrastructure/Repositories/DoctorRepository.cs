@@ -1,4 +1,4 @@
-﻿using EMR.Application.DTOs.Doctors;
+using EMR.Application.DTOs.Doctors;
 using EMR.Application.Interfaces;
 using EMR.Domain.Entities;
 using EMR.Infrastructure.Data;
@@ -84,5 +84,10 @@ public class DoctorRepository : IDoctorRepository
             .Where(d => d.IsActive)
             .OrderBy(d => d.User.FullName)
             .ToListAsync();
+    }
+
+    public async Task<Doctor?> GetByUserIdAsync(int userId)
+    {
+        return await _context.Doctors.FirstOrDefaultAsync(d => d.UserId == userId);
     }
 }

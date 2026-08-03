@@ -1,0 +1,244 @@
+.booking-wrapper {
+  position: relative;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  overflow: hidden;
+
+  /* Animated Blobs */
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: 0;
+    opacity: 0.6;
+    animation: float 20s infinite alternate;
+  }
+
+  .blob-1 {
+    width: 400px;
+    height: 400px;
+    background: #0ea5e9; /* Light blue */
+    top: -100px;
+    left: -100px;
+    animation-delay: 0s;
+  }
+
+  .blob-2 {
+    width: 500px;
+    height: 500px;
+    background: #6366f1; /* Indigo */
+    bottom: -150px;
+    right: -100px;
+    animation-delay: -5s;
+  }
+
+  .blob-3 {
+    width: 300px;
+    height: 300px;
+    background: #14b8a6; /* Teal */
+    top: 30%;
+    left: 50%;
+    transform: translateX(-50%);
+    animation-delay: -10s;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.booking-header {
+  .logo-circle {
+    width: 60px;
+    height: 60px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  }
+}
+
+:host ::ng-deep .booking-card {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  
+  .p-card-body {
+    padding: 0 !important;
+  }
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #d1fae5;
+  color: #10b981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);
+}
+
+.avatar-circle {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.bg-primary-subtle {
+  background-color: #e0f2fe;
+}
+
+.fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes float {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Form Overrides */
+:host ::ng-deep {
+  .p-inputtext {
+    border: none;
+    box-shadow: none !important;
+    background: #f1f5f9;
+    padding: 0.75rem 1rem;
+    &:enabled:focus {
+      outline: 2px solid #0ea5e9;
+      outline-offset: -2px;
+    }
+  }
+
+  .p-dropdown {
+    border: none;
+    box-shadow: none !important;
+    background: #f1f5f9;
+    .p-dropdown-label {
+      padding: 0.75rem 1rem;
+    }
+    &:not(.p-disabled).p-focus {
+      outline: 2px solid #0ea5e9;
+      outline-offset: -2px;
+    }
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #0ea5e9, #6366f1);
+    border: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+    }
+    
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Custom Compact Up/Down Time Selector Widget */
+.emr-time-widget {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  padding: 4px 10px !important;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-time-arrow {
+  background: transparent;
+  border: none;
+  padding: 0;
+  height: 11px;
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #16a34a;
+  transition: all 0.15s ease;
+
+  i {
+    font-size: 0.68rem !important;
+    font-weight: 800 !important;
+  }
+
+  &:hover {
+    background: #e2e8f0;
+    border-radius: 3px;
+  }
+}
+
+.time-box-input {
+  width: 36px;
+  height: 22px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  background: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1e293b;
+  outline: none;
+  text-align: center;
+  margin: 1px 0;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
+
+  &:focus {
+    border-color: #0ea5e9;
+    box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.15);
+  }
+}
+
+.btn-ampm-toggle {
+  background: #16a34a;
+  color: #ffffff;
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  min-width: 44px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+
+  &:hover {
+    background: #15803d;
+  }
+
+  &.is-pm {
+    background: #0ea5e9;
+    &:hover {
+      background: #0284c7;
+    }
+  }
+}

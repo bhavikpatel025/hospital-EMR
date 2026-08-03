@@ -1,4 +1,4 @@
-﻿using EMR.Application.DTOs.Patients;
+using EMR.Application.DTOs.Patients;
 using EMR.Domain.Entities;
 using EMR.Shared.Common;
 
@@ -12,4 +12,5 @@ public interface IPatientRepository
     Task UpdateAsync(Patient patient);
     Task<bool> DeleteAsync(int id);
     Task<bool> MobileExistsAsync(string mobile, int? excludePatientId = null);
+    Task<Patient?> GetByMobileAsync(string mobile);
 }
