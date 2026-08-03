@@ -126,15 +126,15 @@ export class AppointmentListComponent implements OnInit {
   }
 
   onAdd(): void {
-    this.router.navigate(['/appointments/add']);
+    this.router.navigate(['/app/appointments/add']);
   }
 
   onCalendar(): void {
-    this.router.navigate(['/appointments/calendar']);
+    this.router.navigate(['/app/appointments/calendar']);
   }
 
   onEdit(id: number): void {
-    this.router.navigate(['/appointments/edit', id]);
+    this.router.navigate(['/app/appointments/edit', id]);
   }
 
   onChangeStatus(id: number, statusValue: number): void {

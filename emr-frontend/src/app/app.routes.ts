@@ -1,12 +1,18 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
+import { PatientGuard } from './core/guards/patient.guard';
 
 export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () =>
       import('./features/auth/login/login.component').then(m => m.LoginComponent)
+  },
+  {
+    path: 'patient-login',
+    loadComponent: () =>
+      import('./features/auth/patient-login/patient-login.component').then(m => m.PatientLoginComponent)
   },
   {
     path: '',
@@ -22,6 +28,31 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/public/patient-booking/patient-booking.component').then(m => m.PatientBookingComponent),
         data: { title: 'Book Appointment' }
+      }
+    ]
+  },
+  {
+    path: 'patient',
+    canActivate: [PatientGuard],
+    loadComponent: () =>
+      import('./shared/layouts/patient-shell/patient-shell.component').then(m => m.PatientShellComponent),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/patient-portal/patient-dashboard/patient-dashboard.component').then(m => m.PatientDashboardComponent),
+        data: { title: 'Patient Dashboard' }
+      },
+      {
+        path: 'records',
+        loadComponent: () =>
+          import('./features/patient-portal/patient-records/patient-records.component').then(m => m.PatientRecordsComponent),
+        data: { title: 'My Health Records' }
+      },
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
       }
     ]
   },

@@ -772,3 +772,15 @@ textarea,
   overflow: visible !important;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
 }
+
+/* Fix Bootstrap overriding PrimeNG menu link styles */
+.p-menuitem-link, .p-component a {
+  text-decoration: none !important;
+}
+.p-menuitem-link .p-menuitem-text,
+.p-menuitem-link .p-menuitem-icon {
+  color: inherit;
+}
+.p-menu .p-menuitem-link:hover {
+  background-color: rgba(17, 157, 164, 0.08) !important;
+}

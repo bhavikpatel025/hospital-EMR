@@ -10,6 +10,7 @@ namespace EMR.Application.Interfaces
     public interface IAuthService
     {
         Task<LoginResponseDto?> LoginAsync(LoginRequestDto request);
+        Task<PatientLoginResponseDto?> PatientLoginAsync(PatientLoginRequestDto request);
         Task<LoginResponseDto?> RefreshTokenAsync(TokenRefreshRequestDto request);
     }
 }

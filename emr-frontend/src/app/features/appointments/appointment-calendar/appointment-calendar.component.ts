@@ -76,11 +76,11 @@ export class AppointmentCalendarComponent implements OnInit {
   }
 
   onList(): void {
-    this.router.navigate(['/appointments']);
+    this.router.navigate(['/app/appointments']);
   }
 
   onAdd(): void {
-    this.router.navigate(['/appointments/add']);
+    this.router.navigate(['/app/appointments/add']);
   }
 
   onDoctorFilterChange(): void {
@@ -140,7 +140,7 @@ export class AppointmentCalendarComponent implements OnInit {
 
   onEventClick(arg: EventClickArg): void {
     const appointmentId = arg.event.id;
-    this.router.navigate(['/appointments/edit', appointmentId]);
+    this.router.navigate(['/app/appointments/edit', appointmentId]);
   }
 
   onEventDrop(arg: EventDropArg): void {

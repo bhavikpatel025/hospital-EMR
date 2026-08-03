@@ -187,7 +187,7 @@ export class PatientDetailComponent implements OnInit {
   ngOnInit(): void {
     const patientId = Number(this.route.snapshot.paramMap.get('id'));
     if (!patientId) {
-      this.router.navigate(['/patients']);
+      this.router.navigate(['/app/patients']);
       return;
     }
 
@@ -211,7 +211,7 @@ export class PatientDetailComponent implements OnInit {
       },
       error: () => {
         this.notify.error('Unable to load patient details.');
-        this.router.navigate(['/patients']);
+          this.router.navigate(['/app/patients']);
       }
     });
   }
@@ -526,7 +526,7 @@ export class PatientDetailComponent implements OnInit {
   // ==================================================================================
 
   protected backToList(): void {
-    this.router.navigate(['/patients']);
+    this.router.navigate(['/app/patients']);
   }
 
   protected statusClass(isActive: boolean): string {

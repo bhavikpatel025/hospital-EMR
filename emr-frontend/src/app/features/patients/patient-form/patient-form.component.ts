@@ -81,7 +81,7 @@ export class PatientFormComponent implements OnInit {
       this.patientService.update(this.patientId, updateDto as any).subscribe({
         next: () => {
           this.notify.success('Patient updated successfully');
-          this.router.navigate(['/patients']);
+          this.router.navigate(['/app/patients']);
         },
         error: (err) => this.handleError(err)
       });
@@ -89,7 +89,7 @@ export class PatientFormComponent implements OnInit {
       this.patientService.create(formValue as any).subscribe({
         next: () => {
           this.notify.success('Patient added successfully');
-          this.router.navigate(['/patients']);
+          this.router.navigate(['/app/patients']);
         },
         error: (err) => this.handleError(err)
       });
@@ -102,7 +102,7 @@ export class PatientFormComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/patients']);
+    this.router.navigate(['/app/patients']);
   }
 
   // Getters for validation in HTML

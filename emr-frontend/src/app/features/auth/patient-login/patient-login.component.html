@@ -1,0 +1,78 @@
+<div class="emr-content-area min-vh-100 d-flex align-items-center justify-content-center">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-5">
+        <div class="emr-card border-0 p-0 overflow-hidden">
+          
+          <div class="emr-header d-flex flex-column align-items-center p-4" style="background: linear-gradient(135deg, var(--emr-primary), var(--emr-primary-dark));">
+            <div class="bg-white rounded-circle d-flex align-items-center justify-content-center mb-3 shadow-sm" style="width: 56px; height: 56px; color: var(--emr-primary);">
+              <i class="pi pi-shield" style="font-size: 1.8rem;"></i>
+            </div>
+            <h4 class="mb-1 fw-bold text-white">Patient Portal</h4>
+            <p class="mb-0 text-white-50">Access your health records and appointments</p>
+          </div>
+
+          <div class="p-4 p-md-5">
+            <!-- Step 1: Mobile Number -->
+            <ng-container *ngIf="step() === 1">
+              <form [formGroup]="mobileForm" (ngSubmit)="requestOtp()">
+                <div class="emr-form-group mb-4 mt-3">
+                  <p-floatlabel variant="in">
+                    <input pInputText id="mobileNumber" type="text" formControlName="mobile" class="w-100" maxlength="10" />
+                    <label for="mobileNumber">Mobile Number (10 digits)</label>
+                  </p-floatlabel>
+                  <div class="text-danger small mt-1" *ngIf="mobile?.invalid && mobile?.touched">
+                    Please enter a valid 10-digit mobile number.
+                  </div>
+                </div>
+
+                <button type="submit" class="emr-button w-100 fw-medium d-flex justify-content-center align-items-center" [disabled]="loading()">
+                  <span *ngIf="!loading()">Get OTP</span>
+                  <span *ngIf="loading()"><i class="pi pi-spin pi-spinner me-2"></i> Sending...</span>
+                </button>
+              </form>
+            </ng-container>
+
+            <!-- Step 2: OTP Verification -->
+            <ng-container *ngIf="step() === 2">
+              <div class="text-center mb-4">
+                <div class="badge mb-2 rounded-pill px-3 py-2" style="background: rgba(17, 157, 164, 0.1); color: var(--emr-primary);">
+                  OTP Sent to +91 {{ mobile?.value }}
+                </div>
+                <p class="small" style="color: var(--emr-text-soft);">Enter the 6-digit code sent to your phone</p>
+              </div>
+
+              <form [formGroup]="otpForm" (ngSubmit)="verifyOtp()">
+                <div class="emr-form-group mb-4 text-center d-flex flex-column align-items-center">
+                  <p-inputotp formControlName="otp" [length]="6" styleClass="mb-2"></p-inputotp>
+                  <div class="text-danger small mt-1" *ngIf="otp?.invalid && otp?.touched">
+                    Please enter a valid 6-digit OTP.
+                  </div>
+                </div>
+
+                <div class="alert alert-danger p-2 small text-center" *ngIf="errorMsg()">
+                  {{ errorMsg() }}
+                </div>
+
+                <button type="submit" class="emr-button w-100 fw-medium d-flex justify-content-center align-items-center" [disabled]="loading()">
+                  <span *ngIf="!loading()">Verify & Login</span>
+                  <span *ngIf="loading()"><i class="pi pi-spin pi-spinner me-2"></i> Verifying...</span>
+                </button>
+                
+                <div class="text-center mt-3">
+                  <a href="#" class="text-decoration-none small" style="color: var(--emr-primary);" (click)="$event.preventDefault(); step.set(1)">Change Mobile Number</a>
+                </div>
+              </form>
+            </ng-container>
+            
+          </div>
+          
+          <div class="card-footer bg-light border-0 text-center p-3">
+            <a routerLink="/" class="text-decoration-none small" style="color: var(--emr-text-soft);"><i class="pi pi-arrow-left me-1"></i> Back to Home</a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

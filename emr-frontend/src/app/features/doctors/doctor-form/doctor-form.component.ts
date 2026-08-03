@@ -98,7 +98,7 @@ export class DoctorFormComponent implements OnInit {
       this.doctorService.update(this.doctorId, updateDto as any).subscribe({
         next: () => {
           this.notify.success('Doctor updated successfully');
-          this.router.navigate(['/doctors']);
+          this.router.navigate(['/app/doctors']);
         },
         error: (err) => this.handleError(err)
       });
@@ -106,7 +106,7 @@ export class DoctorFormComponent implements OnInit {
       this.doctorService.create(formValue as any).subscribe({
         next: () => {
           this.notify.success('Doctor added successfully');
-          this.router.navigate(['/doctors']);
+          this.router.navigate(['/app/doctors']);
         },
         error: (err) => this.handleError(err)
       });
@@ -119,7 +119,7 @@ export class DoctorFormComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/doctors']);
+    this.router.navigate(['/app/doctors']);
   }
 
   get fullName() { return this.doctorForm.get('fullName'); }

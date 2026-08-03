@@ -286,7 +286,7 @@ export class AppointmentFormComponent implements OnInit {
       this.appointmentService.update(this.appointmentId, { ...payload, appointmentId: this.appointmentId }).subscribe({
         next: () => {
           this.notify.success('Appointment updated successfully');
-          this.router.navigate(['/appointments']);
+          this.router.navigate(['/app/appointments']);
         },
         error: (err) => this.handleError(err)
       });
@@ -294,7 +294,7 @@ export class AppointmentFormComponent implements OnInit {
       this.appointmentService.create(payload).subscribe({
         next: () => {
           this.notify.success('Appointment created successfully');
-          this.router.navigate(['/appointments']);
+          this.router.navigate(['/app/appointments']);
         },
         error: (err) => this.handleError(err)
       });
@@ -314,7 +314,7 @@ export class AppointmentFormComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/appointments']);
+    this.router.navigate(['/app/appointments']);
   }
 
   displayPatientName = (patient: PatientListDto): string => patient?.fullName || '';

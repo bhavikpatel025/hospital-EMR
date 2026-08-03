@@ -100,11 +100,11 @@ export class DoctorListComponent implements OnInit {
   }
 
   onAdd(): void {
-    this.router.navigate(['/doctors/add']);
+    this.router.navigate(['/app/doctors/add']);
   }
 
   onEdit(id: number): void {
-    this.router.navigate(['/doctors/edit', id]);
+    this.router.navigate(['/app/doctors/edit', id]);
   }
 
   onDelete(id: number, name: string): void {

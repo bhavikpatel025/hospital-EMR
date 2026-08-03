@@ -29,6 +29,8 @@
     "@primeng/themes": "^19.1.4",
     "bootstrap": "^5.3.8",
     "chart.js": "^4.5.1",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "primeicons": "^7.0.0",
     "primeng": "^19.1.4",
     "rxjs": "~7.8.0",

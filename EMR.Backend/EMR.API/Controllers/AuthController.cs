@@ -22,6 +22,17 @@ public class AuthController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPost("patient-login")]
+    public async Task<IActionResult> PatientLogin([FromBody] PatientLoginRequestDto request)
+    {
+        var result = await _authService.PatientLoginAsync(request);
+
+        if (result is null)
+            return Unauthorized(new { message = "Invalid mobile number or OTP" });
+
+        return Ok(result);
+    }
+
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken([FromBody] TokenRefreshRequestDto request)
     {

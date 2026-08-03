@@ -106,15 +106,15 @@ export class PatientListComponent implements OnInit {
   }
 
   onAdd(): void {
-    this.router.navigate(['/patients/add']);
+    this.router.navigate(['/app/patients/add']);
   }
 
   onEdit(id: number): void {
-    this.router.navigate(['/patients/edit', id]);
+    this.router.navigate(['/app/patients/edit', id]);
   }
 
   onView(id: number): void {
-    this.router.navigate(['/patients/view', id]);
+    this.router.navigate(['/app/patients/view', id]);
   }
 
   onDelete(id: number, name: string): void {

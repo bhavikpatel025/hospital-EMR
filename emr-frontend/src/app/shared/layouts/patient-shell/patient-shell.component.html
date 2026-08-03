@@ -1,0 +1,71 @@
+<div class="emr-content-area min-vh-100 d-flex flex-column">
+  
+  <!-- Modern Top Navbar -->
+  <nav class="bg-white border-bottom px-3 py-2 sticky-top" style="z-index: 1000; box-shadow: var(--emr-shadow);">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+      
+      <!-- Left: Brand Logo -->
+      <a class="d-flex align-items-center gap-2 text-decoration-none" routerLink="/patient/dashboard">
+        <div class="d-flex align-items-center justify-content-center text-white shadow-sm" style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--emr-primary), var(--emr-primary-dark)); font-size: 1.25rem;">
+          <i class="pi pi-heart-fill"></i>
+        </div>
+        <span style="font-size: 1.35rem; font-weight: 800; letter-spacing: -0.03em; color: var(--emr-title);">EMR <span class="fw-normal" style="color: var(--emr-text-soft);">NextGen</span></span>
+      </a>
+
+      <!-- Middle: Desktop Navigation Links -->
+      <div class="d-none d-md-flex align-items-center gap-4 mx-auto">
+        <a routerLink="/patient/dashboard" routerLinkActive="fw-bold" [routerLinkActiveOptions]="{exact: true}" class="text-decoration-none" style="color: var(--emr-text-soft); font-size: 1.05rem; transition: color 0.2s;" onmouseover="this.style.color='var(--emr-primary)'" onmouseout="this.style.color='var(--emr-text-soft)'">Dashboard</a>
+        
+        <a routerLink="/patient/records" routerLinkActive="fw-bold" class="text-decoration-none" style="color: var(--emr-text-soft); font-size: 1.05rem; transition: color 0.2s;" onmouseover="this.style.color='var(--emr-primary)'" onmouseout="this.style.color='var(--emr-text-soft)'">My Records</a>
+        
+        <a routerLink="/book-appointment" routerLinkActive="fw-bold" class="text-decoration-none" style="color: var(--emr-text-soft); font-size: 1.05rem; transition: color 0.2s;" onmouseover="this.style.color='var(--emr-primary)'" onmouseout="this.style.color='var(--emr-text-soft)'">Book Appointment</a>
+      </div>
+
+      <!-- Mobile Toggle -->
+      <button class="border-0 shadow-none d-md-none bg-transparent" type="button" (click)="toggleMenu()">
+        <i class="pi pi-bars fs-4" style="color: var(--emr-text-soft);"></i>
+      </button>
+
+      <!-- Right: User Profile -->
+      <div class="d-none d-sm-flex align-items-center gap-3 text-nowrap" style="cursor: pointer;" (click)="profileMenu.toggle($event)">
+        <div class="text-end">
+          <div class="small mb-0 lh-1" style="color: var(--emr-text-soft);">Welcome back,</div>
+          <div class="fw-bold lh-1 mt-1 text-truncate" style="color: var(--emr-title); max-width: 150px;">{{ patientName }}</div>
+        </div>
+        <p-avatar [label]="patientName.charAt(0)" shape="circle" size="large" [style]="{'background-color': 'var(--emr-primary)', 'color': '#ffffff'}"></p-avatar>
+        <i class="pi pi-angle-down" style="color: var(--emr-text-soft);"></i>
+      </div>
+      <p-menu #profileMenu [model]="userMenuItems" [popup]="true"></p-menu>
+    </div>
+    
+    <!-- Mobile Navigation Links (Collapsible) -->
+    <div class="d-md-none mt-3" *ngIf="isMenuOpen">
+      <div class="d-flex flex-column gap-3 pb-2 border-top pt-3">
+        <a routerLink="/patient/dashboard" class="text-decoration-none" style="color: var(--emr-text-soft);" (click)="isMenuOpen = false">Dashboard</a>
+        <a routerLink="/patient/records" class="text-decoration-none" style="color: var(--emr-text-soft);" (click)="isMenuOpen = false">My Records</a>
+        <a routerLink="/book-appointment" class="text-decoration-none" style="color: var(--emr-text-soft);" (click)="isMenuOpen = false">Book Appointment</a>
+        
+        <div class="border-top pt-3 d-flex align-items-center gap-3 mt-1" (click)="profileMenu.toggle($event)">
+           <p-avatar [label]="patientName.charAt(0)" shape="circle" [style]="{'background-color': 'var(--emr-primary)', 'color': '#ffffff'}"></p-avatar>
+           <div>
+             <div class="small mb-0 lh-1" style="color: var(--emr-text-soft);">Welcome back,</div>
+             <div class="fw-bold lh-1 mt-1" style="color: var(--emr-title);">{{ patientName }}</div>
+           </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content Area -->
+  <main class="flex-grow-1 p-3 p-md-4">
+    <router-outlet></router-outlet>
+  </main>
+  
+  <!-- Footer -->
+  <footer class="bg-white border-top py-4 mt-auto">
+    <div class="container text-center">
+      <p class="small mb-0" style="color: var(--emr-text-soft);">&copy; 2026 EMR NextGen Medical Center. All rights reserved.</p>
+    </div>
+  </footer>
+
+</div>

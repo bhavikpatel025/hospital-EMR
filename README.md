@@ -62,6 +62,17 @@ An advanced, highly responsive, and AI-augmented **Hospital Electronic Medical R
 
 ![Past Visits Feed](screenshots/past-visits.png)
 
+### 🌐 8. Premium Public Web Portal (New)
+* **Modern Landing Interface:** A clean, high-conversion public landing page designed to welcome patients and provide quick access to hospital services and doctor directories.
+* **Unified Login Navigation:** Features a sleek, hover-responsive PrimeNG dropdown menu that intelligently groups "Patient Portal" and "Staff Login" options for a clutter-free header.
+* **Mobile-First Responsive Design:** The public shell collapses gracefully on smaller screens, ensuring seamless appointment booking flows from mobile devices.
+
+![Public Web Portal](screenshots/public-portal.png)
+
+### 📂 9. Patient Digital Health Records
+* **Modern Medical Timeline:** Patients have access to a clean, left-aligned chronological timeline of their complete medical history, including consultations, lab reports, and imaging.
+* **Instant Document Downloads:** Built-in PDF generation and secure document retrieval allowing patients to instantly download their medical prescriptions and lab reports with a single click.
+
 ---
 
 ## 📱 Core Modules Overview

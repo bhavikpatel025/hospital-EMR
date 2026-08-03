@@ -19,6 +19,22 @@ export class AuthService {
     );
   }
 
+  patientLogin(payload: { mobile: string, otp: string }): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/patient-login`, payload).pipe(
+      tap(res => {
+        localStorage.setItem('token', res.token);
+        // Map Patient response to the expected user format for frontend
+        const patientUser = {
+          userId: res.patientId,
+          fullName: res.fullName,
+          role: 'Patient',
+          email: res.mobile
+        };
+        localStorage.setItem('user', JSON.stringify(patientUser));
+      })
+    );
+  }
+
   refreshTokenSession(): Observable<LoginResponse> {
     const accessToken = this.getToken() || '';
     const refreshToken = this.getRefreshToken() || '';
