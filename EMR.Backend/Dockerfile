@@ -10,6 +10,7 @@ COPY EMR.API/*.csproj EMR.API/
 COPY EMR.Application/*.csproj EMR.Application/
 COPY EMR.Domain/*.csproj EMR.Domain/
 COPY EMR.Infrastructure/*.csproj EMR.Infrastructure/
+COPY EMR.Shared/*.csproj EMR.Shared/
 RUN dotnet restore
 
 # Copy the remaining files and build the app
