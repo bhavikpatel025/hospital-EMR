@@ -29,7 +29,8 @@ export class EmrShellComponent {
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly pageTitle = signal('Hospital Dashboard');
-  protected readonly sidebarOpen = signal(false);
+  protected readonly sidebarCollapsed = signal(false);
+  protected readonly sidebarOpenMobile = signal(false);
   protected readonly user = this.authService.getUser();
   protected readonly todayLabel = new Intl.DateTimeFormat('en-IN', {
     day: '2-digit',
@@ -59,12 +60,16 @@ export class EmrShellComponent {
   }
 
   protected toggleSidebar(): void {
-    this.sidebarOpen.update(current => !current);
+    if (typeof window !== 'undefined' && window.innerWidth <= 960) {
+      this.sidebarOpenMobile.update(current => !current);
+    } else {
+      this.sidebarCollapsed.update(current => !current);
+    }
   }
 
   protected closeSidebar(): void {
     if (typeof window !== 'undefined' && window.innerWidth <= 960) {
-      this.sidebarOpen.set(false);
+      this.sidebarOpenMobile.set(false);
     }
   }
 

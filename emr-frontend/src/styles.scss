@@ -60,6 +60,7 @@ textarea,
   display: grid;
   grid-template-columns: 220px minmax(0, 1fr);
   background: #f4f6f9;
+  transition: grid-template-columns 0.3s ease;
 }
 
 .emr-sidebar {
@@ -704,11 +705,11 @@ textarea,
     transition: transform 180ms ease;
   }
 
-  .emr-shell.sidebar-open .emr-sidebar {
+  .emr-shell.sidebar-open-mobile .emr-sidebar {
     transform: translateX(0);
   }
 
-  .emr-shell.sidebar-open .emr-shell__overlay {
+  .emr-shell.sidebar-open-mobile .emr-shell__overlay {
     display: block;
     position: fixed;
     inset: 0;
@@ -783,4 +784,30 @@ textarea,
 }
 .p-menu .p-menuitem-link:hover {
   background-color: rgba(17, 157, 164, 0.08) !important;
+}
+
+/* Collapsed Sidebar Styles for Desktop */
+.emr-shell.sidebar-collapsed {
+  grid-template-columns: 76px minmax(0, 1fr);
+}
+
+.emr-shell.sidebar-collapsed .emr-sidebar {
+  padding: 18px 10px;
+  align-items: center;
+}
+
+.emr-shell.sidebar-collapsed .emr-brand {
+  padding: 6px 0;
+  justify-content: center;
+}
+
+.emr-shell.sidebar-collapsed .emr-logo-text,
+.emr-shell.sidebar-collapsed .emr-nav-label {
+  display: none;
+}
+
+.emr-shell.sidebar-collapsed .emr-nav__item,
+.emr-shell.sidebar-collapsed .emr-help-card {
+  justify-content: center;
+  padding: 10px;
 }

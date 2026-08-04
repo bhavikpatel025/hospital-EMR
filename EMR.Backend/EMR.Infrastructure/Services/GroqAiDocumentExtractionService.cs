@@ -302,4 +302,75 @@ Required JSON Schema:
 
         return fallback;
     }
+
+    public async Task<string> ExplainDocumentAsync(string rawText, string language)
+    {
+        if (string.IsNullOrWhiteSpace(rawText))
+        {
+            return "No text available to explain.";
+        }
+
+        try
+        {
+            string apiKey = _configuration["GroqSettings:ApiKey"] ?? Environment.GetEnvironmentVariable("GROQ_API_KEY") ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(apiKey) || apiKey.Equals("YOUR_GROQ_API_KEY_HERE", StringComparison.OrdinalIgnoreCase))
+            {
+                return "AI Explanation unavailable (No API Key).";
+            }
+
+            string endpoint = "https://api.groq.com/openai/v1/chat/completions";
+            string model = _configuration["GroqSettings:Model"] ?? "llama-3.3-70b-versatile";
+
+            if (apiKey.Trim().StartsWith("xai-", StringComparison.OrdinalIgnoreCase) || model.Contains("grok", StringComparison.OrdinalIgnoreCase))
+            {
+                endpoint = "https://api.x.ai/v1/chat/completions";
+                if (!model.Contains("grok", StringComparison.OrdinalIgnoreCase)) model = "grok-beta";
+            }
+
+            var client = _httpClientFactory.CreateClient();
+            client.Timeout = TimeSpan.FromSeconds(25);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey.Trim());
+
+            string systemPrompt = $@"You are a friendly, empathetic AI assistant for a hospital. The patient reading this has no medical background.
+Here is their medical document data:
+{rawText}
+
+Please explain what this means in simple terms strictly in {language} language.
+Highlight if anything is slightly abnormal and what it generally means.
+Keep it reassuring, strictly 3 short bullet points. Do NOT give final medical advice or recommend medications.
+Format your output in clean text with bullet points, no markdown bolding if not needed, just plain text.";
+
+            var payload = new
+            {
+                model = model,
+                messages = new[]
+                {
+                    new { role = "user", content = systemPrompt }
+                },
+                temperature = 0.2
+            };
+
+            var jsonContent = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync(endpoint, jsonContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseString = await response.Content.ReadAsStringAsync();
+                using var doc = JsonDocument.Parse(responseString);
+                var content = doc.RootElement.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString();
+                return content?.Trim() ?? "Failed to generate explanation.";
+            }
+            else
+            {
+                var err = await response.Content.ReadAsStringAsync();
+                _logger.LogError("Groq Explanation API returned status {Status}: {Error}", response.StatusCode, err);
+                return "Failed to generate explanation due to an API error.";
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception occurred during AI explanation generation");
+            return "An error occurred while generating the explanation.";
+        }
+    }
 }

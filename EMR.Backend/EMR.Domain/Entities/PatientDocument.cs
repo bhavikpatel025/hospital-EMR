@@ -10,6 +10,9 @@ public class PatientDocument
     public string FileName { get; set; } = string.Empty;
     public string FilePath { get; set; } = string.Empty;
     public string RawTextSummary { get; set; } = string.Empty;
+    public string AiExplanationEnglish { get; set; } = string.Empty;
+    public string AiExplanationHindi { get; set; } = string.Empty;
+    public string AiExplanationGujarati { get; set; } = string.Empty;
     public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
 
     public virtual Patient? Patient { get; set; }

@@ -8,10 +8,15 @@ import { PrescriptionService } from '../../../core/services/prescription.service
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
+import { FormsModule } from '@angular/forms';
+import { DialogModule } from 'primeng/dialog';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+
 @Component({
   selector: 'app-patient-records',
   standalone: true,
-  imports: [CommonModule, TimelineModule, CardModule],
+  imports: [CommonModule, TimelineModule, CardModule, DialogModule, SelectButtonModule, FormsModule, ProgressSpinnerModule],
   templateUrl: './patient-records.component.html',
   styleUrl: './patient-records.component.scss'
 })
@@ -23,6 +28,19 @@ export class PatientRecordsComponent implements OnInit {
   events: TimelineEventDto[] = [];
   loading = true;
   downloadingEventId: string | null = null; // Track which event is downloading
+
+  // AI Explainer State
+  showExplainModal = false;
+  explainLoading = false;
+  explainContent = '';
+  explainDocumentId: number | null = null;
+  explainType: string = 'DOC';
+  explainLanguage = 'English';
+  languageOptions = [
+    { label: 'Eng', value: 'English' },
+    { label: 'हिन्दी', value: 'Hindi' },
+    { label: 'ગુજ', value: 'Gujarati' }
+  ];
 
   ngOnInit() {
     this.fetchRealTimeline();
@@ -67,6 +85,48 @@ export class PatientRecordsComponent implements OnInit {
       // For Lab Reports or other documents without a specific file endpoint currently
       alert('This document type is not available for download yet.');
     }
+  }
+
+  // --- AI Explainer Logic ---
+  openExplainModal(event: TimelineEventDto) {
+    if (event.eventId.startsWith('DOC_')) {
+      this.explainDocumentId = parseInt(event.eventId.replace('DOC_', ''), 10);
+      this.explainType = 'DOC';
+    } else if (event.eventId.startsWith('RX_')) {
+      this.explainDocumentId = parseInt(event.eventId.replace('RX_', ''), 10);
+      this.explainType = 'RX';
+    } else if (event.eventId.includes('_')) {
+       this.explainDocumentId = parseInt(event.eventId.split('_')[1], 10);
+       this.explainType = event.eventId.split('_')[0].toUpperCase();
+    }
+    
+    this.showExplainModal = true;
+    this.explainContent = '';
+    this.explainLanguage = 'English';
+    this.fetchExplanation();
+  }
+
+  onLanguageChange() {
+    this.fetchExplanation();
+  }
+
+  private fetchExplanation() {
+    if (!this.explainDocumentId) return;
+    
+    this.explainLoading = true;
+    this.explainContent = '';
+    
+    this.timelineService.explainDocument(this.explainDocumentId, this.explainLanguage, this.explainType).subscribe({
+      next: (res) => {
+        this.explainContent = res.explanation;
+        this.explainLoading = false;
+      },
+      error: (err) => {
+        console.error('Failed to get AI explanation', err);
+        this.explainContent = 'Failed to load AI explanation. Please try again later.';
+        this.explainLoading = false;
+      }
+    });
   }
 
   private generatePrescriptionPDF(rxDetails: any, event: TimelineEventDto) {

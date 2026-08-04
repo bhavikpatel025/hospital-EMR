@@ -42,6 +42,8 @@ builder.Services.AddScoped<IPatientTimelineRepository, PatientTimelineRepository
 builder.Services.AddScoped<IPatientTimelineService, PatientTimelineService>();
 builder.Services.AddScoped<ITranslationRepository, TranslationRepository>();
 builder.Services.AddScoped<ITranslationService, TranslationService>();
+builder.Services.AddScoped<IPatientDocumentRepository, PatientDocumentRepository>();
+builder.Services.AddScoped<IPatientDocumentService, PatientDocumentService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();

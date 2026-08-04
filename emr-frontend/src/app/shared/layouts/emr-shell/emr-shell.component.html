@@ -1,10 +1,10 @@
-<div class="emr-shell" [class.sidebar-open]="sidebarOpen()">
+<div class="emr-shell" [class.sidebar-open-mobile]="sidebarOpenMobile()" [class.sidebar-collapsed]="sidebarCollapsed()">
   <aside class="emr-sidebar">
     <div class="emr-brand d-flex align-items-center gap-3 px-2 py-2 border-bottom mb-2" style="border-color: #f1f5f9 !important;">
       <div class="emr-logo-box d-flex align-items-center justify-content-center text-white shadow-sm" style="width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #0d9488, #0284c7); font-size: 1.35rem;">
         <i class="pi pi-heart-fill"></i>
       </div>
-      <div>
+      <div class="emr-logo-text">
         <strong style="font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; color: #0f172a;">EMR</strong>
       </div>
     </div>
@@ -20,7 +20,7 @@
         <div class="qa-icon-box" [ngClass]="item.qaColor || 'qa-blue'" style="width: 32px; height: 32px; font-size: 1rem;">
           <i [class]="item.primeIcon || 'pi pi-check'"></i>
         </div>
-        <span class="fw-semibold">{{ item.label }}</span>
+        <span class="fw-semibold emr-nav-label">{{ item.label }}</span>
       </a>
     </nav>
 
@@ -28,7 +28,7 @@
       <div class="qa-icon-box qa-red" style="width: 32px; height: 32px; font-size: 1rem;">
         <i class="pi pi-sign-out"></i>
       </div>
-      <span>Sign out</span>
+      <span class="emr-nav-label">Sign out</span>
     </button>
   </aside>
 
@@ -46,10 +46,10 @@
         </div>
       </div>
 
-      <div class="emr-topbar__search">
-        <i class="pi pi-search me-2" style="color: var(--emr-text-soft, #64748b); font-size: 1.1rem;"></i>
-        <input type="text" placeholder="Search patient (name, UHID, mobile)" />
-      </div>
+        <!-- <div class="emr-topbar__search">
+          <i class="pi pi-search me-2" style="color: var(--emr-text-soft, #64748b); font-size: 1.1rem;"></i>
+          <input type="text" placeholder="Search patient (name, UHID, mobile)" />
+        </div> -->
 
       <div class="emr-topbar__right d-flex align-items-center gap-3">
         <div class="emr-date-chip d-flex align-items-center gap-2 px-3 py-1 shadow-2xs">

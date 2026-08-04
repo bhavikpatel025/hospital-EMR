@@ -23,6 +23,10 @@ namespace EMR.Domain.Entities
         
         public string? NextFollowUpDate { get; set; }
 
+        public string AiExplanationEnglish { get; set; } = string.Empty;
+        public string AiExplanationHindi { get; set; } = string.Empty;
+        public string AiExplanationGujarati { get; set; } = string.Empty;
+
         public ICollection<PrescribedMedication> Medications { get; set; } = new List<PrescribedMedication>();
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

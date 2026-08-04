@@ -24,4 +24,8 @@ export class PatientTimelineService {
   getTimeline(patientId: number): Observable<TimelineEventDto[]> {
     return this.http.get<TimelineEventDto[]>(`${this.apiUrl}/${patientId}`);
   }
+
+  explainDocument(documentId: number, language: string = 'English', type: string = 'DOC'): Observable<{explanation: string, cached: boolean}> {
+    return this.http.get<{explanation: string, cached: boolean}>(`${environment.apiUrl}/documents/${documentId}/explain?type=${type}&language=${language}`);
+  }
 }

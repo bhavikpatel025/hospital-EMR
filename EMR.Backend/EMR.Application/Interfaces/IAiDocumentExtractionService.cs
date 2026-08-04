@@ -7,4 +7,5 @@ public interface IAiDocumentExtractionService
 {
     Task<AiExtractedDocumentDto> ExtractStructuredDataAsync(string rawOcrText, string fileName, string category);
     Task<AiExtractedDocumentDto> ExtractFromHandwrittenImageAsync(string base64Image, string fileName, string category);
+    Task<string> ExplainDocumentAsync(string rawText, string language);
 }
