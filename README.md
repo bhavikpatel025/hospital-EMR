@@ -14,12 +14,30 @@ An advanced, highly responsive, and AI-augmented **Hospital Electronic Medical R
 
 ## ✨ Key Highlights & Enterprise Features
 
-### 🔐 1. Authentication & Role-Based Security
+### 🌐 1. Premium Public Web Portal
+* **Modern Landing Interface:** A clean, high-conversion public landing page designed to welcome patients and provide quick access to hospital services and doctor directories.
+* **Unified Login Navigation:** Features a sleek, hover-responsive PrimeNG dropdown menu that intelligently groups "Patient Portal" and "Staff Login" options for a clutter-free header.
+* **Mobile-First Responsive Design:** The public shell collapses gracefully on smaller screens, ensuring seamless appointment booking flows from mobile devices.
+
+![Public Web Portal](screenshots/public-portal.png)
+
+### 🔐 2. Authentication & Role-Based Security
 * **JWT Bearer Token Security:** Stateless, secure token-based authentication with salted password hashing.
 * **Angular Route Guards (`AuthGuard`):** Strict frontend route protection ensuring unauthorized users are automatically redirected to the login portal.
 * **Global HTTP Error & Auth Interceptor (`error.interceptor.ts`):** Automatically catches expired sessions (`401 Unauthorized`), server errors (`500`), and network disconnects, alerting users via sleek PrimeNG Toast notifications (`p-toast`).
 
-### 🧑‍⚕️ 2. Comprehensive Patient Profile & AI Summarization
+### 📂 3. Patient Digital Health Records (Patient Portal)
+* **Modern Medical Timeline:** Patients have access to a clean, left-aligned chronological timeline of their complete medical history, including consultations, lab reports, and imaging.
+* **Instant Document Downloads:** Built-in PDF generation and secure document retrieval allowing patients to instantly download their medical prescriptions and lab reports with a single click.
+
+### 📊 4. Advanced Clinical Dashboard (Hospital Admin)
+* **Real-time Analytics:** Visual representation of hospital metrics using PrimeNG Charts (`Chart.js`).
+* **Appointments Trend:** A Line Chart showing the 30-day trend of OPD appointments.
+* **Patient Demographics:** A dynamic Donut Chart illustrating the gender distribution of registered patients.
+
+![Dashboard Analytics](screenshots/dashboard.png)
+
+### 🧑‍⚕️ 5. Comprehensive Patient Profile & AI Summarization (Doctor View)
 * **Patient Lifecycle Tracking:** Manage patient demographics, Unique Hospital ID (`UHID`), Age, Gender, Blood Group, Mobile contact, and Active status.
 * **Executive Clinical Snapshot:** Auto-synthesized view of Active Medications, Key Lab Findings, and Radiology Summaries directly on the patient profile.
 * **AI Clinical Voice Notes (Groq Whisper):** Integrated voice dictation for instant, high-accuracy medical transcription directly into the patient record.
@@ -28,19 +46,12 @@ An advanced, highly responsive, and AI-augmented **Hospital Electronic Medical R
 ![Patient Clinical Summary](screenshots/patient-summary.png)
 ![Patient AI Extraction](screenshots/patient-ai-extraction.png)
 
-### 👨‍⚕️ 3. Doctor Roster & OPD Scheduling
+### 👨‍⚕️ 6. Doctor Roster & OPD Scheduling
 * **Doctor Directory:** Manage specialized doctors, qualifications, experience years, and consultation fee structures.
 * **Interactive OPD Appointments:** Doctor-Patient linked appointment booking with real-time status management (`Pending`, `Confirmed`, `Completed`, `Cancelled`).
 * **Live Clinical Dashboard:** Interactive summary cards and daily OPD queue overview.
 
-### 📊 4. Advanced Clinical Dashboard (New)
-* **Real-time Analytics:** Visual representation of hospital metrics using PrimeNG Charts (`Chart.js`).
-* **Appointments Trend:** A Line Chart showing the 30-day trend of OPD appointments.
-* **Patient Demographics:** A dynamic Donut Chart illustrating the gender distribution of registered patients.
-
-![Dashboard Analytics](screenshots/dashboard.png)
-
-### 🦴 5. Interactive Joint Assessment (Rheumatology Module) (New)
+### 🦴 7. Interactive Joint Assessment (Rheumatology Module)
 * **Visual Body Map:** A responsive, interactive SVG Anterior Skeleton allowing doctors to click directly on joints (Shoulders, Elbows, Wrists, Fingers, Hips, Knees, Toes) to record conditions.
 * **Color-coded Joint States:** Visually distinguish between Normal (Green), Tender (Red), Swollen (Blue), Tender & Swollen (Purple), and Limited Movement (Orange).
 * **Smart Visit History Calendar:** A dedicated Datepicker that highlights past patient visits with a green indicator. Selecting a past date locks the form into a secure Read-Only mode to protect historical clinical data.
@@ -48,7 +59,7 @@ An advanced, highly responsive, and AI-augmented **Hospital Electronic Medical R
 
 ![Joint Assessment](screenshots/joint-assessment.png)
 
-### 📝 6. Multilingual E-Prescription & Auto-Translation (New)
+### 📝 8. Multilingual E-Prescription & Auto-Translation
 * **Smart Prescription Builder:** Easily search and add medications, dosages, frequency, and custom instructions.
 * **Instant Auto-Translation:** Features a real-time Groq Llama 3-powered translation engine. When a doctor types instructions in English, it instantly translates them to the patient's preferred language (e.g., Hindi, Gujarati). 
 * **Smart Hybrid DB Dictionary:** Uses a hybrid local database dictionary to cache translations and save Groq API calls for common medical terms!
@@ -56,22 +67,11 @@ An advanced, highly responsive, and AI-augmented **Hospital Electronic Medical R
 
 ![Multilingual E-Prescription](screenshots/e-prescription.png)
 
-### 🗓️ 7. Intelligent Past Visits Feed (New)
+### 🗓️ 9. Intelligent Past Visits Feed
 * **Chronological Accordion Groups:** Clinical events (Assessments, Prescriptions, Document Uploads) are beautifully grouped by date using an interactive PrimeNG Accordion for a clutter-free UI.
 * **Instant Document Previews:** Click the 'Info' tooltip `(i)` on any uploaded document in the timeline to instantly read its AI-extracted clinical summary—no need to download or switch tabs!
 
 ![Past Visits Feed](screenshots/past-visits.png)
-
-### 🌐 8. Premium Public Web Portal (New)
-* **Modern Landing Interface:** A clean, high-conversion public landing page designed to welcome patients and provide quick access to hospital services and doctor directories.
-* **Unified Login Navigation:** Features a sleek, hover-responsive PrimeNG dropdown menu that intelligently groups "Patient Portal" and "Staff Login" options for a clutter-free header.
-* **Mobile-First Responsive Design:** The public shell collapses gracefully on smaller screens, ensuring seamless appointment booking flows from mobile devices.
-
-![Public Web Portal](screenshots/public-portal.png)
-
-### 📂 9. Patient Digital Health Records
-* **Modern Medical Timeline:** Patients have access to a clean, left-aligned chronological timeline of their complete medical history, including consultations, lab reports, and imaging.
-* **Instant Document Downloads:** Built-in PDF generation and secure document retrieval allowing patients to instantly download their medical prescriptions and lab reports with a single click.
 
 ---
 
