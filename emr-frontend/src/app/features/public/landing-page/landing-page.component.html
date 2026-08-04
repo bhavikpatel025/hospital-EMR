@@ -51,20 +51,20 @@
         </div>
         <div class="col-lg-6">
           <span class="text-primary fw-bold text-uppercase tracking-wider mb-2 d-block">About Us</span>
-          <h2 class="section-title mb-4">Dedicated to Your Health & Happiness</h2>
-          <p class="text-secondary mb-4" style="line-height: 1.8;">
+          <h2 class="section-title mb-4 fade-in-up" style="animation-delay: 0.1s;">Dedicated to Your Health & Happiness</h2>
+          <p class="text-secondary mb-4 fade-in-up" style="line-height: 1.8; animation-delay: 0.2s;">
             EMR NextGen is a premier healthcare institution committed to providing exceptional medical care. Our team of renowned specialists utilizes cutting-edge technology and evidence-based practices to ensure the best outcomes for our patients.
           </p>
-          <ul class="list-unstyled d-flex flex-column gap-3 mb-5">
-            <li class="d-flex align-items-center gap-3">
+          <ul class="list-unstyled d-flex flex-column gap-3 mb-5 fade-in-up" style="animation-delay: 0.3s;">
+            <li class="feature-item d-flex align-items-center gap-3">
               <i class="pi pi-check text-success fs-5"></i>
               <span class="fw-semibold text-dark">24/7 Emergency Services</span>
             </li>
-            <li class="d-flex align-items-center gap-3">
+            <li class="feature-item d-flex align-items-center gap-3">
               <i class="pi pi-check text-success fs-5"></i>
               <span class="fw-semibold text-dark">State-of-the-art Facilities</span>
             </li>
-            <li class="d-flex align-items-center gap-3">
+            <li class="feature-item d-flex align-items-center gap-3">
               <i class="pi pi-check text-success fs-5"></i>
               <span class="fw-semibold text-dark">Top Medical Specialists</span>
             </li>
@@ -117,8 +117,8 @@
             </div>
             <div class="p-4 text-center">
               <h5 class="fw-bold text-dark mb-1">Dr. {{ doc.doctorName }}</h5>
-              <p class="text-primary small fw-semibold mb-3">{{ doc.specialization || 'General Physician' }}</p>
-              <a routerLink="/book-appointment" [queryParams]="{ doctorId: doc.doctorId }" class="btn btn-sm btn-light w-100 rounded-pill fw-semibold text-dark">
+              <p class="text-primary small fw-semibold mb-4">{{ doc.specialization || 'General Physician' }}</p>
+              <a routerLink="/book-appointment" [queryParams]="{ doctorId: doc.doctorId }" class="btn btn-book-doc w-100 rounded-pill fw-semibold">
                 Book Slot
               </a>
             </div>

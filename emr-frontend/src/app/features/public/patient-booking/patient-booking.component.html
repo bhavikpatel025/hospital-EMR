@@ -10,19 +10,26 @@
     <div class="row align-items-start g-5 pt-4">
       
       <!-- Left Column: Header & Branding -->
-      <div class="col-12 col-lg-5 text-center text-lg-start pe-lg-5">
+      <div class="col-12 col-lg-5 d-flex flex-column justify-content-center h-100 text-center text-lg-start pe-lg-5" style="min-height: 80vh;">
         <div class="booking-header mb-4 fade-in">
-          <h1 class="fw-bold text-dark mb-3 display-5 mt-3" style="letter-spacing: -1px; line-height: 1.2;">Book Your Appointment</h1>
-          <p class="text-secondary fs-5 mb-5" style="line-height: 1.6;">Premium Healthcare, Just a Click Away. Fill out the form to schedule a consultation with our experts.</p>
+          <span class="badge bg-white text-primary px-3 py-2 rounded-pill mb-3 shadow-sm fw-bold" style="letter-spacing: 0.5px;">
+            <i class="pi pi-calendar-plus me-1"></i> Fast & Easy
+          </span>
+          <h1 class="fw-bold text-dark mb-3 display-4" style="letter-spacing: -1.5px; line-height: 1.15;">
+            Book Your <br class="d-none d-lg-block"><span style="background: linear-gradient(135deg, var(--emr-primary), #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Appointment</span>
+          </h1>
+          <p class="text-secondary fs-5 mb-4" style="line-height: 1.7;">
+            Premium Healthcare, Just a Click Away. Fill out the form to schedule a consultation with our top specialists.
+          </p>
           
-          <div class="d-none d-lg-block mt-5 text-center">
-            <img src="assets/images/booking.png" alt="Booking Illustration" class="img-fluid w-100" style="max-height: 400px; object-fit: contain; mix-blend-mode: multiply; filter: brightness(1.1) contrast(1.2);">
+          <div class="d-none d-lg-block mt-4 text-center">
+            <img src="assets/images/booking.png" alt="Booking Illustration" class="img-fluid floating-img w-100" style="max-height: 380px; object-fit: contain; mix-blend-mode: multiply; filter: brightness(1.1) contrast(1.1);">
           </div>
         </div>
       </div>
 
       <!-- Right Column: The Form -->
-      <div class="col-12 col-lg-7">
+      <div class="col-12 col-lg-7 d-flex flex-column justify-content-center h-100" style="min-height: 80vh;">
         <p-card styleClass="booking-card shadow-lg border-0 rounded-4 overflow-hidden">
           
           <!-- Success State -->
