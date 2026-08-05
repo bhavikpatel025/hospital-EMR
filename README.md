@@ -1,4 +1,4 @@
-# 🏥 Enterprise Hospital Electronic Medical Records (EMR) System
+#  Enterprise Hospital Electronic Medical Records (EMR) System
 
 ![Angular](https://img.shields.io/badge/Angular-18%2B-dd0031?style=for-the-badge&logo=angular&logoColor=white)
 ![.NET Core](https://img.shields.io/badge/.NET%208-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
@@ -8,38 +8,38 @@
 
 An advanced, highly responsive, and AI-augmented **Hospital Electronic Medical Records (EMR) System** engineered from scratch using **Clean Architecture** on the backend (.NET 8 Web API + Entity Framework Core) and reactive **Angular Signals** + **PrimeNG** on the frontend.
 
-🚀 **Live Frontend Demo:** [https://hospital-emr-three.vercel.app](https://hospital-emr-three.vercel.app)
+ **Live Frontend Demo:** [https://hospital-emr-three.vercel.app](https://hospital-emr-three.vercel.app)
 
 **Enterprise-grade Hospital EMR system built with .NET 8 Web API (Clean Architecture) and Angular 18 (Reactive Signals). Features JWT RBAC, OPD scheduling, and a Hybrid AI Engine using Local OCR + Groq AI (Llama-3.3 Text / Vision) for document extraction, Multilingual E-Prescriptions, and real-time Voice Dictation (Groq Whisper AI) to auto-fill prescriptions, clinical summaries, and lab reports.**
 
 ---
 
-## ✨ Key Highlights & Enterprise Features
+##  Key Highlights & Enterprise Features
 
-### 🌐 1. Premium Public Web Portal
+###  1. Premium Public Web Portal
 * **Modern Landing Interface:** A clean, high-conversion public landing page designed to welcome patients and provide quick access to hospital services and doctor directories.
 * **Unified Login Navigation:** Features a sleek, hover-responsive PrimeNG dropdown menu that intelligently groups "Patient Portal" and "Staff Login" options for a clutter-free header.
 * **Mobile-First Responsive Design:** The public shell collapses gracefully on smaller screens, ensuring seamless appointment booking flows from mobile devices.
 
 ![Public Web Portal](screenshots/public-portal.png)
 
-### 🔐 2. Authentication & Role-Based Security
+###  2. Authentication & Role-Based Security
 * **JWT Bearer Token Security:** Stateless, secure token-based authentication with salted password hashing.
 * **Angular Route Guards (`AuthGuard`):** Strict frontend route protection ensuring unauthorized users are automatically redirected to the login portal.
 * **Global HTTP Error & Auth Interceptor (`error.interceptor.ts`):** Automatically catches expired sessions (`401 Unauthorized`), server errors (`500`), and network disconnects, alerting users via sleek PrimeNG Toast notifications (`p-toast`).
 
-### 📂 3. Patient Digital Health Records (Patient Portal)
+###  3. Patient Digital Health Records (Patient Portal)
 * **Modern Medical Timeline:** Patients have access to a clean, left-aligned chronological timeline of their complete medical history, including consultations, lab reports, and imaging.
 * **Instant Document Downloads:** Built-in PDF generation and secure document retrieval allowing patients to instantly download their medical prescriptions and lab reports with a single click.
 
-### 📊 4. Advanced Clinical Dashboard (Hospital Admin)
+###  4. Advanced Clinical Dashboard (Hospital Admin)
 * **Real-time Analytics:** Visual representation of hospital metrics using PrimeNG Charts (`Chart.js`).
 * **Appointments Trend:** A Line Chart showing the 30-day trend of OPD appointments.
 * **Patient Demographics:** A dynamic Donut Chart illustrating the gender distribution of registered patients.
 
 ![Dashboard Analytics](screenshots/dashboard.png)
 
-### 🧑‍⚕️ 5. Comprehensive Patient Profile & AI Summarization (Doctor View)
+###  5. Comprehensive Patient Profile & AI Summarization (Doctor View)
 * **Patient Lifecycle Tracking:** Manage patient demographics, Unique Hospital ID (`UHID`), Age, Gender, Blood Group, Mobile contact, and Active status.
 * **Executive Clinical Snapshot:** Auto-synthesized view of Active Medications, Key Lab Findings, and Radiology Summaries directly on the patient profile.
 * **AI Clinical Voice Notes (Groq Whisper):** Integrated voice dictation for instant, high-accuracy medical transcription directly into the patient record.
@@ -48,12 +48,12 @@ An advanced, highly responsive, and AI-augmented **Hospital Electronic Medical R
 ![Patient Clinical Summary](screenshots/patient-summary.png)
 ![Patient AI Extraction](screenshots/patient-ai-extraction.png)
 
-### 👨‍⚕️ 6. Doctor Roster & OPD Scheduling
+###  6. Doctor Roster & OPD Scheduling
 * **Doctor Directory:** Manage specialized doctors, qualifications, experience years, and consultation fee structures.
 * **Interactive OPD Appointments:** Doctor-Patient linked appointment booking with real-time status management (`Pending`, `Confirmed`, `Completed`, `Cancelled`).
 * **Live Clinical Dashboard:** Interactive summary cards and daily OPD queue overview.
 
-### 🦴 7. Interactive Joint Assessment (Rheumatology Module)
+###  7. Interactive Joint Assessment (Rheumatology Module)
 * **Visual Body Map:** A responsive, interactive SVG Anterior Skeleton allowing doctors to click directly on joints (Shoulders, Elbows, Wrists, Fingers, Hips, Knees, Toes) to record conditions.
 * **Color-coded Joint States:** Visually distinguish between Normal (Green), Tender (Red), Swollen (Blue), Tender & Swollen (Purple), and Limited Movement (Orange).
 * **Smart Visit History Calendar:** A dedicated Datepicker that highlights past patient visits with a green indicator. Selecting a past date locks the form into a secure Read-Only mode to protect historical clinical data.
@@ -61,7 +61,7 @@ An advanced, highly responsive, and AI-augmented **Hospital Electronic Medical R
 
 ![Joint Assessment](screenshots/joint-assessment.png)
 
-### 📝 8. Multilingual E-Prescription & Auto-Translation
+###  8. Multilingual E-Prescription & Auto-Translation
 * **Smart Prescription Builder:** Easily search and add medications, dosages, frequency, and custom instructions.
 * **Instant Auto-Translation:** Features a real-time Groq Llama 3-powered translation engine. When a doctor types instructions in English, it instantly translates them to the patient's preferred language (e.g., Hindi, Gujarati). 
 * **Smart Hybrid DB Dictionary:** Uses a hybrid local database dictionary to cache translations and save Groq API calls for common medical terms!
@@ -69,7 +69,7 @@ An advanced, highly responsive, and AI-augmented **Hospital Electronic Medical R
 
 ![Multilingual E-Prescription](screenshots/e-prescription.png)
 
-### 🗓️ 9. Intelligent Past Visits Feed
+###  9. Intelligent Past Visits Feed
 * **Chronological Accordion Groups:** Clinical events (Assessments, Prescriptions, Document Uploads) are beautifully grouped by date using an interactive PrimeNG Accordion for a clutter-free UI.
 * **Instant Document Previews:** Click the 'Info' tooltip `(i)` on any uploaded document in the timeline to instantly read its AI-extracted clinical summary—no need to download or switch tabs!
 
@@ -77,7 +77,7 @@ An advanced, highly responsive, and AI-augmented **Hospital Electronic Medical R
 
 ---
 
-## 📱 Core Modules Overview
+##  Core Modules Overview
 
 Here is a visual overview of the 5 core modules available in our EMR system:
 
@@ -98,7 +98,7 @@ Here is a visual overview of the 5 core modules available in our EMR system:
 
 ---
 
-## 🤖 6. Smart Hybrid AI Engine (Documents & Voice Dictation)
+##  6. Smart Hybrid AI Engine (Documents & Voice Dictation)
 
 The core innovation of this EMR is its dual-flow intelligent data extraction system, capable of processing both physical medical records and live doctor dictations:
 
@@ -118,7 +118,7 @@ The core innovation of this EMR is its dual-flow intelligent data extraction sys
         (Medications, Lab Findings, Clinical Notes)
 ```
 
-### 🎙️ Flow A: Live Voice Dictation (`Groq Whisper`)
+### 🎙 Flow A: Live Voice Dictation (`Groq Whisper`)
 * **Real-time Transcription:** Doctors can speak symptoms and prescriptions directly into the UI. The `.webm` audio is captured via browser `MediaRecorder` API and streamed to the backend.
 * **Whisper Integration:** The backend sends the audio to Groq Whisper for lightning-fast speech-to-text.
 * **Auto-Data Extraction:** The transcribed text is automatically pipelined into Llama-3.3 to extract and auto-fill clinical summaries and structured medication regimens.
@@ -137,7 +137,7 @@ The core innovation of this EMR is its dual-flow intelligent data extraction sys
 
 ---
 
-## 🛡️ Enterprise Project Stabilization Shield
+##  Enterprise Project Stabilization Shield
 
 To ensure zero downtime and unhandled application crashes, the project incorporates a hardened stability shield:
 1. **Global Exception Handling Middleware (`GlobalExceptionHandlingMiddleware.cs`):** Intercepts all unhandled C# server errors, logging details and returning standardized JSON responses (`{ success: false, statusCode: 500, message: "..." }`).
@@ -145,7 +145,7 @@ To ensure zero downtime and unhandled application crashes, the project incorpora
 
 ---
 
-## 🏗️ Clean Architecture Breakdown
+## 🏗 Clean Architecture Breakdown
 
 The `.NET 8` backend strictly adheres to **Clean Architecture / Onion Architecture** principles, enforcing separation of concerns across 5 distinct layers:
 
@@ -179,7 +179,7 @@ The `.NET 8` backend strictly adheres to **Clean Architecture / Onion Architectu
 
 ---
 
-## 🛠️ Technology Stack
+##  Technology Stack
 
 | Layer | Technologies & Tools |
 | :--- | :--- |
@@ -193,14 +193,14 @@ The `.NET 8` backend strictly adheres to **Clean Architecture / Onion Architectu
 
 ---
 
-## 🚀 Getting Started & Local Setup
+##  Getting Started & Local Setup
 
 ### 📋 Prerequisites
 * [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 * [Node.js (v18+ or v20+)](https://nodejs.org/) & [Angular CLI](https://angular.dev/tools/cli) (`npm install -g @angular/cli`)
 * SQL Server or PostgreSQL instance running locally.
 
-### ⚙️ 1. Backend Setup (`EMR.Backend`)
+### ⚙ 1. Backend Setup (`EMR.Backend`)
 1. Navigate to the backend root directory:
    ```bash
    cd EMR.Backend
@@ -228,7 +228,7 @@ The `.NET 8` backend strictly adheres to **Clean Architecture / Onion Architectu
    ```
    *The API will start at `http://localhost:5000` / `https://localhost:5001`. Swagger UI is accessible at `/swagger`.*
 
-### 💻 2. Frontend Setup (`emr-frontend`)
+###  2. Frontend Setup (`emr-frontend`)
 1. Open a new terminal window and navigate to the Angular workspace:
    ```bash
    cd emr-frontend
@@ -253,7 +253,7 @@ The `.NET 8` backend strictly adheres to **Clean Architecture / Onion Architectu
 
 ---
 
-## 📄 License & Contributing
+##  License & Contributing
 This project is developed as an Enterprise-grade EMR demonstration and production architecture template. Contributions, bug reports, and pull requests are welcome!
 
-Made with ❤️ using **Clean Architecture**, **Angular Signals**, and **Multimodal Vision AI**.
+Made with ❤ using **Clean Architecture**, **Angular Signals**, and **Multimodal Vision AI**.
