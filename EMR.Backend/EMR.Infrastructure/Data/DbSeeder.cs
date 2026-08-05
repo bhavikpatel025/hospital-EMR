@@ -20,10 +20,41 @@ namespace EMR.Infrastructure.Data
                 await context.Database.MigrateAsync();
 
                 // Ensure Roles exist
-                if (!await context.Roles.AnyAsync(r => r.RoleId == 3))
+                var roles = new List<Role>
                 {
-                    context.Roles.Add(new Role { RoleId = 3, RoleName = "Receptionist" });
+                    new Role { RoleId = 1, RoleName = "Admin" },
+                    new Role { RoleId = 2, RoleName = "Doctor" },
+                    new Role { RoleId = 3, RoleName = "Receptionist" }
+                };
+
+                foreach (var role in roles)
+                {
+                    if (!await context.Roles.AnyAsync(r => r.RoleId == role.RoleId))
+                    {
+                        context.Roles.Add(role);
+                    }
+                }
+                await context.SaveChangesAsync();
+
+                // Check for Admin user
+                if (!await context.Users.AnyAsync(u => u.Email == "admin@gmail.com"))
+                {
+                    PasswordHasher.CreateHash("Admin@123", out var passwordHash, out var passwordSalt);
+
+                    var admin = new User
+                    {
+                        FullName = "System Admin",
+                        Email = "admin@gmail.com",
+                        PasswordHash = passwordHash,
+                        PasswordSalt = passwordSalt,
+                        RoleId = 1, // Admin
+                        IsActive = true,
+                        CreatedAt = DateTime.UtcNow
+                    };
+
+                    context.Users.Add(admin);
                     await context.SaveChangesAsync();
+                    logger.LogInformation("Admin user seeded successfully.");
                 }
 
                 // Check for Receptionist user
