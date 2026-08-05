@@ -16,6 +16,9 @@ namespace EMR.Infrastructure.Data
 
             try
             {
+                // Auto-migrate database (Creates tables if they don't exist in cloud DB)
+                await context.Database.MigrateAsync();
+
                 // Ensure Roles exist
                 if (!await context.Roles.AnyAsync(r => r.RoleId == 3))
                 {
