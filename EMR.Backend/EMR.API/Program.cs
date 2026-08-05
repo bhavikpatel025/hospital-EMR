@@ -71,7 +71,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
-        policy.WithOrigins("http://localhost:4200")
+        policy.WithOrigins("http://localhost:4200", "https://hospital-emr-three.vercel.app")
               .AllowAnyHeader()
               .AllowAnyMethod());
 });
