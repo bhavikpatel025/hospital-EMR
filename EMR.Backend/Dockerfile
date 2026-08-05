@@ -25,6 +25,7 @@ COPY --from=build /out ./
 
 # Expose port (Render sets PORT environment variable dynamically)
 ENV ASPNETCORE_URLS=http://+:8080
+ENV DOTNET_USE_POLLING_FILE_WATCHER=true
 EXPOSE 8080
 
 ENTRYPOINT ["dotnet", "EMR.API.dll"]

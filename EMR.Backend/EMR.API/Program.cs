@@ -130,7 +130,14 @@ app.MapControllers();
 // 6. Seed Data (Receptionist)
 using (var scope = app.Services.CreateScope())
 {
-    await DbSeeder.SeedAsync(scope.ServiceProvider);
+    try
+    {
+        await DbSeeder.SeedAsync(scope.ServiceProvider);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Database seeding skipped/failed: {ex.Message}");
+    }
 }
 
 app.Run();
