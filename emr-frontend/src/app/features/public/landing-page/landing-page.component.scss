@@ -4,10 +4,7 @@
 }
 
 .section-title {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: #1e293b;
-  letter-spacing: -1px;
+  /* Class removed, now handled by Bootstrap utilities */
 }
 
 /* Animations */
@@ -62,14 +59,11 @@
 }
 
 .hero-title {
-  font-size: 3.5rem;
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -1px;
+  /* Handled by Bootstrap display utilities */
 }
 
 .hero-subtitle {
-  font-size: 1.25rem;
+  /* Handled by Bootstrap fs utilities */
 }
 
 .btn-book-hero {

@@ -1,9 +1,9 @@
 <div class="emr-login-page">
 
-  <div class="emr-login-split">
+  <div class="row g-0 emr-login-split">
 
     <!-- Left Panel: Illustration -->
-    <div class="emr-login-left">
+    <div class="col-12 col-lg-6 d-none d-lg-flex emr-login-left">
       <div class="emr-login-left__content">
         <!-- <div class="emr-login-brand">
           <div class="emr-login-brand__icon">
@@ -35,12 +35,12 @@
     </div>
 
     <!-- Right Panel: Login Form -->
-    <div class="emr-login-right">
+    <div class="col-12 col-lg-6 emr-login-right py-5 py-lg-0">
       <div class="emr-login-form-wrapper">
 
-        <div class="emr-login-header">
-          <h2 class="emr-login-title">Welcome Back!</h2>
-          <p class="emr-login-subtitle">Please sign in to your account</p>
+        <div class="emr-login-header text-center text-lg-start">
+          <h2 class="emr-login-title fs-2 fs-lg-1">Welcome Back!</h2>
+          <p class="emr-login-subtitle fs-6">Please sign in to your account</p>
         </div>
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="emr-login-form">

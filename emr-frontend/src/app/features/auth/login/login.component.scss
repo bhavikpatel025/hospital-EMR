@@ -7,14 +7,12 @@
 }
 
 .emr-login-split {
-  display: flex;
   width: 100%;
   min-height: 100vh;
 }
 
 // ─── Left Panel (Illustration) ─────────────────────────────────
 .emr-login-left {
-  flex: 1.15;
   background: linear-gradient(145deg, #e8f4f8 0%, #d4eef6 40%, #c5e8f2 100%);
   display: flex;
   align-items: center;
@@ -167,7 +165,6 @@
 
 // ─── Right Panel (Login Form) ──────────────────────────────────
 .emr-login-right {
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -343,64 +340,5 @@
     font-size: 22px;
     width: 22px;
     height: 22px;
-  }
-}
-
-// ─── Responsive ────────────────────────────────────────────────
-@media (max-width: 900px) {
-  .emr-login-split {
-    flex-direction: column;
-  }
-
-  .emr-login-left {
-    padding: 32px 24px 24px;
-    min-height: auto;
-  }
-
-  .emr-login-illustration-stage {
-    margin-bottom: 20px;
-  }
-
-  .emr-login-illustration {
-    max-width: 300px;
-  }
-
-  .emr-login-brand__tagline {
-    margin-bottom: 20px;
-  }
-
-  .emr-login-trust-strip {
-    gap: 18px;
-    padding-top: 16px;
-  }
-
-  .emr-login-right {
-    padding: 32px 24px 48px;
-  }
-}
-
-@media (max-width: 500px) {
-  .emr-login-left {
-    padding: 24px 16px 16px;
-  }
-
-  .emr-login-illustration {
-    max-width: 220px;
-  }
-
-  .emr-login-trust-strip {
-    gap: 12px;
-  }
-
-  .emr-trust-item {
-    font-size: 0.74rem;
-  }
-
-  .emr-login-right {
-    padding: 24px 16px 40px;
-  }
-
-  .emr-login-title {
-    font-size: 1.4rem;
   }
 }

@@ -21,10 +21,10 @@
 
       <!-- Actions -->
       <div class="nav-actions d-flex align-items-center gap-3">
-        <div class="d-none d-sm-flex align-items-center gap-2" style="cursor: pointer; color: var(--emr-text-soft); padding: 0.5rem 0.75rem; border-radius: 8px; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='rgba(17,157,164,0.1)'" onmouseout="this.style.backgroundColor='transparent'" (click)="loginMenu.toggle($event)">
-          <i class="pi pi-user" style="font-size: 1.1rem; color: var(--emr-primary);"></i>
-          <span class="fw-semibold">Login</span>
-          <i class="pi pi-angle-down" style="font-size: 0.8rem; margin-left: 2px;"></i>
+        <div class="d-flex align-items-center gap-2" style="cursor: pointer; color: var(--emr-text-soft); padding: 0.5rem; border-radius: 8px; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='rgba(17,157,164,0.1)'" onmouseout="this.style.backgroundColor='transparent'" (click)="loginMenu.toggle($event)">
+          <i class="pi pi-user" style="font-size: 1.2rem; color: var(--emr-primary);"></i>
+          <span class="fw-semibold d-none d-sm-inline">Login</span>
+          <i class="pi pi-angle-down d-none d-sm-inline" style="font-size: 0.8rem; margin-left: 2px;"></i>
         </div>
         <p-menu #loginMenu [model]="loginMenuItems" [popup]="true"></p-menu>
         <a routerLink="/book-appointment" class="btn-book-nav shadow-sm">
