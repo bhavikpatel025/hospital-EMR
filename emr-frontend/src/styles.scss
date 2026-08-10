@@ -524,7 +524,7 @@ textarea,
 
 .emr-table {
   width: 100%;
-  min-width: 700px; /* Forces scroll on small screens */
+  min-width: 600px; /* Forces scroll on small screens, fits inside desktop grids */
   border-collapse: collapse;
 }
 
