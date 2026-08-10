@@ -1,4 +1,5 @@
 using System.Text;
+using Serilog;
 using EMR.API.Middlewares;
 using EMR.Application.Interfaces;
 using EMR.Application.Mappings;
@@ -14,7 +15,31 @@ using Microsoft.OpenApi.Models;
 // Allow legacy timestamp behavior for PostgreSQL (fixes Unspecified DateTime error)
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-var builder = WebApplication.CreateBuilder(args);
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("Logs/emr-api-log-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+try
+{
+    Log.Information("Starting web application");
+    var builder = WebApplication.CreateBuilder(args);
+    
+    // Add Sentry if DSN is provided
+    var sentryDsn = builder.Configuration["Sentry:Dsn"];
+    if (!string.IsNullOrEmpty(sentryDsn))
+    {
+        builder.WebHost.UseSentry(o =>
+        {
+            o.Dsn = sentryDsn;
+            o.TracesSampleRate = 1.0;
+            o.EnableLogs = true; // Captures ILogger/Serilog logs
+        });
+    }
+
+    // Use Serilog as the logging provider
+    builder.Host.UseSerilog();
 
 // 1. DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -144,3 +169,12 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

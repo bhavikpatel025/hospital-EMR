@@ -75,6 +75,11 @@ export class PatientFormComponent implements OnInit {
 
     this.loading.set(true);
     const formValue = this.patientForm.getRawValue();
+    
+    // Fix: Backend [EmailAddress] attribute rejects empty strings (""), so we convert it to null
+    if (formValue.email?.trim() === '') {
+      formValue.email = null;
+    }
 
     if (this.isEditMode() && this.patientId) {
       const updateDto = { ...formValue, patientId: this.patientId };
