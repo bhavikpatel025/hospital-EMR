@@ -341,6 +341,12 @@ textarea,
   }
 }
 
+@media (max-width: 768px) {
+  .emr-grid--stats {
+    grid-template-columns: 1fr;
+  }
+}
+
 .emr-grid--dual {
   grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr);
   gap: 20px;
@@ -368,6 +374,7 @@ textarea,
 
 .emr-card {
   padding: 18px;
+  min-width: 0; /* Prevents flex/grid blowout on small screens */
 }
 
 .emr-hero-card {
@@ -508,12 +515,16 @@ textarea,
 }
 
 .emr-table-wrap {
-  overflow: auto;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border-radius: 8px;
 }
 
 .emr-table {
   width: 100%;
+  min-width: 700px; /* Forces scroll on small screens */
   border-collapse: collapse;
 }
 
@@ -532,6 +543,7 @@ textarea,
   color: #475569;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  white-space: nowrap;
   border-bottom: 2px solid #e2e8f0;
   border-top: 1px solid #f1f5f9;
 
