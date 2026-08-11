@@ -72,6 +72,7 @@ builder.Services.AddScoped<ITranslationRepository, TranslationRepository>();
 builder.Services.AddScoped<ITranslationService, TranslationService>();
 builder.Services.AddScoped<IPatientDocumentRepository, PatientDocumentRepository>();
 builder.Services.AddScoped<IPatientDocumentService, PatientDocumentService>();
+builder.Services.AddScoped<ICloudStorageService, CloudinaryStorageService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();

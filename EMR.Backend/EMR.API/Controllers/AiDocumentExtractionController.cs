@@ -23,17 +23,20 @@ public class AiDocumentExtractionController : ControllerBase
     private readonly IWebHostEnvironment _environment;
     private readonly ILogger<AiDocumentExtractionController> _logger;
     private readonly string _uploadRootDirectory;
+    private readonly ICloudStorageService _cloudStorageService;
 
     public AiDocumentExtractionController(
         AppDbContext context,
         IAiDocumentExtractionService aiExtractionService,
         IWebHostEnvironment environment,
-        ILogger<AiDocumentExtractionController> logger)
+        ILogger<AiDocumentExtractionController> logger,
+        ICloudStorageService cloudStorageService = null)
     {
         _context = context;
         _aiExtractionService = aiExtractionService;
         _environment = environment;
         _logger = logger;
+        _cloudStorageService = cloudStorageService;
 
         _uploadRootDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "medical_records");
         if (!Directory.Exists(_uploadRootDirectory))
@@ -57,23 +60,18 @@ public class AiDocumentExtractionController : ControllerBase
             ? "Prescription"
             : category;
 
-        var patientFolder = Path.Combine(_uploadRootDirectory, $"patient_{patientId}");
-        if (!Directory.Exists(patientFolder))
-        {
-            Directory.CreateDirectory(patientFolder);
-        }
-
-        // 1. Save physical file to disk
+        // 1. Save file temporarily for OCR
+        var tempDirectory = Path.GetTempPath();
         var uniqueFileName = $"{DateTime.Now:yyyyMMdd_HHmmss}_{file.FileName}";
-        var physicalFilePath = Path.Combine(patientFolder, uniqueFileName);
+        var tempFilePath = Path.Combine(tempDirectory, uniqueFileName);
 
-        using (var stream = new FileStream(physicalFilePath, FileMode.Create))
+        using (var stream = new FileStream(tempFilePath, FileMode.Create))
         {
             await file.CopyToAsync(stream);
         }
 
         // 2. Perform OCR Text Extraction (Option B: self-contained duplicate of OCR helper)
-        string rawExtractedText = await ExtractTextWithTesseractOrPdfAsync(physicalFilePath, file.FileName);
+        string rawExtractedText = await ExtractTextWithTesseractOrPdfAsync(tempFilePath, file.FileName);
 
         // 3. Smart Handwriting Auto-Detection:
         // If the file is an image (.jpg/.jpeg/.png) AND Tesseract extracted very little/empty text (< 30 chars),
@@ -85,7 +83,7 @@ public class AiDocumentExtractionController : ControllerBase
 
         if (isImageFile && (string.IsNullOrWhiteSpace(rawExtractedText) || rawExtractedText.Trim().Length < 30))
         {
-            byte[] fileBytes = await System.IO.File.ReadAllBytesAsync(physicalFilePath);
+            byte[] fileBytes = await System.IO.File.ReadAllBytesAsync(tempFilePath);
             string base64Image = Convert.ToBase64String(fileBytes);
             aiDto = await _aiExtractionService.ExtractFromHandwrittenImageAsync(base64Image, file.FileName, docCategory);
         }
@@ -100,13 +98,31 @@ public class AiDocumentExtractionController : ControllerBase
             docCategory = aiDto.Category;
         }
 
-        // 4. Create database record for the uploaded document (`PatientDocuments`)
+        // 4. Upload file to Cloudinary for permanent scalable storage
+        string cloudinaryUrl = "";
+        try
+        {
+            cloudinaryUrl = await _cloudStorageService.UploadFileAsync(tempFilePath, file.FileName, $"patient_{patientId}");
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Failed to upload document to Cloudinary: {ex.Message}");
+        }
+        finally
+        {
+            if (System.IO.File.Exists(tempFilePath))
+            {
+                System.IO.File.Delete(tempFilePath);
+            }
+        }
+
+        // 5. Create database record for the uploaded document (`PatientDocuments`)
         var patientDoc = new PatientDocument
         {
             PatientId = patientId,
             Category = docCategory,
             FileName = file.FileName,
-            FilePath = physicalFilePath,
+            FilePath = cloudinaryUrl,
             RawTextSummary = aiDto.ClinicalSummary ?? $"AI document summary generated for {docCategory}",
             UploadedAt = DateTime.UtcNow
         };
@@ -114,14 +130,7 @@ public class AiDocumentExtractionController : ControllerBase
         _context.PatientDocuments.Add(patientDoc);
         await _context.SaveChangesAsync();
 
-        // 5. Build web-accessible file URL for frontend preview
-        var wwwrootBasePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-        string? fileUrl = null;
-        if (physicalFilePath.StartsWith(wwwrootBasePath, StringComparison.OrdinalIgnoreCase))
-        {
-            var relativePath = physicalFilePath.Substring(wwwrootBasePath.Length).Replace("\\", "/");
-            fileUrl = relativePath;
-        }
+        string? fileUrl = cloudinaryUrl;
 
         // 6. Return response matching exact frontend expectations (`ExtractedMedicalDataDto`)
         return Ok(new

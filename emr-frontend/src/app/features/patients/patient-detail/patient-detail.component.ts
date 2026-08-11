@@ -544,6 +544,10 @@ export class PatientDetailComponent implements OnInit {
    */
   private buildBackendFileUrl(relativePath: string): string {
     if (!relativePath) return '';
+    // If it's already a full URL (like Cloudinary), return it directly
+    if (relativePath.startsWith('http://') || relativePath.startsWith('https://')) {
+      return relativePath;
+    }
     // Extract base URL from apiUrl (remove /api suffix)
     const apiBase = environment.apiUrl.replace(/\/api\/?$/, '');
     return `${apiBase}${relativePath}`;

@@ -22,11 +22,13 @@ public class DocumentsController : ControllerBase
     private readonly AppDbContext _context;
     private readonly string _uploadRootDirectory;
     private readonly IConfiguration? _configuration;
+    private readonly EMR.Application.Interfaces.ICloudStorageService _cloudStorageService;
 
-    public DocumentsController(AppDbContext context, IConfiguration? configuration = null)
+    public DocumentsController(AppDbContext context, IConfiguration? configuration = null, EMR.Application.Interfaces.ICloudStorageService cloudStorageService = null)
     {
         _context = context;
         _configuration = configuration;
+        _cloudStorageService = cloudStorageService;
         _uploadRootDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "medical_records");
         if (!Directory.Exists(_uploadRootDirectory))
         {
@@ -339,23 +341,19 @@ public class DocumentsController : ControllerBase
         }
 
         var docCategory = string.IsNullOrEmpty(category) ? "Prescription" : category;
-        var patientFolder = Path.Combine(_uploadRootDirectory, $"patient_{patientId}");
-        if (!Directory.Exists(patientFolder))
-        {
-            Directory.CreateDirectory(patientFolder);
-        }
-
-        // 1. Save REAL file physically to server disk archive
+        
+        // 1. Save REAL file temporarily to server memory/temp disk for OCR processing
+        var tempDirectory = Path.GetTempPath();
         var uniqueFileName = $"{DateTime.Now:yyyyMMdd_HHmmss}_{file.FileName}";
-        var physicalFilePath = Path.Combine(patientFolder, uniqueFileName);
+        var tempFilePath = Path.Combine(tempDirectory, uniqueFileName);
 
-        using (var stream = new FileStream(physicalFilePath, FileMode.Create))
+        using (var stream = new FileStream(tempFilePath, FileMode.Create))
         {
             await file.CopyToAsync(stream);
         }
 
         // 2. Perform REAL OCR / Text Extraction using Tesseract OCR or UglyToad.PdfPig
-        string rawExtractedText = await ExtractTextWithTesseractOrPdfAsync(physicalFilePath, file.FileName);
+        string rawExtractedText = await ExtractTextWithTesseractOrPdfAsync(tempFilePath, file.FileName);
 
         // If category is null, "null", or unselected, auto-detect from OCR text / filename
         if (string.IsNullOrWhiteSpace(docCategory) || docCategory.Equals("null", StringComparison.OrdinalIgnoreCase) || docCategory.Equals("undefined", StringComparison.OrdinalIgnoreCase))
@@ -414,27 +412,40 @@ public class DocumentsController : ControllerBase
             summary = await GenerateClinicalSummaryWithGroqAsync(aiDocPrompt, fallbackText: summary);
         }
 
-        // 4. Create REAL Database Entry for the uploaded document (`PatientDocuments`)
+        // 4. Upload file to Cloudinary for permanent scalable storage
+        string cloudinaryUrl = "";
+        try
+        {
+            cloudinaryUrl = await _cloudStorageService.UploadFileAsync(tempFilePath, file.FileName, $"patient_{patientId}");
+        }
+        catch (Exception ex)
+        {
+            // If Cloudinary fails, fallback to something or throw
+            throw new Exception($"Failed to upload document to Cloudinary: {ex.Message}");
+        }
+        finally
+        {
+            // Clean up temporary file
+            if (System.IO.File.Exists(tempFilePath))
+            {
+                System.IO.File.Delete(tempFilePath);
+            }
+        }
+
+        // 5. Create REAL Database Entry for the uploaded document (`PatientDocuments`)
         var patientDoc = new PatientDocument
         {
             PatientId = patientId,
             Category = docCategory,
             FileName = file.FileName,
-            FilePath = physicalFilePath,
+            FilePath = cloudinaryUrl, // Store cloud URL in database
             RawTextSummary = summary,
             UploadedAt = DateTime.UtcNow
         };
         _context.PatientDocuments.Add(patientDoc);
         await _context.SaveChangesAsync();
 
-        // 5. Build web-accessible file URL for frontend preview
-        var wwwrootBasePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-        string? fileUrl = null;
-        if (physicalFilePath.StartsWith(wwwrootBasePath, StringComparison.OrdinalIgnoreCase))
-        {
-            var relativePath = physicalFilePath.Substring(wwwrootBasePath.Length).Replace("\\", "/");
-            fileUrl = relativePath;
-        }
+        string? fileUrl = cloudinaryUrl;
 
         // Return ONLY real extracted data — no fake/hardcoded values
         return Ok(new
