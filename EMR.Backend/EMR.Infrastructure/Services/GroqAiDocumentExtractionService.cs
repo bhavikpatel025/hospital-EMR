@@ -195,9 +195,9 @@ Required JSON Schema:
                 return fallback;
             }
 
-            // For multimodal vision, Groq endpoint is https://api.groq.com/openai/v1/chat/completions with model llama-3.2-11b-vision-preview
+            // For multimodal vision, Groq endpoint is https://api.groq.com/openai/v1/chat/completions with model qwen/qwen3.6-27b
             string endpoint = "https://api.groq.com/openai/v1/chat/completions";
-            string model = "llama-3.2-11b-vision-preview";
+            string model = "qwen/qwen3.6-27b";
 
             var client = _httpClientFactory.CreateClient();
             client.Timeout = TimeSpan.FromSeconds(35);
