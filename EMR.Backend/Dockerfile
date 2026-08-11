@@ -23,6 +23,9 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /out ./
 
+# Install Tesseract OCR dependencies for Linux
+RUN apt-get update && apt-get install -y tesseract-ocr tesseract-ocr-eng libtesseract-dev && rm -rf /var/lib/apt/lists/*
+
 # Expose port (Render sets PORT environment variable dynamically)
 ENV ASPNETCORE_URLS=http://+:8080
 ENV DOTNET_USE_POLLING_FILE_WATCHER=true
