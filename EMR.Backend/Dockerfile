@@ -24,7 +24,9 @@ WORKDIR /app
 COPY --from=build /out ./
 
 # Install Tesseract OCR dependencies for Linux
-RUN apt-get update && apt-get install -y tesseract-ocr tesseract-ocr-eng libtesseract-dev && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y tesseract-ocr tesseract-ocr-eng libtesseract-dev libleptonica-dev && rm -rf /var/lib/apt/lists/*
+RUN ln -s /usr/lib/x86_64-linux-gnu/libtesseract.so.5 /usr/lib/x86_64-linux-gnu/libtesseract50.so || true
+RUN ln -s /usr/lib/x86_64-linux-gnu/liblept.so.5 /usr/lib/x86_64-linux-gnu/liblept50.so || true
 
 # Expose port (Render sets PORT environment variable dynamically)
 ENV ASPNETCORE_URLS=http://+:8080
