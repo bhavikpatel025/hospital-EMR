@@ -1261,12 +1261,18 @@ public class DocumentsController : ControllerBase
         try
         {
             await _context.Database.ExecuteSqlRawAsync(
-                @"IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'Status' AND Object_ID = Object_ID(N'PatientLabFindings'))
-                  BEGIN ALTER TABLE PatientLabFindings ADD Status nvarchar(max) NOT NULL DEFAULT N'Normal'; END;
-                  IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'Category' AND Object_ID = Object_ID(N'PatientLabFindings'))
-                  BEGIN ALTER TABLE PatientLabFindings ADD Category nvarchar(max) NOT NULL DEFAULT N'General'; END;
-                  IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'Duration' AND Object_ID = Object_ID(N'PatientMedications'))
-                  BEGIN ALTER TABLE PatientMedications ADD Duration nvarchar(max) NULL; END;");
+                @"DO $$ 
+                  BEGIN 
+                      IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='PatientLabFindings' AND column_name='Status') THEN 
+                          ALTER TABLE ""PatientLabFindings"" ADD COLUMN ""Status"" text NOT NULL DEFAULT 'Normal'; 
+                      END IF; 
+                      IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='PatientLabFindings' AND column_name='Category') THEN 
+                          ALTER TABLE ""PatientLabFindings"" ADD COLUMN ""Category"" text NOT NULL DEFAULT 'General'; 
+                      END IF; 
+                      IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='PatientMedications' AND column_name='Duration') THEN 
+                          ALTER TABLE ""PatientMedications"" ADD COLUMN ""Duration"" text NULL; 
+                      END IF; 
+                  END $$;");
         }
         catch { }
     }
