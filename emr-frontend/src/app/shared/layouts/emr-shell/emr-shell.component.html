@@ -125,13 +125,37 @@
           <span class="font-semibold text-sm">{{ todayLabel }}</span>
         </div>
 
-        <div class="emr-user d-flex align-items-center gap-2 px-2 py-1 shadow-2xs">
-          <div class="qa-icon-box qa-teal d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; font-size: 1.1rem; border-radius: 8px;">
-            <i class="pi pi-user"></i>
+        <div class="user-menu-container position-relative">
+          <div class="emr-user d-flex align-items-center gap-2 px-2 py-1 shadow-2xs" 
+               style="cursor: pointer; user-select: none;" 
+               (click)="toggleUserMenu($event)">
+            <div class="qa-icon-box qa-teal d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; font-size: 1.1rem; border-radius: 8px;">
+              <i class="pi pi-user"></i>
+            </div>
+            <div>
+              <strong class="d-flex align-items-center gap-1">{{ user?.fullName || 'Dr. Rahul Sharma' }} <i class="pi pi-verified text-primary" style="font-size: 0.78rem;" title="Verified Staff"></i></strong>
+              <span>{{ user?.role || 'Rheumatologist' }}</span>
+            </div>
+            <i class="pi pi-chevron-down text-muted ms-1" style="font-size: 0.7rem; transition: transform 0.2s;" [style.transform]="showUserMenu() ? 'rotate(180deg)' : 'none'"></i>
           </div>
-          <div>
-            <strong class="d-flex align-items-center gap-1">{{ user?.fullName || 'Dr. Rahul Sharma' }} <i class="pi pi-verified text-primary" style="font-size: 0.78rem;" title="Verified Staff"></i></strong>
-            <span>{{ user?.role || 'Rheumatologist' }}</span>
+
+          <!-- User Menu Dropdown -->
+          <div *ngIf="showUserMenu()" class="user-dropdown position-absolute end-0 shadow bg-white rounded-3 mt-2 border" style="width: 210px; z-index: 1050; overflow: hidden;">
+            <div class="p-2 border-bottom bg-light">
+              <small class="text-muted d-block text-truncate" style="font-size: 0.75rem;">Signed in as</small>
+              <strong class="d-block text-truncate text-dark" style="font-size: 0.85rem;">{{ user?.email || user?.fullName }}</strong>
+            </div>
+            <div class="p-1">
+              <button type="button" class="dropdown-item d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-dark" (click)="openChangePasswordModal()" style="font-size: 0.85rem; border: none; background: transparent; width: 100%; text-align: left; cursor: pointer;">
+                <i class="pi pi-key text-primary" style="font-size: 0.9rem;"></i>
+                <span>Change Password</span>
+              </button>
+              <div class="dropdown-divider my-1"></div>
+              <button type="button" class="dropdown-item d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-danger" (click)="logout()" style="font-size: 0.85rem; border: none; background: transparent; width: 100%; text-align: left; cursor: pointer;">
+                <i class="pi pi-sign-out" style="font-size: 0.9rem;"></i>
+                <span>Sign out</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -140,5 +164,132 @@
     <main class="emr-content">
       <router-outlet></router-outlet>
     </main>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 🔒 CHANGE PASSWORD MODAL DIALOG            -->
+<!-- ========================================== -->
+<div *ngIf="showPasswordModal()" class="modal-backdrop-custom d-flex align-items-center justify-content-center" (click)="closeChangePasswordModal()">
+  <div class="modal-card-custom" (click)="$event.stopPropagation()">
+    <!-- Modal Header -->
+    <div class="modal-header-custom d-flex justify-content-between align-items-center p-3 border-bottom bg-light">
+      <div class="d-flex align-items-center gap-2">
+        <div class="qa-icon-box qa-purple" style="width: 36px; height: 36px; font-size: 1rem; border-radius: 8px;">
+          <i class="pi pi-lock"></i>
+        </div>
+        <div>
+          <h5 class="mb-0 fw-bold text-dark" style="font-size: 1.05rem;">Change Password</h5>
+          <small class="text-muted" style="font-size: 0.75rem;">Keep your account safe and secure</small>
+        </div>
+      </div>
+      <button type="button" class="btn-close-custom border-0 bg-transparent text-muted" (click)="closeChangePasswordModal()" [disabled]="changePasswordLoading()">
+        <i class="pi pi-times" style="font-size: 1.1rem;"></i>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <form (ngSubmit)="submitChangePassword()" class="p-4">
+      <!-- Error / Success Banners -->
+      <div *ngIf="passwordError()" class="alert alert-danger d-flex align-items-center gap-2 p-2 mb-3 rounded-2" style="font-size: 0.82rem;">
+        <i class="pi pi-exclamation-circle text-danger flex-shrink-0"></i>
+        <span>{{ passwordError() }}</span>
+      </div>
+
+      <div *ngIf="passwordSuccess()" class="alert alert-success d-flex align-items-center gap-2 p-2 mb-3 rounded-2" style="font-size: 0.82rem;">
+        <i class="pi pi-check-circle text-success flex-shrink-0"></i>
+        <span>{{ passwordSuccess() }}</span>
+      </div>
+
+      <!-- 1. Current Password -->
+      <div class="mb-3">
+        <label class="form-label text-dark fw-semibold mb-1" style="font-size: 0.83rem;">Current Password</label>
+        <div class="position-relative">
+          <input 
+            [type]="showCurrentPassword ? 'text' : 'password'" 
+            name="currentPassword"
+            [(ngModel)]="currentPassword" 
+            placeholder="Enter current password"
+            class="form-control pe-5"
+            [disabled]="changePasswordLoading()"
+            style="font-size: 0.88rem; height: 42px; border-radius: 8px;"
+            required />
+          <button 
+            type="button" 
+            class="btn-eye-toggle position-absolute end-0 top-50 translate-middle-y border-0 bg-transparent text-muted pe-3" 
+            (click)="showCurrentPassword = !showCurrentPassword"
+            tabindex="-1">
+            <i class="pi" [ngClass]="showCurrentPassword ? 'pi-eye-slash' : 'pi-eye'" style="font-size: 0.95rem;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. New Password -->
+      <div class="mb-3">
+        <label class="form-label text-dark fw-semibold mb-1" style="font-size: 0.83rem;">New Password</label>
+        <div class="position-relative">
+          <input 
+            [type]="showNewPassword ? 'text' : 'password'" 
+            name="newPassword"
+            [(ngModel)]="newPassword" 
+            placeholder="Enter new password (min. 6 characters)"
+            class="form-control pe-5"
+            [disabled]="changePasswordLoading()"
+            style="font-size: 0.88rem; height: 42px; border-radius: 8px;"
+            required />
+          <button 
+            type="button" 
+            class="btn-eye-toggle position-absolute end-0 top-50 translate-middle-y border-0 bg-transparent text-muted pe-3" 
+            (click)="showNewPassword = !showNewPassword"
+            tabindex="-1">
+            <i class="pi" [ngClass]="showNewPassword ? 'pi-eye-slash' : 'pi-eye'" style="font-size: 0.95rem;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- 3. Confirm New Password -->
+      <div class="mb-4">
+        <label class="form-label text-dark fw-semibold mb-1" style="font-size: 0.83rem;">Confirm New Password</label>
+        <div class="position-relative">
+          <input 
+            [type]="showConfirmPassword ? 'text' : 'password'" 
+            name="confirmNewPassword"
+            [(ngModel)]="confirmNewPassword" 
+            placeholder="Re-enter new password"
+            class="form-control pe-5"
+            [disabled]="changePasswordLoading()"
+            style="font-size: 0.88rem; height: 42px; border-radius: 8px;"
+            required />
+          <button 
+            type="button" 
+            class="btn-eye-toggle position-absolute end-0 top-50 translate-middle-y border-0 bg-transparent text-muted pe-3" 
+            (click)="showConfirmPassword = !showConfirmPassword"
+            tabindex="-1">
+            <i class="pi" [ngClass]="showConfirmPassword ? 'pi-eye-slash' : 'pi-eye'" style="font-size: 0.95rem;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Footer Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+        <button 
+          type="button" 
+          class="btn btn-light px-3 py-2 fw-medium rounded-2" 
+          style="font-size: 0.85rem;"
+          (click)="closeChangePasswordModal()" 
+          [disabled]="changePasswordLoading()">
+          Cancel
+        </button>
+
+        <button 
+          type="submit" 
+          class="btn btn-primary px-4 py-2 fw-medium rounded-2 d-flex align-items-center gap-2" 
+          style="font-size: 0.85rem; background: linear-gradient(135deg, #0d9488, #0284c7); border: none;"
+          [disabled]="changePasswordLoading()">
+          <i *ngIf="changePasswordLoading()" class="pi pi-spin pi-spinner" style="font-size: 0.85rem;"></i>
+          <span>{{ changePasswordLoading() ? 'Updating...' : 'Update Password' }}</span>
+        </button>
+      </div>
+    </form>
   </div>
 </div>

@@ -9,6 +9,7 @@ namespace EMR.Application.Interfaces
 {
     public interface IUserRepository
     {
+        Task<User?> GetByIdAsync(int userId);
         Task<User?> GetByEmailAsync(string email);
         Task<User?> GetByRefreshTokenAsync(string refreshToken);
         Task UpdateAsync(User user);

@@ -10,6 +10,13 @@ public class UserRepository : IUserRepository
     private readonly AppDbContext _context;
     public UserRepository(AppDbContext context) => _context = context;
 
+    public async Task<User?> GetByIdAsync(int userId)
+    {
+        return await _context.Users
+            .Include(u => u.Role)
+            .FirstOrDefaultAsync(u => u.UserId == userId);
+    }
+
     public async Task<User?> GetByEmailAsync(string email)
     {
         return await _context.Users

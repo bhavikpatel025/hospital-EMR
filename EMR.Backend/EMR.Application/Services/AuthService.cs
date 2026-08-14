@@ -122,6 +122,37 @@ public class AuthService : IAuthService
         };
     }
 
+    public async Task<bool> ChangePasswordAsync(int userId, ChangePasswordDto request)
+    {
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user is null || !user.IsActive)
+        {
+            throw new KeyNotFoundException("User not found or account is inactive.");
+        }
+
+        if (!PasswordHasher.VerifyHash(request.CurrentPassword, user.PasswordHash, user.PasswordSalt))
+        {
+            throw new InvalidOperationException("Current password is incorrect.");
+        }
+
+        if (request.NewPassword == request.CurrentPassword)
+        {
+            throw new InvalidOperationException("New password cannot be the same as your current password.");
+        }
+
+        if (request.NewPassword != request.ConfirmNewPassword)
+        {
+            throw new InvalidOperationException("New password and confirmation password do not match.");
+        }
+
+        PasswordHasher.CreateHash(request.NewPassword, out var newHash, out var newSalt);
+        user.PasswordHash = newHash;
+        user.PasswordSalt = newSalt;
+
+        await _userRepository.UpdateAsync(user);
+        return true;
+    }
+
     private static string GenerateRefreshToken()
     {
         return Guid.NewGuid().ToString("N") + Guid.NewGuid().ToString("N");
