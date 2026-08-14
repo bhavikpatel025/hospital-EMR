@@ -1,9 +1,11 @@
 using EMR.Application.Interfaces;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using MimeKit;
 using System;
 using System.Net;
-using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace EMR.Infrastructure.Services
@@ -111,9 +113,9 @@ namespace EMR.Infrastructure.Services
             var senderName = _configuration["SmtpSettings:SenderName"] ?? "NextGen Hospital EMR";
             var username = _configuration["SmtpSettings:Username"] ?? senderEmail;
             var password = _configuration["SmtpSettings:Password"] ?? "";
-            var enableSsl = bool.TryParse(_configuration["SmtpSettings:EnableSsl"], out var ssl) && ssl;
+            var enableSsl = !bool.TryParse(_configuration["SmtpSettings:EnableSsl"], out var ssl) || ssl;
 
-            _logger.LogInformation("Attempting to send email to {ToEmail} with subject '{Subject}'", toEmail, subject);
+            _logger.LogInformation("Attempting to send email to {ToEmail} with subject '{Subject}' via MailKit", toEmail, subject);
 
             if (string.IsNullOrWhiteSpace(password))
             {
@@ -124,29 +126,42 @@ namespace EMR.Infrastructure.Services
 
             try
             {
-                using var client = new SmtpClient(host, port)
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress(senderName, senderEmail));
+                message.To.Add(new MailboxAddress(toEmail, toEmail));
+                message.Subject = subject;
+
+                var bodyBuilder = new BodyBuilder
                 {
-                    Credentials = new NetworkCredential(username, password),
-                    EnableSsl = enableSsl
+                    HtmlBody = htmlBody
                 };
+                message.Body = bodyBuilder.ToMessageBody();
 
-                using var mailMessage = new MailMessage
-                {
-                    From = new MailAddress(senderEmail, senderName),
-                    Subject = subject,
-                    Body = htmlBody,
-                    IsBodyHtml = true
-                };
+                using var client = new SmtpClient();
 
-                mailMessage.To.Add(toEmail);
+                // Accept all certificates in cross-platform Linux/Render environments
+                client.ServerCertificateValidationCallback = (s, c, h, e) => true;
 
-                await client.SendMailAsync(mailMessage);
-                _logger.LogInformation("Email successfully delivered to {ToEmail}", toEmail);
+                // Determine SSL/TLS mode based on configuration and port
+                var secureSocketOption = !enableSsl
+                    ? SecureSocketOptions.None
+                    : (port == 465 ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.StartTls);
+
+                // Connect to SMTP Server (MailKit auto-handles IPv4 fallback if IPv6 is unreachable)
+                await client.ConnectAsync(host, port, secureSocketOption);
+
+                // Authenticate with Google App Password
+                await client.AuthenticateAsync(username, password);
+
+                // Send email
+                await client.SendAsync(message);
+                await client.DisconnectAsync(true);
+
+                _logger.LogInformation("Email successfully delivered to {ToEmail} via MailKit", toEmail);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to send email to {ToEmail}. Error: {Message}", toEmail, ex.Message);
-                // We do not throw to prevent blocking the user flow; token remains valid in DB for testing
+                _logger.LogError(ex, "Failed to send email to {ToEmail} via MailKit. Error: {Message}", toEmail, ex.Message);
             }
         }
     }
