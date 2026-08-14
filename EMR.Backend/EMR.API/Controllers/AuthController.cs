@@ -74,4 +74,39 @@ public class AuthController : ControllerBase
             return StatusCode(500, new { message = "An error occurred while updating the password.", details = ex.Message });
         }
     }
+
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDto request)
+    {
+        var origin = Request.Headers["Origin"].ToString();
+        var clientBaseUrl = string.IsNullOrWhiteSpace(origin) ? "http://localhost:4200" : origin;
+
+        try
+        {
+            await _authService.ForgotPasswordAsync(request, clientBaseUrl);
+            return Ok(new { message = "If the email is registered, a password reset link has been sent to your inbox." });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred while processing your request.", details = ex.Message });
+        }
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestDto request)
+    {
+        try
+        {
+            await _authService.ResetPasswordAsync(request);
+            return Ok(new { message = "Your password has been reset successfully. You can now log in with your new password." });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred while resetting your password.", details = ex.Message });
+        }
+    }
 }

@@ -23,23 +23,34 @@ An advanced, highly responsive, and AI-augmented **Hospital Electronic Medical R
 
 ![Public Web Portal](screenshots/public-portal.png)
 
-###  2. Authentication & Role-Based Security
-* **JWT Bearer Token Security:** Stateless, secure token-based authentication with salted password hashing.
-* **Angular Route Guards (`AuthGuard`):** Strict frontend route protection ensuring unauthorized users are automatically redirected to the login portal.
+###  2. Enterprise Authentication & Security Lifecycle
+* **JWT Bearer Token & Refresh Token Rotation:** Stateless, secure token-based authentication with 30-day silent refresh rotation and salted HMACSHA512 password hashing.
+* **In-App Change Password:** Seamless change password dialog from the topbar profile menu with current password verification and eye show/hide toggles.
+* **Forgot & Reset Password (SMTP Email):** Automated self-service password recovery flow via Google SMTP. Generates cryptographically secure 32-byte tokens with 15-minute expiration and delivers responsive, branded HTML emails to the user's inbox.
+* **Angular Route Guards (`authGuard`, `roleGuard`, `PatientGuard`):** Multi-tiered role-based frontend protection ensuring doctors, receptionists, and patients only access authorized modules.
 * **Global HTTP Error & Auth Interceptor (`error.interceptor.ts`):** Automatically catches expired sessions (`401 Unauthorized`), server errors (`500`), and network disconnects, alerting users via sleek PrimeNG Toast notifications (`p-toast`).
 
-###  3. Patient Digital Health Records (Patient Portal)
+![Authentication & Login Portal](screenshots/login-auth.png)
+
+###  3. Real-Time Role-Based Notification System (SignalR WebSockets)
+* **Instant WebSocket Push:** Real-time bi-directional communication powered by ASP.NET Core SignalR and Angular Signal synchronization (`NgZone`).
+* **Role-Targeted Broadcasting:** Dynamically groups connected clients into role channels (`Doctor`, `Admin`, `Receptionist`) so notifications reach only relevant staff members.
+* **Clinical Event Triggers:** Automated instant alerts generated on new patient bookings, online web portal requests, and cancellations with 12-hour AM/PM timestamps.
+* **Interactive Notification Center:** Topbar bell with live unread badge, quick "Mark as Read", single-item deletion, "Clear All", responsive mobile layout, and intelligent outside-click dismissal.
+
+###  4. Patient Digital Health Records (Patient Portal)
 * **Modern Medical Timeline:** Patients have access to a clean, left-aligned chronological timeline of their complete medical history, including consultations, lab reports, and imaging.
 * **Instant Document Downloads:** Built-in PDF generation and secure document retrieval allowing patients to instantly download their medical prescriptions and lab reports with a single click.
 
-###  4. Advanced Clinical Dashboard (Hospital Admin)
+###  5. Advanced Clinical Dashboard (Hospital Admin)
 * **Real-time Analytics:** Visual representation of hospital metrics using PrimeNG Charts (`Chart.js`).
 * **Appointments Trend:** A Line Chart showing the 30-day trend of OPD appointments.
 * **Patient Demographics:** A dynamic Donut Chart illustrating the gender distribution of registered patients.
+* **Doctor Workload:** Live workload distribution chart accessible across clinical and administrative roles.
 
 ![Dashboard Analytics](screenshots/dashboard.png)
 
-###  5. Comprehensive Patient Profile & AI Summarization (Doctor View)
+###  6. Comprehensive Patient Profile & AI Summarization (Doctor View)
 * **Patient Lifecycle Tracking:** Manage patient demographics, Unique Hospital ID (`UHID`), Age, Gender, Blood Group, Mobile contact, and Active status.
 * **Executive Clinical Snapshot:** Auto-synthesized view of Active Medications, Key Lab Findings, and Radiology Summaries directly on the patient profile.
 * **AI Clinical Voice Notes (Groq Whisper):** Integrated voice dictation for instant, high-accuracy medical transcription directly into the patient record.
@@ -48,12 +59,12 @@ An advanced, highly responsive, and AI-augmented **Hospital Electronic Medical R
 ![Patient Clinical Summary](screenshots/patient-summary.png)
 ![Patient AI Extraction](screenshots/patient-ai-extraction.png)
 
-###  6. Doctor Roster & OPD Scheduling
+###  7. Doctor Roster & OPD Scheduling
 * **Doctor Directory:** Manage specialized doctors, qualifications, experience years, and consultation fee structures.
 * **Interactive OPD Appointments:** Doctor-Patient linked appointment booking with real-time status management (`Pending`, `Confirmed`, `Completed`, `Cancelled`).
 * **Live Clinical Dashboard:** Interactive summary cards and daily OPD queue overview.
 
-###  7. Interactive Joint Assessment (Rheumatology Module)
+###  8. Interactive Joint Assessment (Rheumatology Module)
 * **Visual Body Map:** A responsive, interactive SVG Anterior Skeleton allowing doctors to click directly on joints (Shoulders, Elbows, Wrists, Fingers, Hips, Knees, Toes) to record conditions.
 * **Color-coded Joint States:** Visually distinguish between Normal (Green), Tender (Red), Swollen (Blue), Tender & Swollen (Purple), and Limited Movement (Orange).
 * **Smart Visit History Calendar:** A dedicated Datepicker that highlights past patient visits with a green indicator. Selecting a past date locks the form into a secure Read-Only mode to protect historical clinical data.
@@ -61,7 +72,7 @@ An advanced, highly responsive, and AI-augmented **Hospital Electronic Medical R
 
 ![Joint Assessment](screenshots/joint-assessment.png)
 
-###  8. Multilingual E-Prescription & Auto-Translation
+###  9. Multilingual E-Prescription & Auto-Translation
 * **Smart Prescription Builder:** Easily search and add medications, dosages, frequency, and custom instructions.
 * **Instant Auto-Translation:** Features a real-time Groq Llama 3-powered translation engine. When a doctor types instructions in English, it instantly translates them to the patient's preferred language (e.g., Hindi, Gujarati). 
 * **Smart Hybrid DB Dictionary:** Uses a hybrid local database dictionary to cache translations and save Groq API calls for common medical terms!
@@ -69,7 +80,7 @@ An advanced, highly responsive, and AI-augmented **Hospital Electronic Medical R
 
 ![Multilingual E-Prescription](screenshots/e-prescription.png)
 
-###  9. Intelligent Past Visits Feed
+###  10. Intelligent Past Visits Feed
 * **Chronological Accordion Groups:** Clinical events (Assessments, Prescriptions, Document Uploads) are beautifully grouped by date using an interactive PrimeNG Accordion for a clutter-free UI.
 * **Instant Document Previews:** Click the 'Info' tooltip `(i)` on any uploaded document in the timeline to instantly read its AI-extracted clinical summary—no need to download or switch tabs!
 
@@ -79,21 +90,24 @@ An advanced, highly responsive, and AI-augmented **Hospital Electronic Medical R
 
 ##  Core Modules Overview
 
-Here is a visual overview of the 5 core modules available in our EMR system:
+Here is a visual overview of the core modules available in our EMR system:
 
-### 1. Dashboard
+### 1. Staff Authentication & Login
+![Staff Authentication](screenshots/login-auth.png)
+
+### 2. Dashboard
 ![Dashboard Module](screenshots/module-dashboard.png)
 
-### 2. Patients
+### 3. Patients
 ![Patients Module](screenshots/module-patients.png)
 
-### 3. Appointments
+### 4. Appointments
 ![Appointments Module](screenshots/module-appointments.png)
 
-### 4. Calendar
+### 5. Calendar
 ![Calendar Module](screenshots/module-calendar.png)
 
-### 5. Doctors
+### 6. Doctors
 ![Doctors Module](screenshots/module-doctors.png)
 
 ---
@@ -183,13 +197,17 @@ The `.NET 8` backend strictly adheres to **Clean Architecture / Onion Architectu
 
 | Layer | Technologies & Tools |
 | :--- | :--- |
-| **Frontend Framework** | Angular 18+ (Standalone Components, Signals (`signal()`), Reactive Forms) |
-| **UI Library & Styling** | PrimeNG (`p-toast`, `p-dropdown`), Angular Material (`MatPaginator`, `MatDialog`), SCSS |
-| **Backend Framework** | .NET 8 Web API (C# 12) |
-| **ORM & Database** | Entity Framework Core 8, SQL Server / PostgreSQL |
+| **Frontend Framework** | Angular 18+ (Standalone Components, Reactive Signals (`signal()`), Reactive Forms) |
+| **UI Library & Styling** | PrimeNG (`p-chart`, `p-toast`, `p-dropdown`, `p-accordion`), Angular Material, SCSS |
+| **Backend Framework** | .NET 8 Web API (C# 12, Clean Architecture) |
+| **ORM & Database** | Entity Framework Core 8, PostgreSQL / SQL Server |
+| **Real-Time WebSockets** | ASP.NET Core SignalR (`@microsoft/signalr`) with role-based broadcasting |
+| **Email & Transactional Delivery** | System.Net.Mail (Google SMTP Integration with App Passwords & HTML Templates) |
+| **Cloud File Storage** | Cloudinary API (`CloudinaryDotNet`) |
 | **AI & LLM Engine** | Groq API (`llama-3.3-70b-versatile` Text Model, `llama-3.2-90b-vision-preview` Vision Model) |
+| **Voice Transcription** | Groq Whisper AI (`whisper-large-v3-turbo`) |
 | **OCR & PDF Engines** | Local Tesseract OCR (`TesseractEngine`), UglyToad.PdfPig |
-| **Authentication** | JSON Web Tokens (`System.IdentityModel.Tokens.Jwt`), Custom PBKDF2 / SHA Hashing |
+| **Authentication & Security** | JWT Bearer, Refresh Token Rotation, HMACSHA512 Salted Hash, Crypto Token Generator |
 
 ---
 

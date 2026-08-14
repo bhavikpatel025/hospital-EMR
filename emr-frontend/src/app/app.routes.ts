@@ -10,6 +10,12 @@ export const routes: Routes = [
       import('./features/auth/login/login.component').then(m => m.LoginComponent)
   },
   {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./features/auth/reset-password/reset-password.component').then(m => m.ResetPasswordComponent),
+    data: { title: 'Reset Password' }
+  },
+  {
     path: 'patient-login',
     loadComponent: () =>
       import('./features/auth/patient-login/patient-login.component').then(m => m.PatientLoginComponent)

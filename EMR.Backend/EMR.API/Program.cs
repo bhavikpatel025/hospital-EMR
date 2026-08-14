@@ -76,6 +76,7 @@ builder.Services.AddScoped<IPatientDocumentService, PatientDocumentService>();
 builder.Services.AddScoped<ICloudStorageService, CloudinaryStorageService>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 
 builder.Services.AddSignalR();
 

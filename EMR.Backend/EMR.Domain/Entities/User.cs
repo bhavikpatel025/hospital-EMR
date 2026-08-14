@@ -20,6 +20,10 @@ namespace EMR.Domain.Entities
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
 
+        // Password Reset Token fields
+        public string? PasswordResetToken { get; set; }
+        public DateTime? ResetTokenExpiry { get; set; }
+
         // Foreign Key
         public int RoleId { get; set; }
         public Role Role { get; set; } = null!;

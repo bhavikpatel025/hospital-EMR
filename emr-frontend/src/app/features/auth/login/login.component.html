@@ -67,7 +67,12 @@
 
           <!-- Password Field -->
           <div class="emr-form-group">
-            <label class="emr-form-label">Password</label>
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="emr-form-label mb-0">Password</label>
+              <button type="button" class="btn btn-link p-0 text-decoration-none" style="font-size: 0.82rem; color: #0284c7; font-weight: 500;" (click)="openForgotModal()">
+                Forgot password?
+              </button>
+            </div>
             <div class="emr-input-wrapper">
               <mat-icon class="emr-input-icon">lock</mat-icon>
               <input
@@ -108,4 +113,85 @@
 
   </div>
 
+</div>
+
+<!-- ========================================== -->
+<!-- ✉️ FORGOT PASSWORD MODAL DIALOG            -->
+<!-- ========================================== -->
+<div *ngIf="showForgotModal()" class="modal-backdrop-custom d-flex align-items-center justify-content-center" (click)="closeForgotModal()">
+  <div class="modal-card-custom" (click)="$event.stopPropagation()">
+    <!-- Modal Header -->
+    <div class="d-flex justify-content-between align-items-center p-3 border-bottom bg-light">
+      <div class="d-flex align-items-center gap-2">
+        <div class="qa-icon-box qa-blue d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; font-size: 1rem; border-radius: 8px; background: rgba(2, 132, 199, 0.12); color: #0284c7;">
+          <mat-icon style="font-size: 20px; width: 20px; height: 20px;">lock_reset</mat-icon>
+        </div>
+        <div>
+          <h5 class="mb-0 fw-bold text-dark" style="font-size: 1.05rem;">Forgot Password?</h5>
+          <small class="text-muted" style="font-size: 0.75rem;">We'll email you a reset link</small>
+        </div>
+      </div>
+      <button type="button" class="btn-close-custom border-0 bg-transparent text-muted" (click)="closeForgotModal()" [disabled]="forgotLoading()" style="cursor: pointer;">
+        <mat-icon style="font-size: 20px; width: 20px; height: 20px;">close</mat-icon>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <form (ngSubmit)="submitForgotPassword()" class="p-4">
+      <!-- Error / Success Banners -->
+      <div *ngIf="forgotError()" class="alert alert-danger d-flex align-items-center gap-2 p-2 mb-3 rounded-2" style="font-size: 0.82rem;">
+        <mat-icon style="font-size: 18px; width: 18px; height: 18px; color: #dc2626;">error</mat-icon>
+        <span>{{ forgotError() }}</span>
+      </div>
+
+      <div *ngIf="forgotSuccess()" class="alert alert-success d-flex align-items-center gap-2 p-3 mb-3 rounded-2" style="font-size: 0.85rem; line-height: 1.4;">
+        <mat-icon style="font-size: 20px; width: 20px; height: 20px; color: #16a34a;" class="flex-shrink-0">check_circle</mat-icon>
+        <div>
+          <strong>Reset email sent!</strong>
+          <div>{{ forgotSuccess() }}</div>
+        </div>
+      </div>
+
+      <div *ngIf="!forgotSuccess()">
+        <p class="text-muted mb-3" style="font-size: 0.85rem; line-height: 1.5;">
+          Enter the registered email address of your doctor/staff account. We will send a secure password reset link to your inbox.
+        </p>
+
+        <div class="mb-4">
+          <label class="form-label text-dark fw-semibold mb-1" style="font-size: 0.83rem;">Email Address</label>
+          <input 
+            type="email" 
+            name="forgotEmail"
+            [(ngModel)]="forgotEmail" 
+            placeholder="e.g. rahul@hospital.com"
+            class="form-control"
+            [disabled]="forgotLoading()"
+            style="font-size: 0.88rem; height: 42px; border-radius: 8px;"
+            required />
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+        <button 
+          type="button" 
+          class="btn btn-light px-3 py-2 fw-medium rounded-2" 
+          style="font-size: 0.85rem;"
+          (click)="closeForgotModal()" 
+          [disabled]="forgotLoading()">
+          {{ forgotSuccess() ? 'Close' : 'Cancel' }}
+        </button>
+
+        <button 
+          *ngIf="!forgotSuccess()"
+          type="submit" 
+          class="btn btn-primary px-4 py-2 fw-medium rounded-2 d-flex align-items-center gap-2" 
+          style="font-size: 0.85rem; background: linear-gradient(135deg, #0d9488, #0284c7); border: none;"
+          [disabled]="forgotLoading()">
+          <span *ngIf="forgotLoading()" class="spinner-border spinner-border-sm"></span>
+          <span>{{ forgotLoading() ? 'Sending Link...' : 'Send Reset Link' }}</span>
+        </button>
+      </div>
+    </form>
+  </div>
 </div>

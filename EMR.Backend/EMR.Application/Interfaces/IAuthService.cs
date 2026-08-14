@@ -13,5 +13,7 @@ namespace EMR.Application.Interfaces
         Task<PatientLoginResponseDto?> PatientLoginAsync(PatientLoginRequestDto request);
         Task<LoginResponseDto?> RefreshTokenAsync(TokenRefreshRequestDto request);
         Task<bool> ChangePasswordAsync(int userId, ChangePasswordDto request);
+        Task<bool> ForgotPasswordAsync(ForgotPasswordRequestDto request, string clientBaseUrl);
+        Task<bool> ResetPasswordAsync(ResetPasswordRequestDto request);
     }
 }

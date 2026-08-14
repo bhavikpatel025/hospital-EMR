@@ -51,6 +51,14 @@ export class AuthService {
     return this.http.post<{ message: string }>(`${this.baseUrl}/change-password`, payload);
   }
 
+  forgotPassword(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}/forgot-password`, { email });
+  }
+
+  resetPassword(payload: { email: string; token: string; newPassword: string; confirmNewPassword: string }): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}/reset-password`, payload);
+  }
+
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');

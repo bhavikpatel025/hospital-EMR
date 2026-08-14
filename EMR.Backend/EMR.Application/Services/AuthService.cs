@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using AutoMapper;
 using EMR.Application.DTOs.Auth;
@@ -16,14 +17,22 @@ public class AuthService : IAuthService
     private readonly IUserRepository _userRepository;
     private readonly IDoctorRepository _doctorRepository;
     private readonly IPatientRepository _patientRepository;
+    private readonly IEmailService _emailService;
     private readonly IConfiguration _configuration;
     private readonly IMapper _mapper;
 
-    public AuthService(IUserRepository userRepository, IDoctorRepository doctorRepository, IPatientRepository patientRepository, IConfiguration configuration, IMapper mapper)
+    public AuthService(
+        IUserRepository userRepository, 
+        IDoctorRepository doctorRepository, 
+        IPatientRepository patientRepository,
+        IEmailService emailService,
+        IConfiguration configuration, 
+        IMapper mapper)
     {
         _userRepository = userRepository;
         _doctorRepository = doctorRepository;
         _patientRepository = patientRepository;
+        _emailService = emailService;
         _configuration = configuration;
         _mapper = mapper;
     }
@@ -148,6 +157,64 @@ public class AuthService : IAuthService
         PasswordHasher.CreateHash(request.NewPassword, out var newHash, out var newSalt);
         user.PasswordHash = newHash;
         user.PasswordSalt = newSalt;
+
+        await _userRepository.UpdateAsync(user);
+        return true;
+    }
+
+    public async Task<bool> ForgotPasswordAsync(ForgotPasswordRequestDto request, string clientBaseUrl)
+    {
+        var user = await _userRepository.GetByEmailAsync(request.Email.Trim().ToLowerInvariant());
+        if (user is null || !user.IsActive)
+        {
+            // Security best practice: don't disclose whether user exists
+            return true;
+        }
+
+        var tokenBytes = RandomNumberGenerator.GetBytes(32);
+        var resetToken = Convert.ToHexString(tokenBytes).ToLowerInvariant();
+        var expiry = DateTime.UtcNow.AddMinutes(15);
+
+        user.PasswordResetToken = resetToken;
+        user.ResetTokenExpiry = expiry;
+        await _userRepository.UpdateAsync(user);
+
+        var baseUrl = string.IsNullOrWhiteSpace(clientBaseUrl) ? "http://localhost:4200" : clientBaseUrl.TrimEnd('/');
+        var resetLink = $"{baseUrl}/reset-password?token={resetToken}&email={Uri.EscapeDataString(user.Email)}";
+
+        await _emailService.SendPasswordResetEmailAsync(user.Email, user.FullName, resetLink);
+        return true;
+    }
+
+    public async Task<bool> ResetPasswordAsync(ResetPasswordRequestDto request)
+    {
+        if (request.NewPassword != request.ConfirmNewPassword)
+        {
+            throw new InvalidOperationException("New password and confirmation password do not match.");
+        }
+
+        var user = await _userRepository.GetByEmailAsync(request.Email.Trim().ToLowerInvariant());
+        if (user is null || !user.IsActive)
+        {
+            throw new InvalidOperationException("Invalid password reset request.");
+        }
+
+        if (string.IsNullOrWhiteSpace(user.PasswordResetToken) ||
+            !string.Equals(user.PasswordResetToken, request.Token, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException("Invalid or expired password reset token.");
+        }
+
+        if (!user.ResetTokenExpiry.HasValue || user.ResetTokenExpiry.Value < DateTime.UtcNow)
+        {
+            throw new InvalidOperationException("Password reset link has expired. Please request a new one.");
+        }
+
+        PasswordHasher.CreateHash(request.NewPassword, out var newHash, out var newSalt);
+        user.PasswordHash = newHash;
+        user.PasswordSalt = newSalt;
+        user.PasswordResetToken = null;
+        user.ResetTokenExpiry = null;
 
         await _userRepository.UpdateAsync(user);
         return true;
