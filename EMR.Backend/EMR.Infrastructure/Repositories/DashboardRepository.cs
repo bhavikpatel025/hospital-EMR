@@ -69,10 +69,8 @@ namespace EMR.Infrastructure.Repositories
             result.PatientsByAgeGroup.Add(new ChartDataDto { Label = "51-65", Value = patients.Count(a => a >= 51 && a <= 65) });
             result.PatientsByAgeGroup.Add(new ChartDataDto { Label = "65+", Value = patients.Count(a => a > 65) });
 
-            // 4. Appointments by Doctor (skip if doctor, since they only see themselves)
-            if (!_currentUserService.IsDoctor)
-            {
-                var doctors = await apptsQuery
+            // 4. Appointments by Doctor (shows current doctor workload for doctor, or all doctors for admin/receptionist)
+            var doctors = await apptsQuery
                 .Include(a => a.Doctor)
                 .ThenInclude(d => d.User)
                 .GroupBy(a => a.Doctor.User.FullName)
@@ -81,14 +79,13 @@ namespace EMR.Infrastructure.Repositories
                 .Take(5)
                 .ToListAsync();
 
-                foreach (var doc in doctors)
+            foreach (var doc in doctors)
+            {
+                result.AppointmentsByDoctor.Add(new ChartDataDto
                 {
-                    result.AppointmentsByDoctor.Add(new ChartDataDto
-                    {
-                        Label = $"Dr. {doc.DoctorName}",
-                        Value = doc.ApptCount
-                    });
-                }
+                    Label = $"Dr. {doc.DoctorName}",
+                    Value = doc.ApptCount
+                });
             }
 
             return result;
