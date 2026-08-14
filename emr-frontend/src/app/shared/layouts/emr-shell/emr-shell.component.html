@@ -52,6 +52,74 @@
         </div> -->
 
       <div class="emr-topbar__right d-flex align-items-center gap-3">
+        <!-- Notification Bell & Dropdown -->
+        <div class="notification-container position-relative">
+          <button type="button" class="emr-icon-button position-relative bg-transparent border-0" (click)="toggleNotifications($event)" style="cursor: pointer;" title="Notifications">
+            <div class="qa-icon-box bg-light" style="width: 36px; height: 36px; font-size: 1.1rem; border-radius: 8px;">
+              <i class="pi pi-bell text-secondary"></i>
+            </div>
+            <span *ngIf="(unreadCount$ | async) as count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem; padding: 0.35em 0.55em;">
+              {{ count > 9 ? '9+' : count }}
+            </span>
+          </button>
+
+          <!-- Notification Dropdown Panel -->
+          <div *ngIf="showNotifications()" class="notification-dropdown">
+            <div class="dropdown-header d-flex justify-content-between align-items-center">
+              <div class="d-flex align-items-center gap-2">
+                <h6 class="mb-0 fw-bold" style="font-size: 0.95rem; color: #0f172a;">Notifications</h6>
+                <span *ngIf="(unreadCount$ | async) as unread" class="badge bg-primary rounded-pill" style="font-size: 0.65rem;">
+                  {{ unread }} new
+                </span>
+              </div>
+              <div class="d-flex gap-2">
+                <button type="button" class="btn btn-link btn-sm text-decoration-none p-0 text-primary fw-medium" (click)="markAllAsRead($event)" style="font-size: 0.75rem;">Mark all read</button>
+                <span class="text-muted" style="font-size: 0.75rem;">•</span>
+                <button type="button" class="btn btn-link btn-sm text-decoration-none p-0 text-danger fw-medium" (click)="clearAll($event)" style="font-size: 0.75rem;">Clear all</button>
+              </div>
+            </div>
+            
+            <div class="notification-list">
+              <ng-container *ngIf="(notifications$ | async) as notifications">
+                <div *ngIf="notifications.length === 0" class="p-4 text-center text-muted">
+                  <div class="qa-icon-box mx-auto mb-2 bg-light text-muted" style="width: 44px; height: 44px; font-size: 1.3rem; border-radius: 50%;">
+                    <i class="pi pi-bell-slash"></i>
+                  </div>
+                  <p class="mb-0 fw-medium text-secondary" style="font-size: 0.88rem;">No notifications right now</p>
+                  <small class="text-muted" style="font-size: 0.75rem;">You're all caught up!</small>
+                </div>
+
+                <div *ngFor="let n of notifications" 
+                     class="notification-item"
+                     [class.unread]="!n.isRead"
+                     (click)="markAsRead(n, $event)">
+                  
+                  <div class="item-icon-box" [ngClass]="!n.isRead ? 'unread' : 'read'">
+                    <i class="pi pi-bell"></i>
+                  </div>
+                  
+                  <div class="item-content">
+                    <div class="item-header">
+                      <h6 class="item-title" [ngClass]="{'text-dark fw-bold': !n.isRead, 'text-secondary': n.isRead}">
+                        {{ n.title }}
+                      </h6>
+                      <span class="item-time">{{ n.createdAt | date:'shortTime' }}</span>
+                    </div>
+                    <p class="item-message">{{ n.message }}</p>
+                  </div>
+                  
+                  <button type="button" 
+                          class="btn-delete-item" 
+                          (click)="deleteNotification(n.id, $event)" 
+                          title="Delete notification">
+                    <i class="pi pi-trash"></i>
+                  </button>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+
         <div class="emr-date-chip d-flex align-items-center gap-2 px-3 py-1 shadow-2xs">
           <div class="qa-icon-box qa-purple" style="width: 28px; height: 28px; font-size: 0.88rem;"><i class="pi pi-calendar"></i></div>
           <span class="font-semibold text-sm">{{ todayLabel }}</span>

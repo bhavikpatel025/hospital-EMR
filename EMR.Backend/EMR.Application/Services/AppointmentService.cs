@@ -10,11 +10,16 @@ public class AppointmentService : IAppointmentService
 {
     private readonly IAppointmentRepository _repository;
     private readonly IPatientRepository _patientRepository;
+    private readonly INotificationService _notificationService;
 
-    public AppointmentService(IAppointmentRepository repository, IPatientRepository patientRepository)
+    public AppointmentService(
+        IAppointmentRepository repository, 
+        IPatientRepository patientRepository,
+        INotificationService notificationService)
     {
         _repository = repository;
         _patientRepository = patientRepository;
+        _notificationService = notificationService;
     }
 
     public async Task<PagedResult<AppointmentListDto>> GetAllAsync(AppointmentQueryParams queryParams)
@@ -56,6 +61,15 @@ public class AppointmentService : IAppointmentService
 
         var created = await _repository.AddAsync(appointment);
         var fullAppointment = await _repository.GetByIdAsync(created.AppointmentId);
+        
+        // Notify the doctor
+        if (fullAppointment != null)
+        {
+            var doctorUserId = fullAppointment.Doctor.UserId;
+            var timeFormatted = DateTime.Today.Add(fullAppointment.StartTime).ToString("hh:mm tt");
+            await _notificationService.SendToUserAsync(doctorUserId, "New Appointment", $"An appointment was booked for {fullAppointment.Patient.FullName} on {fullAppointment.AppointmentDate:MMM dd} at {timeFormatted}.");
+        }
+
         return MapToDetailDto(fullAppointment!);
     }
 
@@ -93,6 +107,19 @@ public class AppointmentService : IAppointmentService
 
         var created = await _repository.AddAsync(appointment);
         var fullAppointment = await _repository.GetByIdAsync(created.AppointmentId);
+        
+        if (fullAppointment != null)
+        {
+            var timeFormatted = DateTime.Today.Add(fullAppointment.StartTime).ToString("hh:mm tt");
+            var msg = $"New online web booking request from {fullAppointment.Patient.FullName} for Dr. {fullAppointment.Doctor.User.FullName} on {fullAppointment.AppointmentDate:MMM dd} at {timeFormatted}.";
+            // Notify Doctor
+            await _notificationService.SendToUserAsync(fullAppointment.Doctor.UserId, "New Online Booking", msg);
+            // Notify Receptionists
+            await _notificationService.SendToRoleAsync("Receptionist", "New Online Booking", msg);
+            // Notify Admins
+            await _notificationService.SendToRoleAsync("Admin", "New Online Booking", msg);
+        }
+
         return MapToDetailDto(fullAppointment!);
     }
 
@@ -125,6 +152,14 @@ public class AppointmentService : IAppointmentService
 
         existing.Status = dto.Status;
         await _repository.UpdateAsync(existing);
+        
+        if (dto.Status == AppointmentStatus.Cancelled)
+        {
+            var timeFormatted = DateTime.Today.Add(existing.StartTime).ToString("hh:mm tt");
+            var msg = $"Appointment for {existing.Patient.FullName} with Dr. {existing.Doctor.User.FullName} on {existing.AppointmentDate:MMM dd} at {timeFormatted} has been cancelled.";
+            await _notificationService.SendToRoleAsync("Receptionist", "Appointment Cancelled", msg);
+        }
+
         return true;
     }
 

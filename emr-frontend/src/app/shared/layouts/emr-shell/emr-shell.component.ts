@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, HostListener, inject, signal } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { filter } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
+import { SystemNotificationService, SystemNotification } from '../../../core/services/system-notification.service';
 
 interface NavItem {
   label: string;
@@ -26,7 +27,9 @@ export class EmrShellComponent {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly authService = inject(AuthService);
+  private readonly notificationService = inject(SystemNotificationService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly elementRef = inject(ElementRef);
 
   protected readonly pageTitle = signal('Hospital Dashboard');
   protected readonly sidebarCollapsed = signal(false);
@@ -38,6 +41,10 @@ export class EmrShellComponent {
     year: 'numeric',
     weekday: 'long'
   }).format(new Date());
+
+  protected readonly notifications$ = this.notificationService.notifications$;
+  protected readonly unreadCount$ = this.notificationService.unreadCount$;
+  protected showNotifications = signal(false);
 
   protected primaryNav: NavItem[] = [];
 
@@ -56,10 +63,30 @@ export class EmrShellComponent {
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe(() => this.updateTitle());
+      .subscribe(() => {
+        this.updateTitle();
+        this.showNotifications.set(false);
+      });
+
+    this.notificationService.startConnection();
+
+    this.destroyRef.onDestroy(() => {
+      this.notificationService.stopConnection();
+    });
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.showNotifications()) return;
+    const targetElement = event.target as HTMLElement;
+    const notificationContainer = this.elementRef.nativeElement.querySelector('.notification-container');
+    if (notificationContainer && !notificationContainer.contains(targetElement)) {
+      this.showNotifications.set(false);
+    }
   }
 
   protected toggleSidebar(): void {
+    this.showNotifications.set(false);
     if (typeof window !== 'undefined' && window.innerWidth <= 960) {
       this.sidebarOpenMobile.update(current => !current);
     } else {
@@ -68,6 +95,7 @@ export class EmrShellComponent {
   }
 
   protected closeSidebar(): void {
+    this.showNotifications.set(false);
     if (typeof window !== 'undefined' && window.innerWidth <= 960) {
       this.sidebarOpenMobile.set(false);
     }
@@ -106,5 +134,32 @@ export class EmrShellComponent {
     }
 
     this.pageTitle.set(currentSnapshot.data?.['title'] ?? 'Dashboard');
+  }
+
+  protected toggleNotifications(event: MouseEvent): void {
+    event.stopPropagation();
+    this.showNotifications.update(v => !v);
+  }
+
+  protected markAsRead(notification: SystemNotification, event: Event): void {
+    event.stopPropagation();
+    if (!notification.isRead) {
+      this.notificationService.markAsRead(notification.id);
+    }
+  }
+
+  protected markAllAsRead(event: Event): void {
+    event.stopPropagation();
+    this.notificationService.markAllAsRead();
+  }
+
+  protected deleteNotification(id: number, event: Event): void {
+    event.stopPropagation();
+    this.notificationService.deleteNotification(id);
+  }
+
+  protected clearAll(event: Event): void {
+    event.stopPropagation();
+    this.notificationService.clearAll();
   }
 }

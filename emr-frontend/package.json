@@ -26,6 +26,7 @@
     "@fullcalendar/interaction": "^6.1.21",
     "@fullcalendar/list": "^6.1.21",
     "@fullcalendar/timegrid": "^6.1.21",
+    "@microsoft/signalr": "^10.0.11",
     "@primeng/themes": "^19.1.4",
     "@sentry/angular": "^10.69.0",
     "bootstrap": "^5.3.8",

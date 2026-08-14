@@ -7,6 +7,7 @@ using EMR.Application.Services;
 using EMR.Infrastructure.Data;
 using EMR.Infrastructure.Repositories;
 using EMR.Infrastructure.Services;
+using EMR.Infrastructure.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -73,6 +74,10 @@ builder.Services.AddScoped<ITranslationService, TranslationService>();
 builder.Services.AddScoped<IPatientDocumentRepository, PatientDocumentRepository>();
 builder.Services.AddScoped<IPatientDocumentService, PatientDocumentService>();
 builder.Services.AddScoped<ICloudStorageService, CloudinaryStorageService>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
+builder.Services.AddSignalR();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
@@ -92,6 +97,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
         };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/notification"))
+                {
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddAuthorization();
@@ -102,7 +121,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngular", policy =>
         policy.WithOrigins("http://localhost:4200", "https://hospital-emr-three.vercel.app")
               .AllowAnyHeader()
-              .AllowAnyMethod());
+              .AllowAnyMethod()
+              .AllowCredentials());
 });
 
 builder.Services.AddControllers();
@@ -151,6 +171,7 @@ app.UseStaticFiles(); // Serve uploaded files from wwwroot/uploads/medical_recor
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<NotificationHub>("/hubs/notification");
 
 //EMR.Shared.Common.PasswordHasher.CreateHash("Admin@123", out var testHash, out var testSalt);
 //Console.WriteLine($"HASH: {testHash}");
